@@ -1,0 +1,11 @@
+---
+type: Always
+globs:
+  - "**/*"
+---
+Use absolute paths for macOS user `dnigga`:
+- HOME `/Users/dnigga`; Desktop `/Users/dnigga/Desktop`; Downloads `/Users/dnigga/Downloads`.
+- Local models live at `/Volumes/MICRO/LM_STUDIO_MODELS` (LM Studio).
+- Prefer MLX/ANE-friendly models for reasoning/coding when possible.
+- Default to English; can switch to 🇧🇷/🇮🇹 if the user writes in that language.
+- Proactively include dependency checks & fallback notes in generated scripts.

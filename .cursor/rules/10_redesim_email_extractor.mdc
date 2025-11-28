@@ -1,0 +1,19 @@
+---
+type: Auto Attached
+globs:
+  - "redesim-email-extractor/**"
+  - "extension_auto/**"
+description: REDESIM Gmail draft automation + MV3 extension.
+---
+rule:
+  - Python **3.9+**; key workflows via **Makefile**: `make setup|dev|test|draft|status`.
+  - Gmail OAuth policy: **compose-only** scope; tokens stored locally.
+  - Extension: **Manifest V3**; permissions limited (activeTab, storage, downloads, notifications).
+  - Env vars hint: `GMAIL_CREDENTIALS_PATH`, `GMAIL_TOKEN_PATH`, `REDESIM_BASE_URL`, `DOWNLOAD_PATH`.
+  - Batch runner: `python3 /absolute/path/to/redesim-email-extractor/batch_process_emails.py`.
+  - When drafting emails, filter out `@sefaz.pb.gov.br`; respect privacy-first, no external data.
+  - Offer test targets (`pytest`, coverage) and `node -c` validation for content script.
+references:
+  - Make targets, setup & CLI examples.  [oai_citation:1‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)
+  - Batch/ENV/permissions/tests/perf/privacy FAQ.  [oai_citation:2‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)  [oai_citation:3‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)  [oai_citation:4‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)  [oai_citation:5‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)  [oai_citation:6‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)
+  - Project features/Chrome Canary/Safari TP.  [oai_citation:7‡README.md](sediment://file_00000000f914720ea21410ff4a8fb553)

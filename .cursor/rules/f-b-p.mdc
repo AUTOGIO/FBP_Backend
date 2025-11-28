@@ -1,0 +1,13 @@
+---
+alwaysApply: true
+---
+This workspace contains my FBP backend.
+All logic must remain in this repository.
+All new features should be added as modules with:
+- schemas.py
+- router.py
+- tasks.py
+- services.py
+Use job_id architecture.
+Never write client-side code here.
+

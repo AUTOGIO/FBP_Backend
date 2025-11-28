@@ -1,0 +1,12 @@
+---
+type: Auto Attached
+globs:
+  - "WorkflowSuggesterApp/**"
+description: Real-time workflow suggestions app (M3 iMac optimized).
+---
+rule:
+  - Emphasize **18 TOPS Neural Engine** hints, privacy-first local storage.
+  - Xcode 13+, macOS 12+, Apple Silicon; provide `xcodebuild` build/test snippets.
+  - Link to User/Dev/API docs when asked; keep pathing absolute in examples.
+references:
+  - Features/requirements/build/test.  [oai_citation:17‡README_PROFESSIONAL.md](sediment://file_00000000e73871f5958b45b7f1476e34)  [oai_citation:18‡README_PROFESSIONAL.md](sediment://file_00000000e73871f5958b45b7f1476e34)

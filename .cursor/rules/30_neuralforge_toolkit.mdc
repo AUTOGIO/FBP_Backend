@@ -1,0 +1,12 @@
+---
+type: Auto Attached
+globs:
+  - "neuralforge/**"
+description: NeuralForge (ANE/Core ML tools + optional PostgreSQL memory).
+---
+rule:
+  - macOS Apple Silicon focus; Python **3.9+**; optional **PostgreSQL 17** for AI memory.
+  - Provide one-liners for venv, deps, launcher; include `quick_start.sh` as cURL pipe when requested.
+  - Surface the toolkit menu (ANE monitor, Core ML conversion, PG memory, tests, status).
+references:
+  - Prereqs/PG17 setup/launcher/menu.  [oai_citation:14‡README.md](sediment://file_00000000390c71f595acf4a2e5eb3782)  [oai_citation:15‡README.md](sediment://file_00000000390c71f595acf4a2e5eb3782)  [oai_citation:16‡README.md](sediment://file_00000000390c71f595acf4a2e5eb3782)

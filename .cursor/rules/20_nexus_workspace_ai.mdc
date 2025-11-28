@@ -1,0 +1,18 @@
+---
+type: Auto Attached
+globs:
+  - "NEXUS/**"
+  - "YABAI/**"
+description: NEXUS workspace intelligence (YABAI + ANE + 3-display).
+---
+rule:
+  - System reqs: macOS ≥12; Apple **M3**; multi-display (optimized for 3).
+  - Core deps: `yabai`, `skhd`, Python 3.9; MLX/transformers stack; optional `n8n`, BTT, KM.
+  - Model store: `/Volumes/MICRO/models` or `/Volumes/MICRO/LM_STUDIO_MODELS`; recommend MLX/GGUF sets.
+  - Provide quickstart: start YABAI service, `./launcher.sh`, load profiles, open dashboard.
+  - Expose **model recommendations** per profile (work/personal/AI research).
+  - Keep everything **local / privacy-first**; attach Streamlit dashboard commands when asked.
+references:
+  - Requirements/deps/quickstart/profiles.  [oai_citation:8‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)  [oai_citation:9‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)  [oai_citation:10‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)
+  - Model directory + recommended models.  [oai_citation:11‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)  [oai_citation:12‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)
+  - Feature set (ANE, multi-display, privacy-first).  [oai_citation:13‡README.md](sediment://file_0000000027f0720e9a0e49d124816e77)

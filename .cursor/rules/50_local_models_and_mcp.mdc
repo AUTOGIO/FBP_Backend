@@ -1,0 +1,18 @@
+---
+type: Auto Attached
+globs:
+  - "**/MCPs/**"
+  - "**/mcp.json"
+  - "**/lmstudio*/**"
+  - "**/*.system-prompt.md"
+description: Local model inventory + MCP wiring for LM Studio/Docker.
+---
+rule:
+  - **Canonical model dir:** `/Volumes/MICRO/LM_STUDIO_MODELS` (mirror/inventory known).
+  - Provide ready JSON for `mcpServers` (Docker gateway + Python filesystem MCP) using absolute paths.
+  - Treat **MacAI Agent** system prompt facts (HOME, hardware, ports, tools) as trusted constants in local runs.
+  - When switching models, prefer MLX 4-bit/8-bit for M3; warn about over-quantization artifacts.
+references:
+  - Inventory + machine facts.  [oai_citation:19‡2cursor_setting_up_local_environment_on.md](sediment://file_0000000064e4720eb2a08449c0cd9ca1)  [oai_citation:20‡2cursor_setting_up_local_environment_on.md](sediment://file_0000000064e4720eb2a08449c0cd9ca1)
+  - MCP JSON examples and env.  [oai_citation:21‡2cursor_setting_up_local_environment_on.md](sediment://file_0000000064e4720eb2a08449c0cd9ca1)
+  - Quantization guidance & MLX notes.  [oai_citation:22‡2cursor_setting_up_local_environment_on.md](sediment://file_0000000064e4720eb2a08449c0cd9ca1)

@@ -1,0 +1,13 @@
+---
+type: Agent Requested
+globs:
+  - "**/*"
+description: Matrix-of-Thought (MoT) scaffolding for complex multi-hop tasks.
+---
+rule:
+  - Use MoT when queries require multi-source, multi-step synthesis; small matrices first (3×4 sweet spot).
+  - Keep outputs structured; prefer JSON for intermediate artifacts; avoid redundant branches.
+  - Explain trade-offs (latency vs quality) before escalating matrix size.
+references:
+  - MoT⇆CoT/ToT relationships & pipeline.  [oai_citation:23‡MTQA- Matrix of Thought for Enhanced Reasoning in Complex Question Answering.pdf](file-service://file-1kA2pmXnojbHR67o4Jv53V)  [oai_citation:24‡MTQA- Matrix of Thought for Enhanced Reasoning in Complex Question Answering.pdf](file-service://file-1kA2pmXnojbHR67o4Jv53V)
+  - Practical matrix size guidance.  [oai_citation:25‡MTQA- Matrix of Thought for Enhanced Reasoning in Complex Question Answering.pdf](file-service://file-1kA2pmXnojbHR67o4Jv53V)
