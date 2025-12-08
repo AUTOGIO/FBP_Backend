@@ -1,0 +1,4660 @@
+
+< !DOCTYPE html >
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+< !DOCTYPE html >
+
+
+
+
+     
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<title>Incluir Nota Fiscal Avulsa</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="../estilos.css">
+
+<script language="JavaScript" src="../js/mensagens.js"></script>
+<script type="text/javascript" src="../jquery/js/jquery-3.3.1.min.js"></script>
+<script language="JavaScript" src="../js/popup.js"></script>
+<script language="JavaScript" src="../js/validacaoJS.js"></script>
+<script language="JavaScript" src="../js/validaCampos.js"></script>
+<script language="JavaScript" src="../js/funcoesValidacaoJS.js"></script>
+<script language="JavaScript" src="../js/UtilidadesTexto.js"></script>
+<script language="JavaScript" src="../js/validaDV.js"></script>
+<script language="JavaScript" src="../js/constantes.js"></script>
+<script language="JavaScript" src="../js/VisualGerais.js"></script>
+<script language="JavaScript" src="../js/validaData.js"></script>
+<script language="JavaScript" src="../js/validaNumeros.js"></script>
+<script language="JavaScript" src="../js/formatoDataHora.js"></script>
+<script language="JavaScript" src="../js/formatoCFOP.js"></script>
+<script language="JavaScript" src="../js/formatoReal.js"></script>
+<script language="JavaScript" src="../js/formatoCNPJ.js"></script>
+<script language="JavaScript" src="../js/formatoNumeracaoFiscal.js"></script>
+<script language="javascript" src="../js/checkBoxUtil.js"></script>
+<script language="javascript" src="../js/comboBoxUtil.js"></script>
+<script language="JavaScript" src="../js/marcar.js"></script>
+<script language="JavaScript" src="../js/utilidadesGerais.js"></script>
+<script language="JavaScript" src="../js/formatoOutros.js"></script>
+
+<script language="JavaScript">
+
+<!--
+
+TIPOGRAFICO = 0;
+EM_BRANCO = 1;
+NOVO = 2;
+
+function verificarFoco() {
+	
+	if (null != null) {
+	
+		null.focus();
+	
+	}
+	
+}
+
+function pesquisarCEPMud() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+	
+	if (!validaCampoJS(frm.edtCEPMud)) {
+		
+		frm.edtCEPMud.focus();
+		return false;
+		
+	} //if
+	
+	// Definindo a Ação
+	frm.hidAcao.value = "pesquisarCEPMud";
+	frm.target = '';
+	frm.submit();
+	
+} //pesquisarCEPMud
+
+function apertaBotaoPesqCEPMud(obj) {
+
+	$(document).keypress(function(e){
+		if(e.wich == 13 || e.keyCode == 13){
+			e.keyCode = 0
+			e.wich = 0
+			obj.form.btnPesqCEPMud.click();
+		}
+	})
+
+} // apertaBotaoPesqCEPMud()
+
+function calcularNovo() {
+
+	if (validaFormCalculoNotaFiscalNovo()) {
+	
+		document.frmIncluirNotaAvulsa.hidAcao.value = 'calcularNovo';
+    	document.frmIncluirNotaAvulsa.action = '../fis/FISf_EmitirNFAeReparticao.do';
+    	document.frmIncluirNotaAvulsa.submit();
+	}
+    
+} // calcularNovo()
+
+function incluirNota(obj) {
+
+    document.frmIncluirNotaAvulsa.hidAcao.value = 'incluir';
+
+    if (validaForm()) {
+    
+    	desabilitar(obj);
+    	
+    	if (document.frmIncluirNotaAvulsa.chbSemLancamento.checked) {
+    	
+        	document.frmIncluirNotaAvulsa.hidEmitirDar.value = 'N';
+      
+        } else {
+        
+        	document.frmIncluirNotaAvulsa.hidEmitirDar.value = 'S';
+        }
+        
+        if (document.frmIncluirNotaAvulsa.chbNFAEPNAE.checked) {
+        	
+        	document.frmIncluirNotaAvulsa.hidNFAePNAE.value = 'S';
+      
+        } else {
+        
+        	document.frmIncluirNotaAvulsa.hidNFAePNAE.value = 'N';
+        }
+    	
+        if (document.frmIncluirNotaAvulsa.hidIdGra.value == 'I') {
+
+            document.frmIncluirNotaAvulsa.action = '../fis/FISf_IncluirNotaFiscalAvulsaViaGra.do';
+            document.frmIncluirNotaAvulsa.submit();
+
+        } else if (document.frmIncluirNotaAvulsa.hidIdGra.value == 'A') {
+
+            document.frmIncluirNotaAvulsa.action = '../fis/FISf_IncluirNotaFiscalAvulsaViaAltGra.do';
+            document.frmIncluirNotaAvulsa.submit();
+
+        } else {
+
+            document.frmIncluirNotaAvulsa.action = '../fis/FISf_EmitirNFAeReparticao.do';
+            document.frmIncluirNotaAvulsa.submit();
+        }
+
+    } 
+
+} // incluirNota()
+
+function validaForm() {
+	
+    if (document.frmIncluirNotaAvulsa.hidAcao.value == 'incluir') {
+
+	 	return validaFormInclusao();
+
+    } else if (document.frmIncluirNotaAvulsa.hidAcao.value == 'incluirItem') {
+
+        return validaFormItemNotaFiscal();
+
+    } else if (document.frmIncluirNotaAvulsa.hidAcao.value == 'alterarItem') {
+
+        if (!algumMarcado(document.frmIncluirNotaAvulsa.chbProduto)) {
+
+            mostraAlerta(SELECIONE_UM_ITEM, "Item");
+            return false;
+
+        }
+
+        if (maisDeUmMarcado(document.frmIncluirNotaAvulsa.chbProduto)) {
+
+            mostraAlerta("Selecione apenas um item para alterar");
+            return false;
+
+        }
+
+    } else if (document.frmIncluirNotaAvulsa.hidAcao.value == 'removerItem') {
+
+        if (!algumMarcado(document.frmIncluirNotaAvulsa.chbProduto)) {
+
+            mostraAlerta(SELECIONE_UM_ITEM, "Item");
+            return false;
+
+        }
+
+    } 
+    return true;
+    
+} // validaForm()
+
+function temCalculo(formulario) {
+
+	var objChavePrimaria = formulario.chbChavePrimaria;
+	
+	var vlImpostoRecolher = null;
+	
+	if (objChavePrimaria != null) {
+	
+		if (objChavePrimaria[0] == null) {
+
+			vlImpostoRecolher = formatoFloatJS(document.getElementById('edtVlTotalRecolher'
+					+ objChavePrimaria.value).value);
+
+			if (vlImpostoRecolher != null && vlImpostoRecolher > 0.0) {
+
+				return true;
+		
+			}
+	
+		} else {
+
+			var nrSequenciais = objChavePrimaria.length;
+			
+			for (i = 0; i < nrSequenciais; i++) {
+			
+				vlImpostoRecolher = formatoFloatJS(document.getElementById('edtVlTotalRecolher'
+						+ objChavePrimaria[i].value).value);
+					
+				if (vlImpostoRecolher > 0.0) {
+					
+					return true;
+						
+				} // if
+				
+			} // for
+	
+		} // else
+	
+	} // if (objChavePrimaria != null) {
+	
+	return false;
+	
+} // temCalculo()
+
+// Tratamento do clique no botão Remover
+function remover() {
+
+    var formulario = document.frmIncluirNotaAvulsa;
+    formulario.hidAcao.value = 'remover';
+
+	if (algumMarcado(formulario.chbChavePrimaria)) {
+	
+    	formulario.submit();
+    	
+    } else {
+    
+    	mostraAlerta('Selecione pelo menos um cálculo');
+    }
+    
+} // remover()
+
+function validaFormLancamento() {
+
+    if (document.frmIncluirLancamento.hidAcao.value != 'limpar') {
+    
+    	var edtReceita = document.frmIncluirLancamento.edtCdReceitaIcms;
+    	var edtReceitaSubst = document.frmIncluirLancamento.edtCdReceitaSubst;
+
+    	if (edtReceita != null && ehVazio(edtReceita.value)) {
+
+        	mostraAlerta("Forneça o código da receita de ICMS");
+            edtReceita.focus();
+        	return false;
+        	
+    	}
+
+        if (edtReceitaSubst != null && ehVazio(edtReceitaSubst.value)) {
+    
+            mostraAlerta("Forneça o código da receita de Substituição");
+            edtReceitaSubst.focus();
+            return false;
+            
+        }
+        
+    }
+
+    return true;
+    
+} // validaFormLancamento()
+
+function validaFormItemNotaFiscal() {
+	
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value)) {
+
+        mostraAlerta('Selecione a natureza da operação');
+        document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.focus();
+        return false;
+        
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbMotivo.value)) {
+        
+        mostraAlerta('Selecione o motivo da inclusão');
+        document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+        return false;
+        
+    }
+	
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    		document.frmIncluirNotaAvulsa.cmbMotivo.value);
+	
+    if (motivo != "IMPORTACAO" && motivo != "EXPORTACAO" 
+    		&& ehVazio(document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value)) {
+
+        mostraAlerta('Informe o Destinatário/Remetente');
+        cmpDestinatario.iform.hidNrDocumentocmpDestinatario.focus();
+        return false;
+        
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.hidSqClassProdutocmpProduto.value)) {
+
+        mostraAlerta(CAMPO_OBRIGATORIO, "Produto");
+        cmpProduto.iform.hidNoClassProdutocmpProduto.focus();   
+        return false;
+        
+    }
+    
+    if (!validaCampoJS(document.frmIncluirNotaAvulsa.txaDsDetalheProduto)) {
+		
+		return false;			
+		
+	}
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbUnidMedida.value)) {
+
+        mostraAlerta('Selecione a unidade de medida');
+        document.frmIncluirNotaAvulsa.cmbUnidMedida.focus();
+        return false;
+        
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.edtQtdProduto.value)) {
+
+        mostraAlerta('Forneça a quantidade de produtos');
+        document.frmIncluirNotaAvulsa.edtQtdProduto.focus();
+        return false;
+        
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.edtVlAliquota.value)) {
+
+        mostraAlerta('Forneça a alíquota');
+        document.frmIncluirNotaAvulsa.edtVlAliquota.focus();
+        return false;
+        
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.edtVlProduto.value)) {
+
+        mostraAlerta('Forneça o valor do produto');
+        document.frmIncluirNotaAvulsa.edtVlProduto.focus();
+        return false;
+        
+    }
+
+    return true;
+    
+} // validaFormItemNotaFiscal()
+
+function validaFormCalculoNotaFiscalNovo() {
+	
+	var formulario = document.frmIncluirNotaAvulsa;
+	var cmb = formulario.cmbNrCST;
+	var cst = cmb.options[cmb.selectedIndex].text.split(" - ")[0].trim();
+	
+	if (!algumMarcado(document.frmIncluirNotaAvulsa.chbProduto)) {
+
+		mostraAlerta('Selecione o produto');
+		return false;
+		
+	}
+	
+	if (ehVazio(cst)) {
+
+		console.log("Chegou aqui viuuu!");
+        mostraAlerta('O campo CST é obrigatório');
+        formulario.cmbNrCST.focus();
+        return false;
+    }
+	
+  if (cst === '900') {
+	  var pICMS = formulario.edtVlAliquotaICMS 
+	      ? formulario.edtVlAliquotaICMS.value.trim() : '';	 
+
+        if (ehVazio(pICMS)) {
+            mostraAlerta("Para CST 900, o campo Alíquota ICMS (pICMS) é obrigatório");
+            formulario.edtVlAliquotaICMS.focus();
+            return false;
+        }     
+    }
+
+    if (formulario.cmbSqReceitaSefin.value == "") {
+        if (cst != '5' && cst != '6' && cst != '7') {
+            mostraAlerta("O campo receita é obrigatório");
+            return false;
+        }
+    }
+
+    if (document.frmIncluirNotaAvulsa.edtCEST != null
+        && ehVazio(document.frmIncluirNotaAvulsa.edtCEST.value)) {
+        mostraAlerta('O campo CEST é obrigatório');
+        document.frmIncluirNotaAvulsa.edtCEST.focus();
+        return false;
+    }
+
+    if (ehVazio(formulario.edtGTIN.value)) {
+        mostraAlerta("O campo GTIN é obrigatório");
+        formulario.edtGTIN.focus();
+        return false;
+    }
+
+    return true;
+	
+} // validaFormCalculoNotaFiscalNovo()
+
+function itemRepetido() {
+
+    var box = document.frmIncluirNotaAvulsa.chbProduto;
+    var produtoSelecionado = document.frmIncluirNotaAvulsa.hidSqClassProdutocmpProduto.value;
+
+    if (box != null) {
+
+        if (box.length > 1) {
+
+            for (i = 0; i < box.length; i++) {
+                
+                if (box[i].value == produtoSelecionado) {
+
+                	return true;
+
+                }
+                
+            }
+            
+        } else {
+            
+            if (box.value == produtoSelecionado) {
+            
+                return true;
+                
+            }
+            
+        }
+        
+    }
+
+    return false;
+
+} // itemRepetido()
+
+function validaFormInclusao() {
+
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    		document.frmIncluirNotaAvulsa.cmbMotivo.value);
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.edtDtEmissao.value)) {
+
+        mostraAlerta('Informe a data de emissão da nota');
+        document.frmIncluirNotaAvulsa.edtDtEmissao.focus();
+        return false;
+        
+    }
+    
+    if (validarDataMaior(document.frmIncluirNotaAvulsa.edtDtEmissao.value,
+    		'04/12/2025')) {
+    
+    	mostraAlerta('A data de emissão da nota não pode ser superior a data atual');
+        document.frmIncluirNotaAvulsa.edtDtEmissao.focus();
+        return false;
+        
+    }
+
+    if (!validaData(document.frmIncluirNotaAvulsa.edtDtEmissao.value)) {
+
+        mostraAlerta(DATA_INVALIDA, "Data Emissão");
+        document.frmIncluirNotaAvulsa.edtDtEmissao.focus();
+        return false;
+        
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.hidSqUnidGeograficacmpMunicipioGiva.value)) {
+    	
+    	mostraAlerta('Informe o Município para Giva Fiscal');
+    	cmpMunicipioGiva.iform.hidNoUnidGeograficacmpMunicipioGiva.focus();
+        return false;
+    	
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value)) {
+
+        mostraAlerta('Informe o Emitente');
+        cmpEmitente.iform.hidNrDocumentocmpEmitente.focus();
+        return false;
+        
+    }
+    
+    if (motivo == "MUDANÇA") {
+    	
+		if (!validaCampoJS(document.frmIncluirNotaAvulsa.edtNoLograMud)) {
+			
+			document.frmIncluirNotaAvulsa.edtNoLograMud.focus();
+	        return false;
+			
+		} //if
+		
+		if (!validaCampoJS(document.frmIncluirNotaAvulsa.edtNrLograMud)) {
+			
+	        document.frmIncluirNotaAvulsa.edtNrLograMud.focus();
+	        return false;
+			
+		} //if
+		
+		if (!validaCampoJS(document.frmIncluirNotaAvulsa.edtCompLograMud)) {
+			
+			document.frmIncluirNotaAvulsa.edtCompLograMud.focus();
+	        return false;
+			
+		} //if
+		
+		if (!validaCampoJS(document.frmIncluirNotaAvulsa.edtNoBairroMud)) {
+			
+			document.frmIncluirNotaAvulsa.edtNoBairroMud.focus();
+	        return false;
+			
+		} //if
+		
+		if (!validaCampoJS(document.frmIncluirNotaAvulsa.edtCEPMud)) {
+			
+	        document.frmIncluirNotaAvulsa.edtCEPMud.focus();
+	        return false;
+			
+		} //if
+		
+		if (ehVazio(document.frmIncluirNotaAvulsa.UGScmpMunicMud.value)) {
+
+			mostraAlerta("O campo UF do Destinatário é obrigatório");
+			document.frmIncluirNotaAvulsa.UGScmpMunicMud.focus();
+			return false;
+			
+		} //if
+		
+		if (!validaCMP(cmpMunicMud, document.frmIncluirNotaAvulsa.hidSqUnidGeograficacmpMunicMud.value, 
+				'Município do Destinatário', true)) {
+			
+			cmpMunicDest.iform.hidNoUnidGeograficacmpMunicMud.focus();
+			return false;
+			
+		} //if
+    	
+    	
+    }
+    
+    if (motivo == "IMPORTACAO" || motivo == "EXPORTACAO") {
+    	
+	    if (ehVazio(document.frmIncluirNotaAvulsa.edtIdEstrangeiro.value)) {
+	    	
+	        mostraAlerta('Informe Identificação Estrangeiro');
+	        document.frmIncluirNotaAvulsa.edtIdEstrangeiro.focus();
+	        return false;
+	        
+	    }
+	    
+	    if (!validaDocEstrangeiro(document.frmIncluirNotaAvulsa.edtIdEstrangeiro.value)) {
+	    	
+	    	mostraAlerta('Identificação Estrangeiro inválida');
+	        document.frmIncluirNotaAvulsa.edtIdEstrangeiro.focus();
+	        return false;
+	    	
+	    }
+
+	    if (ehVazio(document.frmIncluirNotaAvulsa.edtNomeEstrangeiro.value)) {
+	    	
+	        mostraAlerta('Informe o Nome do Destinatário/Remetente');
+	        document.frmIncluirNotaAvulsa.edtNomeEstrangeiro.focus();
+	        return false;
+	        
+	    }
+	    
+	    if (ehVazio(document.frmIncluirNotaAvulsa.cmbPais.value)) {
+	    	
+	        mostraAlerta('Informe o Pais do Destinatário/Remetente');
+	        document.frmIncluirNotaAvulsa.cmbPais.focus();
+	        return false;
+	        
+	    }
+	    
+    } else {
+    
+	    if (ehVazio(document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value)) {
+	
+	        mostraAlerta('Informe o Destinatário/Remetente');
+	        cmpDestinatario.iform.hidNrDocumentocmpDestinatario.focus();
+	        return false;
+	        
+	    }
+	    
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbTpOperacao.value)) {
+
+        mostraAlerta('Informe o Tipo de Operação');
+        document.frmIncluirNotaAvulsa.cmbTpOperacao.focus();
+        return false;
+        
+    }
+    
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbNrCfop.value)) {
+
+        mostraAlerta('Informe o número do CFOP');
+        document.frmIncluirNotaAvulsa.cmbNrCfop.focus();
+        return false;
+        
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value)) {
+
+        mostraAlerta('Selecione a natureza da operação');
+        document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.focus();
+        return false;
+        
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.cmbMotivo.value)) {
+    
+        mostraAlerta('Selecione o motivo da inclusão');
+        document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+        return false;
+        
+    }
+    
+    if ((document.frmIncluirNotaAvulsa.cmbNrCfop.value == '5.601' 
+    	|| document.frmIncluirNotaAvulsa.cmbNrCfop.value == '5.602')
+		&& document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value != '68') {
+    	
+    	alert("Uma Nota Fiscal Avulsa cujo CFOP for 5.601(TRANSFERÊNCIA DE CRÉDITO DE ICMS ACUMULADO) "
+    			+ "ou 5.602(TRANSFERÊNCIA DE SALDO CREDOR DE ICMS), deve ter como Natureza de Operação a TRANSFERÊNCIA DE CRÉDITO.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((document.frmIncluirNotaAvulsa.cmbNrCfop.value == '5.601' 
+    	|| document.frmIncluirNotaAvulsa.cmbNrCfop.value == '5.602') 
+    	&& (motivo != "TRANSFERENCIA DE CREDITO")) {
+    	
+    	alert("Uma Nota Fiscal Avulsa cujo CFOP for 5.601(TRANSFERÊNCIA DE CRÉDITO DE ICMS ACUMULADO) "
+    			+ "ou 5.602(TRANSFERÊNCIA DE SALDO CREDOR DE ICMS), deve ter como Motivo a TRANSFERÊNCIA DE CRÉDITO.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if (document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value == '68'
+    		&& (document.frmIncluirNotaAvulsa.cmbNrCfop.value != '5.601' 
+    		&& document.frmIncluirNotaAvulsa.cmbNrCfop.value != '5.602')) {
+    	
+    	alert("Uma Nota Fiscal Avulsa cuja Natureza de Operação é TRANSFERÊNCIA DE CRÉDITO deve ter como CFOP o valor "
+    			+ "5.601(TRANSFERÊNCIA DE CRÉDITO DE ICMS ACUMULADO) ou 5.602(TRANSFERÊNCIA DE SALDO CREDOR DE ICMS).");
+    			
+    	document.frmIncluirNotaAvulsa.cmbNrCfop.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if (document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value == '68' 
+	    && (motivo != "TRANSFERENCIA DE CREDITO")) {
+    	
+    	alert("Uma Nota Fiscal Avulsa cuja Natureza de Operação é TRANSFERÊNCIA DE CRÉDITO deve ter como "
+    			+ "Motivo a TRANSFERÊNCIA DE CRÉDITO.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((motivo == "TRANSFERENCIA DE CREDITO") 
+    	&& (document.frmIncluirNotaAvulsa.cmbNrCfop.value != '5.601' 
+    	&& document.frmIncluirNotaAvulsa.cmbNrCfop.value != '5.602')) {
+    	
+    	alert("Uma Nota Fiscal Avulsa cujo motivo é TRANSFERÊNCIA DE CRÉDITO deve possuir como CFOP "
+    			+ "5.601(TRANSFERÊNCIA DE CRÉDITO DE ICMS ACUMULADO), ou 5.602(TRANSFERÊNCIA DE SALDO CREDOR DE ICMS).");
+    			
+    	document.frmIncluirNotaAvulsa.cmbNrCfop.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((motivo == "TRANSFERENCIA DE CREDITO")
+    		&& document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value != '68') {
+    	
+    	alert("Uma Nota Fiscal Avulsa cujo motivo é TRANSFERÊNCIA DE CRÉDITO deve possuir como natureza de operação "
+    			+ "a TRANSFERÊNCIA DE CRÉDITO.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((motivo != "MUDANÇA" && motivo != "IMPORTACAO") 
+    		&& (!document.frmIncluirNotaAvulsa.chbSemLancamento.checked) && temCalculo(document.frmIncluirNotaAvulsa) 
+    		&& ehVazio(document.frmIncluirNotaAvulsa.cmbImposto.value)) {
+    
+        mostraAlerta('Selecione o responsável pelo pagamento do imposto');
+        document.frmIncluirNotaAvulsa.cmbImposto.focus();
+        return false;
+        
+    }
+    
+    // Falar com Zé Antônio sobre o lançamento cujo motivo é mudança.
+    if ((motivo == "MUDANÇA" || motivo == "IMPORTACAO") 
+    		&& (!document.frmIncluirNotaAvulsa.chbSemLancamento.checked) && temCalculo(document.frmIncluirNotaAvulsa) 
+    		&& ehVazio(document.frmIncluirNotaAvulsa.cmbImposto.value)) {
+    
+        mostraAlerta('Selecione o responsável pelo pagamento do imposto');
+        document.frmIncluirNotaAvulsa.cmbImposto.focus();
+        return false;
+        
+    }
+    
+    if ((motivo == "MUDANÇA")
+    		&& (!document.frmIncluirNotaAvulsa.chbSemLancamento.checked) && temCalculo(document.frmIncluirNotaAvulsa) 
+    		&& document.frmIncluirNotaAvulsa.cmbImposto.value == 'E') {
+    	
+    	alert("Em uma Nota Fiscal Avulsa cujo motivo é " + motivo + " o imposto deve "
+    			+ "ser cobrado do Destinatário/Remetente.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbImposto.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((motivo == "REMESSA A VENDA") 
+    		&& (!document.frmIncluirNotaAvulsa.chbSemLancamento.checked) 
+    		&& temCalculo(document.frmIncluirNotaAvulsa) 
+    		&&	document.frmIncluirNotaAvulsa.cmbImposto.value == 'D') {
+    	
+    	alert("Em uma Nota Fiscal Avulsa cujo motivo é REMESSA A VENDA o imposto deve "
+    			+ "ser cobrado do Emitente.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbImposto.focus();
+    	
+    	return false;
+    	
+    }
+    
+    if ((motivo != "REMESSA A VENDA") 
+    		&& (document.frmIncluirNotaAvulsa.cmbNrCfop.value == '545' 
+        		|| document.frmIncluirNotaAvulsa.cmbNrCfop.value == '659')) {
+    	
+    	alert("Em uma Nota Fiscal Avulsa cujo CFOP é 5904 ou 6904 deve ser informado o motivo REMESSA A VENDA.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+    	
+    	return false;
+    	
+    }
+
+    if (ehVazio(document.frmIncluirNotaAvulsa.hidsqElementoOrgcmpElementoOrg.value)) {
+
+        mostraAlerta(CAMPO_OBRIGATORIO, "Repartição Fiscal Emitente");
+        cmpElementoOrg.iform.hidcdSefincmpElementoOrg.focus();
+        return false;
+        
+    }
+	
+	if (ehVazio(document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value)) {
+    						
+    	alert("O campo Emitente é obrigatório.");
+		cmpEmitente.iform.hidNrDocumentocmpEmitente.focus();
+		return false;
+	
+	}
+	
+	if (motivo == "MUDANÇA"
+			&& document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+			 != document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value) {
+    	
+    	alert("Uma Nota Fiscal Avulsa cujo motivo é " + motivo + " deverá ter Emitente e Destinatário/Remetente iguais.");
+    			
+    	document.frmIncluirNotaAvulsa.cmbMotivo.focus();
+    	
+    	return false;
+    	
+    }
+	
+	if (motivo == "REMESSA A VENDA") {
+	    
+		var cmbCST = document.frmIncluirNotaAvulsa.cmbNrCST;
+		var cst = cmbCST.options[cmbCST.selectedIndex].text.split(" - ")[0].trim();
+		console.log(cst);
+		
+		var cmbCFOP = document.frmIncluirNotaAvulsa.cmbNrCfop;
+	    var cfop = cmbCFOP.options[cmbCFOP.selectedIndex].text.split(" - ")[0].trim();
+	    console.log(cfop);
+
+	    if (cst == "900" && cfop != "5904" && cfop != "6904") {
+
+	        if (document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+	   			 != document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value) {
+
+	            mostraAlerta("Uma Nota Fiscal Avulsa cujo motivo é REMESSA A VENDA deverá ter Emitente e Destinatário/Remetente iguais.");
+	            return false;
+	        }
+	    }
+	}
+	    
+    if (document.frmIncluirNotaAvulsa.chbProduto == null) {
+
+        mostraAlerta('Adicione pelo menos um item à nota fiscal');
+        cmpProduto.iform.hidNoClassProdutocmpProduto.focus();
+        return false;
+
+    }
+    
+    if (document.frmIncluirNotaAvulsa.cmpMod.value == 1) {
+		
+    	if (!validaReutHumanoInst('cmpTransportadora', 
+			document.frmIncluirNotaAvulsa, 'Transportador')) {
+		
+			return false;
+		
+		} //if
+	
+    } //if
+
+    var docDestinatario = null;
+    var docEmitente = null;
+    
+    var tpDocEmitente = null;
+    var tpDocDestinatario = null;
+    
+    if (motivo != "IMPORTACAO" && motivo != "EXPORTACAO") {
+    	
+    	tpDocDestinatario = document.frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value;
+    	tpDocEmitente = document.frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value;
+    
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value ==
+				'16') {
+						
+			docDestinatario = 
+					document.frmIncluirNotaAvulsa.hidNrATFcmpDestinatario.value;
+									
+		} else {
+		
+			docDestinatario =
+					document.frmIncluirNotaAvulsa.hidCnpjCpfcmpDestinatario.value;
+									
+		} 
+	    
+	
+	    if (document.frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value ==
+	    		'16') {
+						
+			docEmitente = 
+					document.frmIncluirNotaAvulsa.hidNrATFcmpEmitente.value;
+						
+	    } else {
+	   
+			docEmitente = 
+					document.frmIncluirNotaAvulsa.hidCnpjCpfcmpEmitente.value;
+			
+		}
+    
+    }
+    
+    if (document.frmIncluirNotaAvulsa.cmpMod.value == 1) {
+    	
+    	if (document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+    			 == document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value
+    			 && document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+    			 == document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpTransportadora.value) {
+
+   	    	alert("Emitente e Destinatário iguais - Transportadora não pode ser emitente/destinatário");
+   	    	return false;
+    	        
+    	}
+    	
+    	if (document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+   			 == document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value
+   			 && (document.frmIncluirNotaAvulsa.cmbTpModalidade.value == 3 || document.frmIncluirNotaAvulsa.cmbTpModalidade.value == 4)) {
+
+  	    	alert("Emitente e Destinatário iguais - não é permitido informar frete próprio pelo remetente ou destinatário");
+  	    	return false;
+   	        
+   		}
+	
+    }
+    
+    if ((motivo != "REMESSA A VENDA" && motivo != "MUDANÇA" && motivo != "IMPORTACAO" && motivo != "EXPORTACAO") 
+    		&& document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value
+  			 == document.frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value) {
+
+    	var confirma = true;
+        
+        confirma = confirm('O Emitente e o Destinatário/Remetente são iguais. Emitir a Nota Fiscal desta forma?');
+		
+		if (!confirma) return false;
+        
+    }
+    
+    if ((motivo == "REMESSA A VENDA")
+    		&& (document.frmIncluirNotaAvulsa.cmbImposto.value 
+    				== "D")) {
+    	
+    	alert("O imposto de uma Nota Fiscal Avulsa cujo motivo é REMESSA A VENDA, tem que ser cobrado "
+    			+ "do Emitente.");
+    	document.frmIncluirNotaAvulsa.cmbImposto.focus();
+    	return false;
+    	
+    }
+    
+    if (document.frmIncluirNotaAvulsa.cmpMod.value == 1 && (motivo == "MUDANÇA")
+			&& (document.frmIncluirNotaAvulsa.cmbTpModalidade.value 
+					== 'C')) {
+    	
+    	alert("O frete de uma Nota Fiscal Avulsa cujo motivo é " + motivo + ", não pode ser cobrado "
+    			+ "do Emitente.");
+    	document.frmIncluirNotaAvulsa.cmbTpModalidade.focus();
+    	return false;
+    	
+    } 
+    
+    if (motivo == "TRANSFERENCIA DE CREDITO") {
+    
+    	if (itemIncorreto()) {
+    	
+    		cmpProduto.iform.hidNoClassProdutocmpProduto.focus();
+    		return false;
+    	}
+    	
+    } else if (motivo == "EXPORTACAO") {
+    	
+    	if (ehVazio(document.frmIncluirNotaAvulsa.cmpUFSaida.value)) {
+		
+			mostraAlerta('Informar UF de saída');
+			document.frmIncluirNotaAvulsa.cmpUFSaida.focus();
+			return false;
+		
+		} //if
+		
+    	if (ehVazio(document.frmIncluirNotaAvulsa.edtLocExporta.value)) {
+    		
+			mostraAlerta('Informar Descrição do Local de Embarque ou de transposição de fronteira');
+			document.frmIncluirNotaAvulsa.edtLocExporta.focus();
+			return false;
+		
+		} //if
+		
+    } //else-if
+    
+    if (document.frmIncluirNotaAvulsa.cmpMod.value == 1) {
+    
+	    if (ehVazio(document.frmIncluirNotaAvulsa.cmbTpModalidade.value)) {
+	
+	        mostraAlerta('Informe a modalidade de frete');
+	        document.frmIncluirNotaAvulsa.cmbTpModalidade.focus();
+	        return false;
+	        
+	    }
+    
+    } //if
+    
+	if (document.frmIncluirNotaAvulsa.chbChavePrimaria == null) {
+    
+		mostraAlerta('Calcular o imposto do produto');
+		return false;
+    	
+	}
+	
+	if (document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value == '72'
+			&& ehVazio(document.frmIncluirNotaAvulsa.edtNrChaveOriginal.value)) {
+		
+		mostraAlerta('Informar a Chave de acesso da nota fiscal original');
+		document.frmIncluirNotaAvulsa.edtNrChaveOriginal.focus();
+		return false;
+		
+	}
+	
+	if (document.frmIncluirNotaAvulsa.cmbNrCfop.value == '570'
+		&& ehVazio(document.frmIncluirNotaAvulsa.edtNrChaveNFCeOriginal.value)) {
+	
+		mostraAlerta('Informar a Chave da NFC-e');
+		document.frmIncluirNotaAvulsa.edtNrChaveNFCeOriginal.focus();
+		return false;
+	
+	}
+	
+
+	
+	return true;
+
+} // validaFormInclusao()
+
+function itemIncorreto() {
+
+
+	
+} // itemIncorreto
+
+function validaReutHumanoInst(nomeComponente, frm, campo) {
+	
+	var resultado = true;
+	var tpDoc = eval(frm.name + ".cmbTpDoc" + nomeComponente);
+	var hidCNPJ = eval(frm.name + ".hidCNPJ" + nomeComponente);
+	var hidCPF = eval(frm.name + ".hidCPF" + nomeComponente);
+	var hidNrATF = eval(frm.name + ".hidNrATF" + nomeComponente);
+	var hidCnpjCpf = eval(frm.name + ".hidCnpjCpf" + nomeComponente);
+	var cmp = eval(nomeComponente);
+	
+	if (ehVazio(tpDoc.value)) {
+	
+		mostraAlerta('Selecione o tipo de documento');
+		tpDoc.focus();
+		resultado = false;	
+	}
+
+	if (tpDoc.value	== '2') {	
+
+		if (!validaCMP(cmp, hidCNPJ.value, campo, true)) {		
+		
+			resultado = false;		
+		}//if
+	} else if (tpDoc.value == '3') {
+
+		if (!validaCMP(cmp, hidCPF.value, campo, true)) {			
+
+			resultado = false;			
+			
+		}
+	} else if (tpDoc.value == '16') {
+			
+		if (!validaCMP(cmp, hidNrATF.value, campo, true)) {			
+
+			resultado = false;
+			
+		}//if
+	} else {						
+	
+		if (!validaCMP(cmp, hidCnpjCpf.value, campo, true)) {			
+			
+			resultado = false;		
+		}//if
+	} //else
+	
+	return resultado;
+	
+} // validaReutHumanoInst()
+
+function submeter() {
+
+    document.frmAbertura.hidAcao.value = 'continuarAbertura';
+    document.frmAbertura.submit();
+    
+} // submeter()
+
+function atualizarHiddens() {
+
+    var comboBox = document.frmIncluirNotaAvulsa.cmbUnidMedida;
+    var option = comboBox.options[comboBox.selectedIndex];
+
+    document.frmIncluirNotaAvulsa.hidAcao.value = 'incluirItem';
+    document.frmIncluirNotaAvulsa.hidNoUnidMedida.value = option.text;
+
+} // atualizarHiddens()
+
+function naturezaEProdutoPreenchido() {
+
+    return !ehVazio(document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value) &&
+    		!ehVazio(document.frmIncluirNotaAvulsa.hidSqClassProdutocmpProduto.value);
+
+} // naturezaEProdutoPreenchido()
+
+function redirecionaSubmit() {
+
+	$(document).keypress(function(e){
+		if(e.wich == 13 || e.keyCode == 13){
+			e.keyCode = 0
+			e.wich = 0
+    	
+			if (validaFormLancamento()) {
+	            document.frmIncluirLancamento.hidAcao.value = 'incluirLancamento';
+	            document.frmIncluirLancamento.hidEmitirDar.value = 'S';
+	            document.frmIncluirLancamento.submit();
+	        }
+	   }
+	})
+    
+} // redirecionaSubmit()
+
+function emissaoDar() {
+
+	var num = null;
+	
+	if ((num != null) && (num != "0")) {
+		
+		document.frmEmitirDar.hidAcao.value="emitirDAR";
+		document.frmEmitirDar.action = '../fis/FISf_EmitirNFAeReparticao.do';
+	    document.frmEmitirDar.target = "emissaoNotaFiscalAvulsa";
+	    document.frmEmitirDar.submit();
+			
+	}
+	
+} // emissaoDar()
+
+function incluirContribuinteEmitente(obj) {
+
+	document.frmIncluirNotaAvulsa.hidAcao.value = '';
+
+	if (obj.value == 'Emitente não cadastrado - Cadastrar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=E&hidIdPacoteJSP=NFAE'
+    				+ '&telaAlterar=N';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=E&hidIdPacoteJSP=NFAE'
+    				+ '&telaAlterar=N';
+
+		}
+
+	} else if (obj.value == 'Emitente sem endereço - Informar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=E&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=E&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		}
+
+	}
+
+	document.frmIncluirNotaAvulsa.submit();
+
+} // incluirContribuinteEmitente()
+
+function incluirContribuinteDestinatario(obj) {
+
+	document.frmIncluirNotaAvulsa.hidAcao.value = '';
+
+	if (obj.value == 'Destinatário/Remetente não cadastrado - Cadastrar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=D&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=D&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N';
+		}
+
+	} else if (obj.value == 'Destinatário/Remetente sem endereço - Informar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=D&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=D&hidIdPacoteJSP=NFAE'
+    				+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		}
+
+	}
+
+	document.frmIncluirNotaAvulsa.submit();
+
+} // incluirContribuinteDestinatario()
+
+function incluirContribuinteTransporte(obj) {
+
+	document.frmIncluirNotaAvulsa.hidAcao.value = '';
+
+	if (obj.value == 'Transportador não cadastrado - Cadastrar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpTransportadora.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=T&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=T&hidIdPacoteJSP=NFAE'
+		    		+ '&telaAlterar=N';
+
+		}
+
+	} else if (obj.value == 'Transportador sem endereço - Informar') {
+
+		if (document.frmIncluirNotaAvulsa.cmbTpDoccmpTransportadora.value ==
+				'3') {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirHumanoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=T&hidIdPacoteJSP=NFAE'
+    				+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		} else {
+
+			document.frmIncluirNotaAvulsa.action =
+		    		'../cad/CADf_IncluirInstituicaoAvulsa.jsp?idControleApresentacao=idSessao&hidIncluirContrib=T&hidIdPacoteJSP=NFAE'
+    				+ '&telaAlterar=N&idAcao=A&sqHumanoInst=' + '';
+
+		}
+
+	}
+
+	document.frmIncluirNotaAvulsa.submit();
+
+} // incluirContribuinteTransporte()
+
+function MM_openBrWindow(theURL, winName, features) { 
+  
+	window.open(theURL,winName,features);
+  
+} // MM_openBrWindow()
+
+function atualizarTela() { 
+	
+	document.frmIncluirNotaAvulsa.hidAcao.value = 'atualizarApresentacao';
+	document.frmIncluirNotaAvulsa.submit();
+  
+} // atualizarTela()
+
+function submetePaginaEmitente() {
+
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    	document.frmIncluirNotaAvulsa.cmbMotivo.value);
+
+	var frm = document.frmIncluirNotaAvulsa;
+
+	frm.hidAcao.value = 'manterEmitente';
+	
+	frm.hidMotivo.value = motivo;
+	
+	frm.submit();
+		
+} // submetePaginaEmitente()
+
+function submetePaginaDestinatario() {
+
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    	document.frmIncluirNotaAvulsa.cmbMotivo.value);
+	
+	var frm = document.frmIncluirNotaAvulsa;
+
+	frm.hidAcao.value = 'manterDestinatario';
+	
+	frm.hidMotivo.value = motivo;
+			
+	frm.submit();
+		
+} // submetePaginaDestinatario()
+
+function submetePaginaTransportador() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+
+	frm.hidAcao.value = 'manterTransporte';
+			
+	frm.submit();
+		
+} // submetePaginaTransportador()
+
+function chamaCalcularFrete() {
+
+    var frm = document.frmImprimir;
+
+	frm.hidAcao.value = 'pesquisarNFAe';
+	
+	frm.action = "../fis/FISf_CalcularFreteNfa.do";
+	
+	frm.target = 'Calcular_Frete';
+			
+} // chamaCalcularFrete()
+
+function chamaCalcularTaxa() {
+
+    var frm = document.frmImprimir;
+    
+    frm.target = "calcularTaxa";
+    frm.hidAcao.value = 'calcularTaxa';
+    
+    frm.action = '../fis/FISf_EmitirNFAeReparticao.do';
+			
+} // chamaCalcularTaxa()
+
+function chamaXML() {
+
+    var frm = document.frmImprimir;
+    
+    frm.hidAcao.value = 'gerarXML';
+    
+    frm.action = '../fis/FISf_EmitirNFAeReparticao.do';
+			
+} // chamaXML()
+
+function chamaImprimir() {
+
+    var frm = document.frmImprimir;
+    
+    frm.target = "imprimirNFAe";
+    frm.hidAcao.value = 'imprimirNFAe';
+    
+    frm.action = 'FISf_ImprimirNotasFiscaisAvulsas.do';
+			
+} // chamaImprimir()
+
+function verificarCST() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+
+	frm.hidAcao.value = 'verificarCST';
+			
+	frm.submit();
+	
+}
+
+function criarFiltroCFOP() {
+
+	var frm = document.frmIncluirNotaAvulsa;
+
+	frm.hidAcao.value = 'criarFiltroCFOP';
+			
+	frm.submit();
+	
+}
+
+function verificarCFOP() {
+
+	if (document.frmIncluirNotaAvulsa.cmbNrCfop != null
+			&& document.frmIncluirNotaAvulsa.cmbNrCfop.value == '570') {
+  	
+		document.getElementById('nfceorigem').style.display = '';
+  	
+  	} else {
+  		
+  		document.getElementById('nfceorigem').style.display = 'none';
+  		
+  	}
+	
+}
+
+function verificarCFOPComb() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+
+ 	frm.hidAcao.value = 'verificarCFOP';
+ 				
+ 	frm.submit();
+ 	
+}
+
+function verificarTransp() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+
+ 	frm.hidAcao.value = 'verificarTransp';
+ 				
+ 	frm.submit();
+ 	
+}
+
+function verificarImportacao() {
+
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    		document.frmIncluirNotaAvulsa.cmbMotivo.value);
+	
+	if (motivo == "IMPORTACAO" || motivo == "EXPORTACAO") {
+  	
+		document.getElementById('estrangeiro').style.display = '';
+		document.getElementById('destinatario').style.display = 'none';
+		
+  	} else {
+  		
+  		document.getElementById('estrangeiro').style.display = 'none';
+  		document.getElementById('destinatario').style.display = '';
+  		
+  	}
+	
+	if (motivo == "EXPORTACAO") {
+		
+		document.getElementById('dadosExpo').style.display = '';
+		
+	} else {
+		
+		document.getElementById('dadosExpo').style.display = 'none';
+		
+	}
+	
+}
+
+function verificarMudanca() {
+
+	var motivo = obterTextoItemCombo(document.frmIncluirNotaAvulsa.cmbMotivo,
+    		document.frmIncluirNotaAvulsa.cmbMotivo.value);
+	
+	if (motivo == "MUDANÇA") {
+  	
+		document.getElementById('enderMudanca').style.display = '';
+		
+  	} else {
+  		
+  		document.getElementById('enderMudanca').style.display = 'none';
+  		
+  	}
+	
+}
+
+
+function verificarCSTIPI() {
+	
+	
+		
+}
+
+function verificarTpCalcIPI() {
+	
+	
+		
+}
+
+
+function verificarTpInter() {
+	
+
+	
+}
+
+function adicionarAd() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+	
+	if (ehVazio(document.frmIncluirNotaAvulsa.edtNrAdicao.value)) {
+			
+		mostraAlerta('Informar Numero da Adição');
+		document.frmIncluirNotaAvulsa.edtNrAdicao.focus();
+		return false;
+			
+	}
+	
+	if (ehVazio(document.frmIncluirNotaAvulsa.edtNrSeqAdicao.value)) {
+		
+		mostraAlerta('Informar Numero sequencial do item dentro da Adição');
+		document.frmIncluirNotaAvulsa.edtNrSeqAdicao.focus();
+		return false;
+			
+	}
+	
+	if (ehVazio(document.frmIncluirNotaAvulsa.edtCodFab.value)) {
+		
+		mostraAlerta('Informar Código do fabricante estrangeiro');
+		document.frmIncluirNotaAvulsa.edtCodFab.focus();
+		return false;
+			
+	}
+
+ 	frm.hidAcao.value = 'adicionarAd';
+ 				
+ 	frm.submit();
+ 	
+}
+
+function removerAd() {
+	
+	var frm = document.frmIncluirNotaAvulsa;
+	
+	if (!algumMarcado(frm.rdbChavePrimariaAd)) {
+        
+		mostraAlerta(SELECIONE_UM_ITEM);
+		return false;
+            
+	} // if
+	
+ 	frm.hidAcao.value = 'removerAd';
+ 				
+ 	frm.submit();
+ 	
+}
+
+function verificarDevolucao(exibiralerta) {
+	
+	if (document.frmIncluirNotaAvulsa.cmbNaturezaOperacao != null
+			&& document.frmIncluirNotaAvulsa.cmbNaturezaOperacao.value == '72') {
+	
+		if (exibiralerta) {
+		
+			alert("O CFOP escolhido deve ser de devolução.");
+			
+		}
+		
+	} //if
+	
+} //verificarDevolucao
+
+function atualizarValorPagar(obj) {
+    var bcNota = parseFloat(formatoFloatJS(obj.value));
+
+    var nameEdtBcNota = obj.name;
+    var chave = nameEdtBcNota.substring(17);
+
+    var campoAliquota = document.getElementsByName('edtVlAliquotaICMS' + chave)[0];
+    var aliquota = 0;
+
+    if (campoAliquota && campoAliquota.value) {
+        aliquota = parseFloat(formatoFloatJS(campoAliquota.value));
+    }
+
+    var pagar = bcNota * (aliquota / 100);
+
+    if (!isNaN(pagar)) {
+        if (pagar < 0) pagar = 0;
+
+        document.getElementsByName("edtVlImpostoICMS" + chave)[0].value = formataNumero(pagar + '', 2);
+        document.getElementsByName("edtVlTotalRecolher" + chave)[0].value = formataNumero(pagar + '', 2);
+        document.getElementsByName("hidVlTotalRecolher" + chave)[0].value = formataNumero(pagar + '', 2);
+        document.getElementsByName("hidVlImpostoIcms" + chave)[0].value = formataNumero(pagar + '', 2);
+    } else {
+        document.getElementsByName("edtVlImpostoICMS" + chave)[0].value = '0,00';
+        document.getElementsByName("edtVlTotalRecolher" + chave)[0].value = '0,00';
+        document.getElementsByName("hidVlTotalRecolher" + chave)[0].value = '0,00';
+        document.getElementsByName("hidVlImpostoIcms" + chave)[0].value = '0,00';
+    }
+}
+
+function validaDocEstrangeiro(docEstrangeiro) {
+
+	var padrao = /^[a-zA-Z0-9\[\:\.\+\-\/\(\)\]]{1,20}$/;
+
+	return padrao.test(docEstrangeiro);
+}
+
+function verificarLimiteCaract(objeto) {
+	
+    var limite = 200;
+    var erro = "Voc ultrapassou o limite de caracteres.";
+
+    tamanho = objeto.value.length;
+
+    if (tamanho > limite) {
+        
+		objeto.value = objeto.value.substring(0,limite);
+		alert(erro);
+	
+    } else {
+        
+		document.getElementById('restantes').innerHTML = (limite-objeto.value.length);
+		
+    } //if-else
+    
+} //verificarLimiteCaract
+
+
+function manterSessaoAtiva() {
+
+	var formulario = document.frmAbertura;
+	manterSessaoWebAtiva('../fis/FISf_EmitirNFAeReparticao.do', formulario);
+
+}
+
+-->
+
+</script>
+</head>
+<body  bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="manterSessaoAtiva(); verificarDevolucao(false); verificarCFOP(); verificarImportacao(); verificarTpInter(); verificarCSTIPI(); verificarTpCalcIPI(); verificarMudanca(); verificarFoco();">
+<table class="fontePadrao" width="100%" border="0" cellpadding="1" cellspacing="0" height="99%">
+	<tr class="tdCabecalho" valign="middle">
+		<td class="tdCabecalho" align="left">
+			<b>Incluir Nota Fiscal Avulsa</b>
+		</td>
+      	<td align="right">
+      		
+
+ 
+
+
+
+
+
+<head>
+	<link rel="stylesheet" href="/atf/jquery/css/thickbox.css" type="text/css" media="screen" />
+ 	<script type="text/javascript" src="/atf/jquery/js/jquery-3.3.1.min.js"></script>
+ 	<script type="text/javascript" src="/atf/jquery/js/thickbox.js"></script>
+	<script type="text/javascript" src="/atf/js/contador.js"></script>
+	
+	<script type="text/javascript">
+	
+		function iniciarContador(){
+			resetContador(15, 00, document.getElementById('cronometro'), document.getElementById('cronometro_div'));
+		}
+
+	</script>
+	
+</head>
+<body>
+	<div id="cronometro_div">
+	
+	 
+			Login: 
+		<span>eduardof    </span>
+			 Função: 
+		<span>FIS_1698</span>
+			Data: 
+		<span>04/12/2025 22:15:06</span>
+		<span>Produ&ccedil;&atilde;o</span>
+	</div>
+	
+	<script type="text/javascript">
+		contador(15, 00, document.getElementById('cronometro'), document.getElementById('cronometro_div'));
+	</script>
+</body>
+		</td>
+    </tr>
+    <tr align="center" valign="middle">
+    	<td colspan="2" height="100%">
+        
+      	<table class="fontePadrao" width="600" border="0" cellspacing="1" cellpadding="1">
+
+      	
+			<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+ 
+		</table>
+
+
+
+
+
+		<form name="frmIncluirNotaAvulsa" method="post" action="../fis/FISf_EmitirNFAeReparticao.do" onSubmit=" return validaForm();" onLoad="habilitaBotaoIncluir();">
+		<table class="fontePadrao" width="600" border="0" cellspacing="1" cellpadding="1">
+			<tr class="tdPadrao">
+				<td colspan="3" align="center" class="tdCabecalho">
+					<strong>Nota Fiscal</strong>
+				</td>
+			</tr>
+			<tr class="tdPadrao">
+				<td width="200">
+					&nbsp;- Data de Emissão:
+				</td>
+				<td colspan="2">
+					<input  type="hidden" name="hidHistorico" value="">
+					<input type="hidden" name="hidAcao">
+					<input type="hidden" name="hidFoco" value="null">
+					<input type="hidden" name="hidMotivo">
+					<input type="hidden" name="hidEmitirDar">
+					<input  type="text" name="edtDtEmissao" class="caixas" size="12" value="04/12/2025" maxlength="10" onKeyPress="this.value = mascaraData(this.value)"> (dd/mm/aaaa) *
+				</td>
+          	</tr>
+          	
+          	<tr class="tdPadrao">
+          		<td width="200">
+          			&nbsp;- Natureza da Operação:
+          		</td>
+            	<td colspan="2">
+
+					<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbNaturezaOperacao"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="Natureza da Operação"
+        
+        onChange="this.form.hidNatOperacao.value = this.options[this.selectedIndex].text; verificarDevolucao(true);" onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="70">COMPRA</option>
+<option value="74">CONSIGNAÇÃO</option>
+<option value="72">DEVOLUÇÃO</option>
+<option value="4">ENTRADA INTERNA</option>
+<option value="79">EXPORTAÇÃO</option>
+<option value="6">IMPORTACAO</option>
+<option value="75">REMESSA</option>
+<option value="2">SAIDA INTERESTADUAL</option>
+<option value="5">SAIDA INTERNA</option>
+<option value="71">TRANSFERÊNCIA</option>
+<option value="68">TRANSFERÊNCIA DE CRÉDITO</option>
+<option value="3">TRANSITO</option>
+<option value="69">VENDA</option>
+    </select>
+    
+        <input type="hidden" name="hidNatOperacao"
+                value="---">
+    
+    
+
+ *
+
+				</td>
+			</tr>
+			
+			<tr class="tdPadrao">
+				<td width="200" align="left" valign="middle">
+					&nbsp;- Chave de acesso da nota fiscal original:
+				</td>
+				<td colspan="2" align="left" valign="middle">
+					<input  type="text" name="edtNrChaveOriginal" class="caixas" size="60" value="" maxlength="65">
+              	</td>
+			</tr>
+          	<tr class="tdPadrao">
+          		<td>&nbsp;- Motivo:</td>
+          		<td colspan="2">
+          		
+					<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbMotivo"
+        class="caixas"            
+        
+        
+        
+        
+        onChange="this.form.hidMotivoNotFisAvu.value = this.options[this.selectedIndex].text; verificarImportacao(); verificarMudanca();" onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="4">ACOMPANHAMENTO DE MERCADORIA SEM NOTA FISCAL</option>
+<option value="1">DESPACHO</option>
+<option value="8">EXPORTACAO</option>
+<option value="7">IMPORTACAO</option>
+<option value="3">MUDANÇA</option>
+<option value="5">REMESSA A VENDA</option>
+<option value="2">SUBSTITUICAO DE NOTA FISCAL</option>
+<option value="6">TRANSFERENCIA DE CREDITO</option>
+    </select>
+    
+        <input type="hidden" name="hidMotivoNotFisAvu"
+                value="---">
+    
+    
+
+ *
+				
+				</td>
+          	</tr>
+        </table>
+          	
+  		<!DOCTYPE html>
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="Javascript">
+function setarSqElementoOrgcmpElementoOrg(sqEO) {
+    frmIncluirNotaAvulsa.hidsqElementoOrgcmpElementoOrg.value = sqEO;
+}
+function setarSqTipoElementoOrgcmpElementoOrg(sqTipoEO) {
+    frmIncluirNotaAvulsa.hidsqTipoElementoOrgcmpElementoOrg.value = sqTipoEO;
+}
+</script>
+
+<table class="fontePadrao" width="600" border="0" cellspacing="0" cellpadding="0">
+
+    <tr class="tdCabecalho">
+        <td align="center">
+            
+                <b>Repartição Fiscal Emitente *</b>
+            </td>
+    </tr>
+
+    <tr>
+        <td>
+            <iframe class="cmpWrapper" frameborder="0" name="cmpElementoOrg" scrolling="no" width="600" height="100" align="center" src="../componentes/CodDescLst.jsp?id=FISf_EmitirNFAeReparticao_cmpElementoOrg" ></iframe>
+<input type="hidden" name="hidcdSefincmpElementoOrg" value="">
+<input type="hidden" name="hidnoElementoOrgcmpElementoOrg" value="">
+<input type="hidden" name="hidsqTipoElementoOrgcmpElementoOrg">
+<input type="hidden" name="hidsgElementoOrgcmpElementoOrg">
+<input type="hidden" name="hidsqElementoOrgcmpElementoOrg">
+
+        </td>
+    </tr>
+</table>
+
+
+
+
+
+
+
+
+		
+		<!DOCTYPE html>
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script language="JavaScript" src="../js/validaNumeros.js"></script>
+<table class="fontePadrao" width="600" border="0" cellspacing="0" cellpadding="0">
+
+    <tr class="tdSubCabecalho">
+        <td align="center" valign="middle" >
+            
+                <b>Município p/ Giva Fiscal *</b>
+            
+        </td>
+    </tr>
+
+    <tr class="tdPadrao">
+        <td>
+            <iframe class="cmpWrapper" frameborder="0" name="cmpMunicipioGiva" scrolling="no" width="600" height="100" align="center" src="../componentes/CodDescLst.jsp?id=FISf_EmitirNFAeReparticao_cmpMunicipioGiva" ></iframe>
+<input type="hidden" name="hidCdUnidGeograficacmpMunicipioGiva" value="">
+<input type="hidden" name="hidNoUnidGeograficacmpMunicipioGiva" value="">
+<input type="hidden" name="hidSqUnidGeograficacmpMunicipioGiva">
+<input type="hidden" name="hidCdIbgecmpMunicipioGiva">
+<input type="hidden" name="hidnoUnidSuperiorcmpMunicipioGiva">
+
+        </td>
+    </tr>
+</table>
+<script language="JavaScript">
+<!--
+    frmIncluirNotaAvulsa.hidSqUnidGeograficacmpMunicipioGiva.value =
+            "";
+	frmIncluirNotaAvulsa.hidCdIbgecmpMunicipioGiva.value =
+			"";
+-->
+</script>
+
+
+
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+        	<tr class="tdPadrao">
+        		<td colspan="3" class="tdSubCabecalho" align="center" valign="middle"><b>Emitente *</b></td>
+        	</tr>
+        </table>
+
+		<!DOCTYPE html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="Javascript" src="../js/formatoInscricaoEstadualPB.js"></script>
+<script language="Javascript" src="../js/formatoCNPJ.js"></script>
+<script language="Javascript" src="../js/formatoCPF.js"></script>
+<script language="Javascript" src="../js/formatoNrATF.js"></script>
+<script language="Javascript">
+<!--
+
+function setarCNPJCPFcmpEmitente (nrCNPJCPF) {
+
+    var cpf = frmIncluirNotaAvulsa.hidCPFcmpEmitente.value;
+    var cnpj = frmIncluirNotaAvulsa.hidCNPJcmpEmitente.value;
+    var docSelecionado = frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value;
+
+    frmIncluirNotaAvulsa.hidCnpjCpfcmpEmitente.value = (cnpj != "")? cnpj: cpf;
+
+    if (docSelecionado == "2") {
+				cmpEmitente.iform.hidNrDocumentocmpEmitente.value =
+						cnpj;
+				frmIncluirNotaAvulsa.hidNrDocumentocmpEmitente.value	= cnpj;
+    }
+
+    if (docSelecionado == "3") {
+
+        cmpEmitente.iform.hidNrDocumentocmpEmitente.value = cpf;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpEmitente.value = cpf;
+    }
+
+    if (docSelecionado == "10") {
+
+        cmpEmitente.iform.hidNrDocumentocmpEmitente.value
+            = frmIncluirNotaAvulsa.hidCdSIAFcmpEmitente.value;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpEmitente.value
+            = frmIncluirNotaAvulsa.hidCdSIAFcmpEmitente.value;
+    }
+
+    if (docSelecionado == "16") {
+
+        cmpEmitente.iform.hidNrDocumentocmpEmitente.value
+            = frmIncluirNotaAvulsa.hidNrATFcmpEmitente.value;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpEmitente.value
+            = frmIncluirNotaAvulsa.hidNrATFcmpEmitente.value;
+    }
+}
+
+function trataBtnCadastrarcmpEmitente () {
+
+    if (frmIncluirNotaAvulsa.cmbTpDoccmpEmitente.value
+            == 3) {
+
+        frmIncluirNotaAvulsa.action =
+                '../cad/CADf_IncluirHumano.jsp?idControleApresentacao=idSessao';
+    }else {
+
+        frmIncluirNotaAvulsa.action =
+                '../cad/CADf_IncluirInstituicao.jsp?idControleApresentacao=idSessao';
+    }
+
+    frmIncluirNotaAvulsa.submit();
+}
+
+-->
+</script>
+<table class="fontePadrao" width="600" border="0" cellspacing="0" cellpadding="0">
+  <tr class="tdPadrao">
+    <td width="200">
+
+            &nbsp;- Tipo de Identificação:
+
+    </td>
+    <td width="400">
+      <select name="cmbTpDoccmpEmitente" class="caixas"
+            onChange="cmpEmitente.document.iform.hidNrDocumentocmpEmitente.value = '';"
+             >
+
+
+
+            <option value="1"
+                    >
+                    Inscrição Estadual</option>
+
+
+
+
+
+
+
+
+
+                <option value="2"
+                        >CNPJ</option>
+                <option value="3" >
+                        CPF</option>
+              </select>
+            </td>
+
+
+
+          </tr>
+          <tr>
+            <td colspan="2" width="600">
+                    <iframe class="cmpWrapper" frameborder="0" name="cmpEmitente" scrolling="no" width="600" height="100" align="center" src="../componentes/CodDescLstFIS.jsp?id=FISf_EmitirNFAeReparticao_cmpEmitente" ></iframe>
+<input type="hidden" name="hidTsAtualizacaocmpEmitente">
+<input type="hidden" name="hidNrDocumentocmpEmitente" value="">
+<input type="hidden" name="hidNoHumanoInstcmpEmitente" value="">
+<input type="hidden" name="hidCdSIAFcmpEmitente">
+<input type="hidden" name="hidCPFcmpEmitente">
+<input type="hidden" name="hidSqHumanoInstcmpEmitente">
+<input type="hidden" name="hidNrATFcmpEmitente">
+<input type="hidden" name="hidNrInscrEstadualcmpEmitente">
+<input type="hidden" name="hidTpNaturezacmpEmitente">
+<input type="hidden" name="hidCnpjCpfcmpEmitente">
+<input type="hidden" name="hidSqEnderecocmpEmitente">
+<input type="hidden" name="hidCNPJcmpEmitente">
+
+            </td>
+<SCRIPT language="JavaScript">
+frmIncluirNotaAvulsa.hidSqHumanoInstcmpEmitente.value = '';
+frmIncluirNotaAvulsa.hidTpNaturezacmpEmitente.value = '';
+frmIncluirNotaAvulsa.hidCnpjCpfcmpEmitente.value = '';
+frmIncluirNotaAvulsa.hidCNPJcmpEmitente.value = '';
+frmIncluirNotaAvulsa.hidCPFcmpEmitente.value = '';
+frmIncluirNotaAvulsa.hidSqEnderecocmpEmitente.value = '';
+
+if (true) {
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCNPJcmpEmitente.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCPFcmpEmitente.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidNrATFcmpEmitente.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCdSIAFcmpEmitente.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidNrInscrEstadualcmpEmitente.value = '';
+    }
+
+}
+
+
+</SCRIPT>
+          </tr>
+        </table>
+
+		<input  type="hidden" name="hidIEcmpEmitente" value="">
+	
+
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+        	<tr class="tdPadrao">
+        		<td colspan="3" class="tdSubCabecalho" align="center" valign="middle"><b>Destinatário/Remetente *</b></td>
+        	</tr>
+        	
+        	
+        </table>
+        
+			<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1" id="estrangeiro" style="display: none">
+				<tr class="tdPadrao" align="left">
+	                <td width="200">&nbsp;- Identificação Estrangeiro:</td>
+	                <td>
+						<input  type="text" name="edtIdEstrangeiro" class="caixas" size="30" value="" maxlength="20" title="Identificação Estrangeiro">*
+	                </td>
+	            </tr>
+	            <tr class="tdPadrao" align="left">
+	                <td width="200">&nbsp;- Nome:</td>
+	                <td>
+						<input  type="text" name="edtNomeEstrangeiro" class="caixas" size="70" value="" maxlength="60" title="Nome Estrangeiro">*
+	                </td>
+	            </tr>
+         			<tr class="tdPadrao">
+         				<td>&nbsp;- País:</td>
+         				<td>
+	          			<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbPais"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="País"
+        
+        onChange="this.form.hidPais.value = this.options[this.selectedIndex].text; " onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 380px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="132">AFEGANISTAO</option>
+<option value="153">ALAND, ILHAS</option>
+<option value="175">ALBANIA, REPUBLICA  DA</option>
+<option value="230">ALEMANHA</option>
+<option value="310">BURKINA FASO</option>
+<option value="370">ANDORRA</option>
+<option value="400">ANGOLA</option>
+<option value="418">ANGUILLA</option>
+<option value="420">ANTARTICA</option>
+<option value="434">ANTIGUA E BARBUDA</option>
+<option value="531">ARABIA SAUDITA</option>
+<option value="590">ARGELIA</option>
+<option value="639">ARGENTINA</option>
+<option value="647">ARMENIA, REPUBLICA DA</option>
+<option value="655">ARUBA</option>
+<option value="698">AUSTRALIA</option>
+<option value="728">AUSTRIA</option>
+<option value="736">AZERBAIJAO, REPUBLICA DO</option>
+<option value="779">BAHAMAS, ILHAS</option>
+<option value="809">BAHREIN, ILHAS</option>
+<option value="817">BANGLADESH</option>
+<option value="833">BARBADOS</option>
+<option value="850">BELARUS, REPUBLICA DA</option>
+<option value="876">BELGICA</option>
+<option value="884">BELIZE</option>
+<option value="906">BERMUDAS</option>
+<option value="930">MIANMAR (BIRMANIA)</option>
+<option value="973">BOLIVIA, ESTADO PLURINACIONAL DA</option>
+<option value="981">BOSNIA-HERZEGOVINA (REPUBLICA DA)</option>
+<option value="990">BONAIRE</option>
+<option value="1015">BOTSUANA</option>
+<option value="1023">BOUVET, ILHA</option>
+<option value="1058">BRASIL</option>
+<option value="1082">BRUNEI</option>
+<option value="1112">BULGARIA, REPUBLICA DA</option>
+<option value="1155">BURUNDI</option>
+<option value="1198">BUTAO</option>
+<option value="1279">CABO VERDE, REPUBLICA DE</option>
+<option value="1376">CAYMAN, ILHAS</option>
+<option value="1414">CAMBOJA</option>
+<option value="1457">CAMAROES</option>
+<option value="1490">CANADA</option>
+<option value="1538">CAZAQUISTAO, REPUBLICA DO</option>
+<option value="1546">CATAR</option>
+<option value="1589">CHILE</option>
+<option value="1600">CHINA, REPUBLICA POPULAR</option>
+<option value="1619">FORMOSA (TAIWAN)</option>
+<option value="1635">CHIPRE</option>
+<option value="1651">COCOS(KEELING),ILHAS</option>
+<option value="1694">COLOMBIA</option>
+<option value="1732">COMORES, ILHAS</option>
+<option value="1775">CONGO</option>
+<option value="1830">COOK, ILHAS</option>
+<option value="1872">COREIA (DO NORTE), REP.POP.DEMOCRATICA</option>
+<option value="1902">COREIA (DO SUL), REPUBLICA DA</option>
+<option value="1937">COSTA DO MARFIM</option>
+<option value="1953">CROACIA (REPUBLICA DA)</option>
+<option value="1961">COSTA RICA</option>
+<option value="1988">KUWAIT</option>
+<option value="1996">CUBA</option>
+<option value="2003">CURACAO</option>
+<option value="2291">BENIN</option>
+<option value="2321">DINAMARCA</option>
+<option value="2356">DOMINICA,ILHA</option>
+<option value="2399">EQUADOR</option>
+<option value="2402">EGITO</option>
+<option value="2437">ERITREIA</option>
+<option value="2445">EMIRADOS ARABES UNIDOS</option>
+<option value="2453">ESPANHA</option>
+<option value="2461">ESLOVENIA, REPUBLICA DA</option>
+<option value="2470">ESLOVACA, REPUBLICA</option>
+<option value="2496">ESTADOS UNIDOS</option>
+<option value="2518">ESTONIA, REPUBLICA DA</option>
+<option value="2534">ETIOPIA</option>
+<option value="2550">FALKLAND (ILHAS MALVINAS)</option>
+<option value="2593">FEROE, ILHAS</option>
+<option value="2674">FILIPINAS</option>
+<option value="2712">FINLANDIA</option>
+<option value="2755">FRANCA</option>
+<option value="2810">GABAO</option>
+<option value="2852">GAMBIA</option>
+<option value="2895">GANA</option>
+<option value="2917">GEORGIA, REPUBLICA DA</option>
+<option value="2925">ILHAS GEORGIA DO SUL E SANDWICH DO SUL</option>
+<option value="2933">GIBRALTAR</option>
+<option value="2976">GRANADA</option>
+<option value="3018">GRECIA</option>
+<option value="3050">GROENLANDIA</option>
+<option value="3093">GUADALUPE</option>
+<option value="3131">GUAM</option>
+<option value="3174">GUATEMALA</option>
+<option value="3212">GUERNSEY, ILHA DO CANAL (INCLUI ALDERNEY E SARK)</option>
+<option value="3255">GUIANA FRANCESA</option>
+<option value="3298">GUINE</option>
+<option value="3310">GUINE-EQUATORIAL</option>
+<option value="3344">GUINE-BISSAU</option>
+<option value="3379">GUIANA</option>
+<option value="3417">HAITI</option>
+<option value="3433">ILHA HEARD E ILHAS MCDONALD</option>
+<option value="3450">HONDURAS</option>
+<option value="3514">HONG KONG</option>
+<option value="3557">HUNGRIA, REPUBLICA DA</option>
+<option value="3573">IEMEN</option>
+<option value="3595">MAN, ILHA DE</option>
+<option value="3611">INDIA</option>
+<option value="3654">INDONESIA</option>
+<option value="3697">IRAQUE</option>
+<option value="3727">IRA, REPUBLICA ISLAMICA DO</option>
+<option value="3751">IRLANDA</option>
+<option value="3794">ISLANDIA</option>
+<option value="3832">ISRAEL</option>
+<option value="3867">ITALIA</option>
+<option value="3913">JAMAICA</option>
+<option value="3930">JERSEY, ILHA DO CANAL</option>
+<option value="3999">JAPAO</option>
+<option value="4030">JORDANIA</option>
+<option value="4111">KIRIBATI</option>
+<option value="4200">LAOS, REP.POP.DEMOCR.DO</option>
+<option value="4260">LESOTO</option>
+<option value="4278">LETONIA, REPUBLICA DA</option>
+<option value="4316">LIBANO</option>
+<option value="4340">LIBERIA</option>
+<option value="4383">LIBIA</option>
+<option value="4405">LIECHTENSTEIN</option>
+<option value="4421">LITUANIA, REPUBLICA DA</option>
+<option value="4456">LUXEMBURGO</option>
+<option value="4472">MACAU</option>
+<option value="4499">MACEDONIA, ANT.REP.IUGOSLAVA</option>
+<option value="4502">MADAGASCAR</option>
+<option value="4553">MALASIA</option>
+<option value="4588">MALAVI</option>
+<option value="4618">MALDIVAS</option>
+<option value="4642">MALI</option>
+<option value="4677">MALTA</option>
+<option value="4723">MARIANAS DO NORTE</option>
+<option value="4740">MARROCOS</option>
+<option value="4766">MARSHALL,ILHAS</option>
+<option value="4774">MARTINICA</option>
+<option value="4855">MAURICIO</option>
+<option value="4880">MAURITANIA</option>
+<option value="4898">MAYOTTE (ILHAS FRANCESAS)</option>
+<option value="4936">MEXICO</option>
+<option value="4944">MOLDAVIA, REPUBLICA DA</option>
+<option value="4952">MONACO</option>
+<option value="4979">MONGOLIA</option>
+<option value="4985">MONTENEGRO</option>
+<option value="4995">MICRONESIA</option>
+<option value="5010">MONTSERRAT,ILHAS</option>
+<option value="5053">MOCAMBIQUE</option>
+<option value="5070">NAMIBIA</option>
+<option value="5088">NAURU</option>
+<option value="5118">CHRISTMAS,ILHA (NAVIDAD)</option>
+<option value="5177">NEPAL</option>
+<option value="5215">NICARAGUA</option>
+<option value="5258">NIGER</option>
+<option value="5282">NIGERIA</option>
+<option value="5312">NIUE,ILHA</option>
+<option value="5355">NORFOLK,ILHA</option>
+<option value="5380">NORUEGA</option>
+<option value="5428">NOVA CALEDONIA</option>
+<option value="5452">PAPUA NOVA GUINE</option>
+<option value="5487">NOVA ZELANDIA</option>
+<option value="5517">VANUATU</option>
+<option value="5568">OMA</option>
+<option value="5665">PACIFICO,ILHAS DO (POSSESSAO DOS EUA)</option>
+<option value="5738">PAISES BAIXOS (HOLANDA)</option>
+<option value="5754">PALAU</option>
+<option value="5762">PAQUISTAO</option>
+<option value="5780">PALESTINA</option>
+<option value="5800">PANAMA</option>
+<option value="5860">PARAGUAI</option>
+<option value="5894">PERU</option>
+<option value="5932">PITCAIRN,ILHA</option>
+<option value="5991">POLINESIA FRANCESA</option>
+<option value="6033">POLONIA, REPUBLICA DA</option>
+<option value="6076">PORTUGAL</option>
+<option value="6114">PORTO RICO</option>
+<option value="6238">QUENIA</option>
+<option value="6254">QUIRGUIZ, REPUBLICA</option>
+<option value="6289">REINO UNIDO</option>
+<option value="6408">REPUBLICA CENTRO-AFRICANA</option>
+<option value="6475">REPUBLICA DOMINICANA</option>
+<option value="6602">REUNIAO, ILHA</option>
+<option value="6653">ZIMBABUE</option>
+<option value="6700">ROMENIA</option>
+<option value="6750">RUANDA</option>
+<option value="6769">RUSSIA, FEDERACAO DA</option>
+<option value="6777">SALOMAO, ILHAS</option>
+<option value="6858">SAARA OCIDENTAL</option>
+<option value="6874">EL SALVADOR</option>
+<option value="6904">SAMOA</option>
+<option value="6912">SAMOA AMERICANA</option>
+<option value="6955">SAO CRISTOVAO E NEVES,ILHAS</option>
+<option value="6939">SAO BARTOLOMEU</option>
+<option value="6971">SAN MARINO</option>
+<option value="6980">SAO MARTINHO, ILHA DE (PARTE FRANCESA)</option>
+<option value="6998">SAO MARTINHO, ILHA DE (PARTE HOLANDESA)</option>
+<option value="7005">SAO PEDRO E MIQUELON</option>
+<option value="7056">SAO VICENTE E GRANADINAS</option>
+<option value="7102">SANTA HELENA</option>
+<option value="7153">SANTA LUCIA</option>
+<option value="7200">SAO TOME E PRINCIPE, ILHAS</option>
+<option value="7285">SENEGAL</option>
+<option value="7315">SEYCHELLES</option>
+<option value="7358">SERRA LEOA</option>
+<option value="7370">SERVIA</option>
+<option value="7412">CINGAPURA</option>
+<option value="7447">SIRIA, REPUBLICA ARABE DA</option>
+<option value="7480">SOMALIA</option>
+<option value="7501">SRI LANKA</option>
+<option value="7544">SUAZILANDIA</option>
+<option value="7552">SVALBARD E JAN MAYERN</option>
+<option value="7560">AFRICA DO SUL</option>
+<option value="7595">SUDAO</option>
+<option value="7600">SUDÃƒO DO SUL</option>
+<option value="7641">SUECIA</option>
+<option value="7676">SUICA</option>
+<option value="7706">SURINAME</option>
+<option value="7722">TADJIQUISTAO, REPUBLICA DO</option>
+<option value="7765">TAILANDIA</option>
+<option value="7803">TANZANIA, REP.UNIDA DA</option>
+<option value="7811">TERRAS AUSTRAIS E ANTARTICAS FRANCESAS</option>
+<option value="7820">TERRITORIO BRIT.OC.INDICO</option>
+<option value="7838">DJIBUTI</option>
+<option value="7889">CHADE</option>
+<option value="7919">TCHECA, REPUBLICA</option>
+<option value="7951">TIMOR LESTE</option>
+<option value="8001">TOGO</option>
+<option value="8052">TOQUELAU,ILHAS</option>
+<option value="8109">TONGA</option>
+<option value="8150">TRINIDAD E TOBAGO</option>
+<option value="8206">TUNISIA</option>
+<option value="8230">TURCAS E CAICOS,ILHAS</option>
+<option value="8249">TURCOMENISTAO, REPUBLICA DO</option>
+<option value="8273">TURQUIA</option>
+<option value="8281">TUVALU</option>
+<option value="8311">UCRANIA</option>
+<option value="8338">UGANDA</option>
+<option value="8451">URUGUAI</option>
+<option value="8478">UZBEQUISTAO, REPUBLICA DO</option>
+<option value="8486">VATICANO, EST.DA CIDADE DO</option>
+<option value="8508">VENEZUELA</option>
+<option value="8583">VIETNA</option>
+<option value="8630">VIRGENS,ILHAS (BRITANICAS)</option>
+<option value="8664">VIRGENS,ILHAS (E.U.A.)</option>
+<option value="8702">FIJI</option>
+<option value="8753">WALLIS E FUTUNA, ILHAS</option>
+<option value="8885">CONGO, REPUBLICA DEMOCRATICA DO</option>
+<option value="8907">ZAMBIA</option>
+    </select>
+    
+        <input type="hidden" name="hidPais"
+                value="---">
+    
+    
+
+*
+              			</td>
+         			</tr>
+			</table>
+			<div id="destinatario" style="display: ">
+		<!DOCTYPE html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="Javascript" src="../js/formatoInscricaoEstadualPB.js"></script>
+<script language="Javascript" src="../js/formatoCNPJ.js"></script>
+<script language="Javascript" src="../js/formatoCPF.js"></script>
+<script language="Javascript" src="../js/formatoNrATF.js"></script>
+<script language="Javascript">
+<!--
+
+function setarCNPJCPFcmpDestinatario (nrCNPJCPF) {
+
+    var cpf = frmIncluirNotaAvulsa.hidCPFcmpDestinatario.value;
+    var cnpj = frmIncluirNotaAvulsa.hidCNPJcmpDestinatario.value;
+    var docSelecionado = frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value;
+
+    frmIncluirNotaAvulsa.hidCnpjCpfcmpDestinatario.value = (cnpj != "")? cnpj: cpf;
+
+    if (docSelecionado == "2") {
+				cmpDestinatario.iform.hidNrDocumentocmpDestinatario.value =
+						cnpj;
+				frmIncluirNotaAvulsa.hidNrDocumentocmpDestinatario.value	= cnpj;
+    }
+
+    if (docSelecionado == "3") {
+
+        cmpDestinatario.iform.hidNrDocumentocmpDestinatario.value = cpf;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpDestinatario.value = cpf;
+    }
+
+    if (docSelecionado == "10") {
+
+        cmpDestinatario.iform.hidNrDocumentocmpDestinatario.value
+            = frmIncluirNotaAvulsa.hidCdSIAFcmpDestinatario.value;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpDestinatario.value
+            = frmIncluirNotaAvulsa.hidCdSIAFcmpDestinatario.value;
+    }
+
+    if (docSelecionado == "16") {
+
+        cmpDestinatario.iform.hidNrDocumentocmpDestinatario.value
+            = frmIncluirNotaAvulsa.hidNrATFcmpDestinatario.value;
+        frmIncluirNotaAvulsa.hidNrDocumentocmpDestinatario.value
+            = frmIncluirNotaAvulsa.hidNrATFcmpDestinatario.value;
+    }
+}
+
+function trataBtnCadastrarcmpDestinatario () {
+
+    if (frmIncluirNotaAvulsa.cmbTpDoccmpDestinatario.value
+            == 3) {
+
+        frmIncluirNotaAvulsa.action =
+                '../cad/CADf_IncluirHumano.jsp?idControleApresentacao=idSessao';
+    }else {
+
+        frmIncluirNotaAvulsa.action =
+                '../cad/CADf_IncluirInstituicao.jsp?idControleApresentacao=idSessao';
+    }
+
+    frmIncluirNotaAvulsa.submit();
+}
+
+-->
+</script>
+<table class="fontePadrao" width="600" border="0" cellspacing="0" cellpadding="0">
+  <tr class="tdPadrao">
+    <td width="200">
+
+            &nbsp;- Tipo de Identificação:
+
+    </td>
+    <td width="400">
+      <select name="cmbTpDoccmpDestinatario" class="caixas"
+            onChange="cmpDestinatario.document.iform.hidNrDocumentocmpDestinatario.value = '';"
+             >
+
+
+
+            <option value="1"
+                    >
+                    Inscrição Estadual</option>
+
+
+
+
+
+
+
+
+
+                <option value="2"
+                        >CNPJ</option>
+                <option value="3" >
+                        CPF</option>
+              </select>
+            </td>
+
+
+
+          </tr>
+          <tr>
+            <td colspan="2" width="600">
+                    <iframe class="cmpWrapper" frameborder="0" name="cmpDestinatario" scrolling="no" width="600" height="100" align="center" src="../componentes/CodDescLstFIS.jsp?id=FISf_EmitirNFAeReparticao_cmpDestinatario" ></iframe>
+<input type="hidden" name="hidTsAtualizacaocmpDestinatario">
+<input type="hidden" name="hidNrDocumentocmpDestinatario" value="">
+<input type="hidden" name="hidNoHumanoInstcmpDestinatario" value="">
+<input type="hidden" name="hidSqEnderecocmpDestinatario">
+<input type="hidden" name="hidNrATFcmpDestinatario">
+<input type="hidden" name="hidTpNaturezacmpDestinatario">
+<input type="hidden" name="hidCNPJcmpDestinatario">
+<input type="hidden" name="hidSqHumanoInstcmpDestinatario">
+<input type="hidden" name="hidNrInscrEstadualcmpDestinatario">
+<input type="hidden" name="hidCnpjCpfcmpDestinatario">
+<input type="hidden" name="hidCPFcmpDestinatario">
+<input type="hidden" name="hidCdSIAFcmpDestinatario">
+
+            </td>
+<SCRIPT language="JavaScript">
+frmIncluirNotaAvulsa.hidSqHumanoInstcmpDestinatario.value = '';
+frmIncluirNotaAvulsa.hidTpNaturezacmpDestinatario.value = '';
+frmIncluirNotaAvulsa.hidCnpjCpfcmpDestinatario.value = '';
+frmIncluirNotaAvulsa.hidCNPJcmpDestinatario.value = '';
+frmIncluirNotaAvulsa.hidCPFcmpDestinatario.value = '';
+frmIncluirNotaAvulsa.hidSqEnderecocmpDestinatario.value = '';
+
+if (true) {
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCNPJcmpDestinatario.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCPFcmpDestinatario.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidNrATFcmpDestinatario.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidCdSIAFcmpDestinatario.value = '';
+    }
+
+    if (false) {
+        frmIncluirNotaAvulsa.hidNrInscrEstadualcmpDestinatario.value = '';
+    }
+
+}
+
+
+</SCRIPT>
+          </tr>
+        </table>
+
+		<input  type="hidden" name="hidIEcmpDestinatario" value="">
+
+	
+       </div>
+		<table class="fontePadrao" width="600" border="0" cellspacing="1" cellpadding="0" id="enderMudanca" style="display: none">
+			<tr valign="middle" class="tdCabecalho" >
+				<td colspan="2" align="center" >Endereço*</td>
+			</tr>      
+			<tr class="tdPadrao" align="left">
+            	<td width="170">&nbsp;- CEP:</td>
+            	<td>
+            		<input  type="text" name="edtCEPMud" class="caixas" size="15" value="" maxlength="9" title="CEP do Remetente" alt="VALIDA_EHVAZIO + VALIDA_CEP" onKeyPress="this.value = mascaraCEP(this.value); apertaBotaoPesqCEPMud(this);">
+					<input  type="button" name="btnPesqCEPMud" class="botoes" value="Pesquisar" onClick="pesquisarCEPMud();">
+				</td>
+			</tr>                                             
+			<tr class="tdPadrao" align="left">
+                    <td width="170">&nbsp;- Logradouro:</td>
+                    <td>
+				<input  type="text" name="edtNoLograMud" class="caixas" size="75" value="" maxlength="70" title="Logradouro do Destinatário mudança" alt="VALIDA_EHVAZIO + VALIDA_MINIMO_TRES_CARACTERES">
+                    </td>
+                </tr>                        
+                <tr class="tdPadrao" align="left">
+                    <td width="170">&nbsp;- Número:</td>
+                    <td>
+                    	<input  type="text" name="edtNrLograMud" class="caixas" size="15" value="" maxlength="12" title="Número de Residência do Destinatário mudança" alt="VALIDA_EHVAZIO">*              			   
+                    </td>
+                </tr>                        
+                <tr class="tdPadrao" align="left">
+                    <td width="170">&nbsp;- Complemento:</td>
+                    <td>
+                    	<input  type="text" name="edtCompLograMud" class="caixas" size="75" value="" maxlength="70" title="Complemento do Endereço do Destinatário mudança" alt="VALIDA_MINIMO_TRES_CARACTERES">
+                    </td>
+                </tr>    
+                <tr class="tdPadrao" align="left">
+                    <td width="170">&nbsp;- Bairro:</td>
+                    <td>
+                    	<input  type="text" name="edtNoBairroMud" class="caixas" size="75" value="" maxlength="70" title="Bairro do Destinatário mudança" alt="VALIDA_EHVAZIO + VALIDA_MINIMO_TRES_CARACTERES">
+                    </td>
+                </tr>    
+                <tr class="tdPadrao" align="left">
+                    <td width="170">&nbsp;- UF:</td>
+                    <td>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="UGScmpMunicMud"
+        class="caixas"            
+        
+        
+        
+        
+        onChange="this.form.hidSgUFMud.value = this.options[this.selectedIndex].text; " onMouseOver="mostraHint(this);" 
+        
+        
+         disabled
+         style="width: 200px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="498">AC</option>
+<option value="499">AL</option>
+<option value="500">AP</option>
+<option value="501">AM</option>
+<option value="502">BA</option>
+<option value="503">CE</option>
+<option value="504">DF</option>
+<option value="505">ES</option>
+<option value="506">GO</option>
+<option value="507">MA</option>
+<option value="508">MT</option>
+<option value="509">MS</option>
+<option value="510">MG</option>
+<option value="511">PA</option>
+<option value="1">PB</option>
+<option value="513">PR</option>
+<option value="514">PE</option>
+<option value="515">PI</option>
+<option value="516">RJ</option>
+<option value="517">RN</option>
+<option value="518">RS</option>
+<option value="519">RO</option>
+<option value="520">RR</option>
+<option value="521">SC</option>
+<option value="522">SP</option>
+<option value="523">SE</option>
+<option value="524">TO</option>
+    </select>
+    
+        <input type="hidden" name="hidSgUFMud"
+                value="---">
+    
+    
+
+
+                    </td>
+                </tr> 
+                <tr class="tdPadrao" align="left">
+                    <td colspan="2">
+<!DOCTYPE html>
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script language="JavaScript" src="../js/validaNumeros.js"></script>
+<table class="fontePadrao" width="600" border="0" cellspacing="0" cellpadding="0">
+
+    <tr class="tdPadrao">
+        <td>
+            <iframe class="cmpWrapper" frameborder="0" name="cmpMunicMud" scrolling="no" width="600" height="100" align="center" src="../componentes/CodDescLst.jsp?id=FISf_EmitirNFAeReparticao_cmpMunicMud" ></iframe>
+<input type="hidden" name="hidCdUnidGeograficacmpMunicMud" value="">
+<input type="hidden" name="hidNoUnidGeograficacmpMunicMud" value="">
+<input type="hidden" name="hidSqUnidGeograficacmpMunicMud">
+<input type="hidden" name="hidnoUnidSuperiorcmpMunicMud">
+<input type="hidden" name="hidCdIbgecmpMunicMud">
+
+        </td>
+    </tr>
+</table>
+<script language="JavaScript">
+<!--
+    frmIncluirNotaAvulsa.hidSqUnidGeograficacmpMunicMud.value =
+            "";
+	frmIncluirNotaAvulsa.hidCdIbgecmpMunicMud.value =
+			"";
+-->
+</script>
+
+
+                    </td>
+                </tr>    
+		</table>
+        <table>
+        	<tr class="tdCabecalho">
+				<td colspan="3" class="tdCabecalho" valign="middle" align="center">
+					<b>Informações da Nota Fiscal</b>
+				</td>
+			</tr>
+			<tr class="tdPadrao">
+          		<td>&nbsp;- Tipo de Operação:</td>
+          		<td colspan="3">
+          			
+          			<select name="cmbTpOperacao" onChange="criarFiltroCFOP();" class="caixas">
+            			<option SELECTED value="">---</option>
+						<option value="E">Entrada</option>
+						<option value="S">Saída</option>
+					</select>*
+          			
+               	</td>
+          	</tr>
+          	<tr class="tdPadrao">
+          		<td>&nbsp;- Número CFOP:</td>
+          		<td colspan="3">
+          			
+          			<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbNrCfop"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="CFOP"
+        
+        onChange="this.form.hidCFOP.value = this.options[this.selectedIndex].text; verificarCFOP(); verificarCFOPComb();" onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 380px">
+    
+        <option 
+         value="">---</option>
+    
+    </select>
+    
+        <input type="hidden" name="hidCFOP"
+                value="---">
+    
+    
+
+*
+          			
+               	</td>
+          	</tr>
+          	
+			<tr class="tdPadrao">
+				<td width = "200" align="left" valign="middle">
+					&nbsp;- Cobrar Imposto do:
+				</td>
+            	<td width = "400" align="left" valign="middle">
+            		<select name="cmbImposto" class="caixas">
+            			<option SELECTED value="">---</option>
+						<option value="E">Emitente</option>
+						<option value="D">Destinatário/Remetente</option>
+					</select>
+				</td>
+			</tr>
+			<tr id="dadosExpo" style="display: none">
+				<td colspan="3">
+					<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+					   	<tr class="tdCabecalho">
+							<td colspan="3" class="tdCabecalho" valign="middle" align="center">
+								<b>Dados de exportação</b>
+							</td>
+						</tr>
+		               <tr class="tdPadrao" align="left">
+		                   <td width="170">&nbsp;-  UF de saída:</td>
+		                   <td>
+							<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmpUFSaida"
+        class="caixas"            
+        
+        
+        
+        
+        onChange="this.form.hidSgUFSaida.value = this.options[this.selectedIndex].text; " onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="498">AC</option>
+<option value="499">AL</option>
+<option value="500">AP</option>
+<option value="501">AM</option>
+<option value="502">BA</option>
+<option value="503">CE</option>
+<option value="504">DF</option>
+<option value="505">ES</option>
+<option value="506">GO</option>
+<option value="507">MA</option>
+<option value="508">MT</option>
+<option value="509">MS</option>
+<option value="510">MG</option>
+<option value="511">PA</option>
+<option value="1">PB</option>
+<option value="513">PR</option>
+<option value="514">PE</option>
+<option value="515">PI</option>
+<option value="516">RJ</option>
+<option value="517">RN</option>
+<option value="518">RS</option>
+<option value="519">RO</option>
+<option value="520">RR</option>
+<option value="521">SC</option>
+<option value="522">SP</option>
+<option value="523">SE</option>
+<option value="524">TO</option>
+    </select>
+    
+        <input type="hidden" name="hidSgUFSaida"
+                value="---">
+    
+    
+
+*
+		                   </td>
+		               </tr> 
+					<tr class="tdPadrao" align="left">
+		                <td width="200">&nbsp;- Descrição do Local de Embarque ou de transposição de fronteira:</td>
+		                <td>
+							<input  type="text" name="edtLocExporta" class="caixas" size="40" value="" maxlength="60" title="Descrição do Local de Embarque ou de transposição de fronteira">*
+		                </td>
+		            </tr>
+					<tr class="tdPadrao" align="left">
+		                <td width="200">&nbsp;- Descrição do local de despacho:</td>
+		                <td>
+							<input  type="text" name="edtLocDespacho" class="caixas" size="40" value="" maxlength="60" title="Descrição do local de despacho">
+		                </td>
+		            </tr>
+    	        </table>
+          	</td>
+          </tr>
+	
+			<tr class="tdPadrao" id="nfceorigem" style="display: none">
+				<td width="200" align="left" valign="middle">
+					&nbsp;- Chave da NFC-e:
+				</td>
+				<td colspan="3" align="left" valign="middle">
+					<input  type="text" name="edtNrChaveNFCeOriginal" class="caixas" size="60" value="" maxlength="65">*
+              	</td>
+			</tr>
+          	
+		</table>
+
+		<br>
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+        	<tr class="tdPadrao">
+        		<td colspan="3" align="center" class="tdCabecalho">
+        			<table class="fontePadrao" width="100%" border="0" cellspacing="0" cellpadding="0">
+        				<tr>
+        					<td width="90%" align="center">
+        						<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item da Nota Fiscal</strong>
+        					</td>
+        					<td width="10%" align="center">
+        						<strong>1/1</strong>
+        					</td>
+        				</tr>
+        			</table>
+        		</td>
+        	</tr>
+  		</table>
+  			
+		<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table class="fontePadrao" width="600">
+  <tbody>
+
+
+
+    <tr class="tdSubCabecalho">
+        <td align="center" valign="middle" colspan="2">
+            <b>
+              Produto *
+            </b>
+        </td>
+    </tr>
+
+
+
+    <tr>
+        <td>
+            <iframe class="cmpWrapper" frameborder="0" name="cmpProduto" scrolling="no" width="600" height="120" align="center" src="../componentes/CmpPesquisa.jsp?id=FISf_EmitirNFAeReparticao_cmpProduto" ></iframe>
+<input type="hidden" name="hidSqClassProdutocmpProduto">
+<input type="hidden" name="hidCdNCMcmpProduto">
+<input type="hidden" name="hidCdNBMcmpProduto">
+<input type="hidden" name="hidSqProdutoSubordinantecmpProduto">
+<input type="hidden" name="hidNoProdutoSubordinantecmpProduto">
+<input type="hidden" name="hidNoClassProdutocmpProduto">
+
+        </td>
+    </tr>
+  </tbody>
+</table>
+<script language="JavaScript">
+<!--
+    frmIncluirNotaAvulsa.hidNoClassProdutocmpProduto.value = "";
+    frmIncluirNotaAvulsa.hidSqClassProdutocmpProduto.value = "";
+    frmIncluirNotaAvulsa.hidCdNBMcmpProduto.value = "";
+    frmIncluirNotaAvulsa.hidCdNCMcmpProduto.value = "";
+    frmIncluirNotaAvulsa.hidSqProdutoSubordinantecmpProduto.value = "";
+    frmIncluirNotaAvulsa.hidNoProdutoSubordinantecmpProduto.value = "";    
+-->
+</script>
+
+		<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+			<tr class="tdPadrao" align="center" valign="middle">
+				<td width="200" align="left">
+					&nbsp;- Detalhamento do Produto:
+				</td>
+				<td width="400" colspan="2" align="left">
+	       			<textarea name="txaDsDetalheProduto" class="caixas" rows="4" cols="70" title="Detalhamento do Produto" alt="VALIDA_EHVAZIO + VALIDA_MINIMO_TRES_CARACTERES"></textarea>*
+          		</td>
+			</tr>
+			<tr class="tdPadrao" valign="middle">
+				<td width="200" align="left">&nbsp;- Unidade de Medida:</td>
+				<td colspan = "2" align="left">
+					<input type = "hidden" name = "hidNoUnidMedida">
+										
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbUnidMedida"
+        class="caixas"            
+        
+        
+        
+        
+        onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 357px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="141">*00</option>
+<option value="140">0</option>
+<option value="272">00</option>
+<option value="200">01</option>
+<option value="296">06</option>
+<option value="306">2,20m x 1,60mX0,004m</option>
+<option value="307">2,20m x 1,60mX0,006m</option>
+<option value="308">2,20m x 1,60mX0,010m</option>
+<option value="309">2,20m x 1,60mX0,015m</option>
+<option value="304">2,20m x 1,60mX0,018m</option>
+<option value="303">2,20m x 1,60mX0,020m</option>
+<option value="305">2,20m x 1,60mX0,025m</option>
+<option value="191">30</option>
+<option value="173">32</option>
+<option value="238">ACR</option>
+<option value="289">AM</option>
+<option value="239">AMP</option>
+<option value="315">AMPOLA</option>
+<option value="288">AP</option>
+<option value="260">APL</option>
+<option value="13">ARROBA</option>
+<option value="153">B20</option>
+<option value="175">BB</option>
+<option value="152">BBN</option>
+<option value="185">BD</option>
+<option value="266">BG</option>
+<option value="250">BIS</option>
+<option value="261">BL</option>
+<option value="176">BL2</option>
+<option value="251">BLT</option>
+<option value="146">BO</option>
+<option value="210">BR</option>
+<option value="12">CABECA</option>
+<option value="174">CAF</option>
+<option value="21">CAIXA</option>
+<option value="125">CAR</option>
+<option value="18">CARRADA</option>
+<option value="259">CART</option>
+<option value="235">CARTA</option>
+<option value="246">CAT</option>
+<option value="248">CD</option>
+<option value="7">CENTO</option>
+<option value="193">CFA</option>
+<option value="237">CFC</option>
+<option value="216">CFD</option>
+<option value="194">CFN</option>
+<option value="149">CFS</option>
+<option value="143">CJ</option>
+<option value="214">CLT</option>
+<option value="316">COMPRIMIDO</option>
+<option value="314">COMPRIMIDO</option>
+<option value="274">CONJ</option>
+<option value="219">CONJ.</option>
+<option value="255">CPR</option>
+<option value="126">CTL</option>
+<option value="281">CTO</option>
+<option value="284">cx</option>
+<option value="285">Cx</option>
+<option value="276">CX 12</option>
+<option value="226">CX.</option>
+<option value="290">cx06</option>
+<option value="291">cx12</option>
+<option value="294">cx18</option>
+<option value="292">cx24</option>
+<option value="273">CX720</option>
+<option value="188">CXA</option>
+<option value="215">CXF</option>
+<option value="213">CXL</option>
+<option value="133">CXS</option>
+<option value="127">DCT</option>
+<option value="267">DP</option>
+<option value="254">DSP</option>
+<option value="24">DUZIA</option>
+<option value="299">Dz</option>
+<option value="179">DZ.</option>
+<option value="147">EA</option>
+<option value="270">EN</option>
+<option value="257">ENV</option>
+<option value="282">ES</option>
+<option value="253">EST</option>
+<option value="269">EV</option>
+<option value="155">FARDO</option>
+<option value="16">FARDO</option>
+<option value="27">FARDO 10X1KG</option>
+<option value="26">FARDO 30KG</option>
+<option value="265">FC</option>
+<option value="230">FR</option>
+<option value="249">FRC</option>
+<option value="202">FRD</option>
+<option value="240">GAR</option>
+<option value="11">GARAJAU</option>
+<option value="301">GARRAFA 250 ml</option>
+<option value="302">GARRAFA 600 ml</option>
+<option value="244">GF</option>
+<option value="190">GL</option>
+<option value="20">GRADE</option>
+<option value="2">GRAMA</option>
+<option value="118">HORA/AULA</option>
+<option value="120">HORAS-TÉCNICA</option>
+<option value="184">JG</option>
+<option value="234">K</option>
+<option value="232">Kg</option>
+<option value="189">KG.</option>
+<option value="183">KGS</option>
+<option value="204">KI</option>
+<option value="231">KIT</option>
+<option value="129">L20</option>
+<option value="25">LATA</option>
+<option value="211">Litro</option>
+<option value="6">LITRO</option>
+<option value="209">LITRO</option>
+<option value="196">Lt</option>
+<option value="122">LT</option>
+<option value="228">LTR</option>
+<option value="131">LTS</option>
+<option value="157">M/3</option>
+<option value="134">M20</option>
+<option value="247">MC</option>
+<option value="23">METRO</option>
+<option value="4">METRO CUBICO</option>
+<option value="311">metro cúbico</option>
+<option value="300">METRO LINEAR</option>
+<option value="19">METRO QUADRADO</option>
+<option value="148">MH</option>
+<option value="227">mi</option>
+<option value="181">Mil</option>
+<option value="130">MIL</option>
+<option value="208">MILH</option>
+<option value="14">MILHEIRO</option>
+<option value="15">MILILITRO</option>
+<option value="313">ml</option>
+<option value="310">MOLHE</option>
+<option value="223">MT</option>
+<option value="195">MT3</option>
+<option value="197">MWH</option>
+<option value="279">pa</option>
+<option value="283">PA</option>
+<option value="132">PAC</option>
+<option value="22">PAR</option>
+<option value="206">pc</option>
+<option value="123">PC</option>
+<option value="295">PC.</option>
+<option value="262">PCS</option>
+<option value="124">PCT</option>
+<option value="178">PCT.</option>
+<option value="233">PCTS</option>
+<option value="205">PE</option>
+<option value="201">PEC</option>
+<option value="218">peca</option>
+<option value="137">PECA</option>
+<option value="119">PESSOAS</option>
+<option value="154">PM3</option>
+<option value="256">POT</option>
+<option value="287">PR</option>
+<option value="258">PT</option>
+<option value="128">PTC</option>
+<option value="207">Quilograma</option>
+<option value="1">QUILOGRAMA</option>
+<option value="271">RL</option>
+<option value="203">RM</option>
+<option value="275">ROL</option>
+<option value="286">S01</option>
+<option value="280">S20</option>
+<option value="293">S25</option>
+<option value="268">S50</option>
+<option value="236">SAC</option>
+<option value="187">SACO</option>
+<option value="17">SACO</option>
+<option value="28">SACO 25KG</option>
+<option value="10">SACO 30KG</option>
+<option value="5">SACO 50KG</option>
+<option value="8">SACO 60KG</option>
+<option value="222">Sc</option>
+<option value="297">SC50</option>
+<option value="199">SC60K</option>
+<option value="217">SCS</option>
+<option value="138">ST</option>
+<option value="151">TAB</option>
+<option value="245">TAN</option>
+<option value="145">TB</option>
+<option value="150">TBB</option>
+<option value="221">TBI</option>
+<option value="182">TL</option>
+<option value="278">TM</option>
+<option value="144">TN</option>
+<option value="142">TO</option>
+<option value="121">TON</option>
+<option value="225">TON.</option>
+<option value="212">Tonelada</option>
+<option value="3">TONELADA</option>
+<option value="139">u</option>
+<option value="186">U</option>
+<option value="224">UD</option>
+<option value="264">UM</option>
+<option value="156">un</option>
+<option value="229">Un</option>
+<option value="277">und</option>
+<option value="136">UND</option>
+<option value="263">UND.</option>
+<option value="298">uni</option>
+<option value="135">UNI</option>
+<option value="180">UNID</option>
+<option value="177">UNID.</option>
+<option value="243">UNIDA</option>
+<option value="9">UNIDADE</option>
+<option value="198">US</option>
+<option value="252">VD</option>
+    </select>
+    
+    
+
+ *
+
+				</td>
+			</tr>
+        </table>
+        <table class="fontePadrao" width="600" border="0" cellspacing="1" cellpadding="1">
+        	<tr class="tdPadrao">
+        		<td width="200" align="left" valign="middle">
+        			&nbsp;- Valor Unitário:
+        		</td>
+            	<td>
+            		<input  type="hidden" name="hidChaveItem" value="">
+            		<input  type="text" name="edtVlProduto" class="caixas" size="15" value="" maxlength="20"> *
+              	</td>
+				<td align="left" valign="middle">&nbsp;- Quantidade:</td>
+				<td>
+					<input  type="text" name="edtQtdProduto" class="caixas" size="15" value="" maxlength="20"> *
+		  		</td>
+          	</tr>
+          	<tr class="tdPadrao">
+		  		<td  align="left" valign="middle">
+          			&nbsp;- Alíquota (%):
+          		</td>
+          		<td>
+          			<input  type="text" name="edtVlAliquota" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)"> *
+          			        
+          		</td>
+		  		<td align="left" valign="middle">
+		  			&nbsp;- Alíquota IPI (%):
+		  		</td>
+            	<td>
+            		<input  type="text" name="edtVlAliquotaIPI" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+              	</td>
+          	</tr>
+          	<tr class="tdPadrao">
+          		<td colspan="4" align="left" valign="middle">
+          			&nbsp;
+          		</td>
+		  	</tr>
+				
+			
+
+
+					
+			<tr class="tdPadrao">																											
+				<td colspan="4" align="center" valign="middle">
+					<input  type="submit" name="btnAdicionarItem" class="botoes" value="Adicionar/Alterar Item" onClick="atualizarHiddens();">
+				</td>              
+          	</tr>
+          	
+		</table>
+
+
+
+
+        
+        <br>
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+          <tr class="tdPadrao">
+            <td colspan="4" align="center" class="tdCabecalho"><strong>Cálculo do Imposto</strong></td>
+          </tr>
+        </table>
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+          <tr class="tdPadrao">
+            	<td width="200" align="left" valign="middle">&nbsp;- Valor do Frete:</td>
+            	<td>
+              		<input  type="text" name="edtVlFrete" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+            	</td>
+            	<td width="165" align="left" valign="middle">&nbsp;- Valor do Seguro:</td>
+            	<td>
+              		<input  type="text" name="edtVlSeguro" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+            	</td>
+          </tr>
+          <tr class="tdPadrao">
+            	<td align="left" valign="middle">&nbsp;- Valor de Despesas Acessórias:</td>
+            	<td>
+              		<input  type="text" name="edtVlDespAcessorias" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+					
+					<input  type="hidden" name="hidBcProduto" value="">
+            		<input  type="hidden" name="hidVlFreteProduto" value="">
+            		<input  type="hidden" name="hidVlSeguroProduto" value="">
+            		<input  type="hidden" name="hidVlDespAcessProduto" value="">
+					
+              	</td>
+            	
+                <td align="left" valign="middle">&nbsp;- Valor ICMS Substituição:</td>
+            	<td>
+              		<input  type="text" name="edtVlICMSubstituicao" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+              	</td>
+                
+                
+          </tr>
+          <tr class="tdPadrao">
+            	<td align="left" valign="middle">&nbsp;- Base de Cálculo ICMS Subst.:</td>
+            	<td>
+              		<input  type="text" name="edtVlBaseCalcIcmsST" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+              	</td>
+            	
+				<td width="165" align="left" valign="middle">&nbsp;- Desconto:</td>
+                <td>
+                	<input  type="text" name="edtVlDesconto" class="caixas" size="15" value="" maxlength="15" title="Desconto" alt="VALIDA_REAL" onKeyPress="return mascaraReal(this, event);">
+					<input  type="hidden" name="hidVlDesconto" value="">
+                </td>
+          </tr>
+          
+          <tr class="tdPadrao">
+            	<td align="left" valign="middle">&nbsp;- GTIN:</td>
+            	<td>
+            		<input  type="text" name="edtGTIN" class="caixas" size="15" value="SEM GTIN" maxlength="14" title="GTIN">*
+            	</td>
+            	<td width="165" align="left" valign="middle">&nbsp;- Alíquota ICMS:</td>
+            	<td>
+            		<input  type="text" name="edtVlAliquotaICMS" class="caixas" size="15" value="" maxlength="20" title="AliquotaICMS" onKeyPress="mascaraReal(this, event)"> 
+            	</td>
+          </tr>
+          
+          <tr class="tdPadrao">
+            	<td align="left" valign="middle">&nbsp;- CST:</td>
+            	<td colspan="3">
+            		<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbNrCST"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="CST"
+        
+        onChange="this.form.hidCST.value = this.options[this.selectedIndex].text; verificarCST();" onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 370px">
+    
+        <option 
+         value="">---</option>
+    
+    </select>
+    
+        <input type="hidden" name="hidCST"
+                value="---">
+    
+    
+
+
+					*
+            	</td>
+          </tr>
+
+          
+          <tr class="tdPadrao">
+          		<td align="left" valign="middle">&nbsp;- Receita:</td>
+            	<td colspan="3">
+              		<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbSqReceitaSefin"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="Receita"
+        
+        onChange="this.form.hidCdReceitaSefin.value = this.options[this.selectedIndex].text; " onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 370px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="317">1102 - ICMS - IMPORTACAO</option>
+<option value="318">1103 - ICMS - EXPORTACAO</option>
+<option value="325">1110 - ICMS - VEICULOS USADOS</option>
+<option value="852">1166 - ICMS LEILAO DETRAN- ITENS RECUPERÁVEIS</option>
+<option value="853">1167 - ICMS LEILAO DETRAN - ITENS SUCATA</option>
+<option value="335">1199 - ICMS - OUTROS (COMERCIO E INDUSTRIA)</option>
+<option value="341">1301 - ICMS - ABACAXI</option>
+<option value="342">1302 - ICMS - BANANA</option>
+<option value="343">1303 - ICMS - CAJU</option>
+<option value="344">1304 - ICMS - CASTANHA DE CAJU</option>
+<option value="345">1399 - ICMS - OUTROS (FRUTICULTURA)</option>
+<option value="346">1401 - ICMS - AGAVE</option>
+<option value="347">1402 - ICMS - ALGODAO</option>
+<option value="348">1403 - ICMS - ALHO</option>
+<option value="349">1404 - ICMS - AMENDOIM</option>
+<option value="350">1405 - ICMS - ARROZ</option>
+<option value="351">1406 - ICMS - BAMBU</option>
+<option value="352">1407 - ICMS - BATATA INGLESA</option>
+<option value="353">1408 - ICMS - CAFE EM GRAO</option>
+<option value="354">1409 - ICMS - CANA DE ACUCAR</option>
+<option value="355">1410 - ICMS - CARNAUBA</option>
+<option value="356">1411 - ICMS - COCO VERDE</option>
+<option value="357">1412 - ICMS - COCO SECO</option>
+<option value="358">1413 - ICMS - FARINHA</option>
+<option value="359">1414 - ICMS - FAVA</option>
+<option value="360">1415 - ICMS - FEIJAO</option>
+<option value="361">1416 - ICMS - FUMO</option>
+<option value="362">1417 - ICMS - INHAME</option>
+<option value="363">1418 - ICMS - MAMONA</option>
+<option value="364">1419 - ICMS - MANDIOCA</option>
+<option value="365">1420 - ICMS - MILHO EM GRAO</option>
+<option value="366">1421 - ICMS - OITICICA</option>
+<option value="367">1422 - ICMS - URUCUM</option>
+<option value="368">1499 - ICMS - OUTROS (PRODUTOS AGRICOLAS)</option>
+<option value="369">1501 - ICMS - TOMATE</option>
+<option value="370">1599 - ICMS - OUTROS (HORTICULTURA)</option>
+<option value="371">1601 - ICMS - GOMA</option>
+<option value="372">1602 - ICMS - LAGOSTA</option>
+<option value="373">1603 - ICMS - LENHAS E ESTACAS</option>
+<option value="374">1604 - ICMS - MADEIRA</option>
+<option value="375">1605 - ICMS - MANTEIGA</option>
+<option value="376">1606 - ICMS - PELE DE OVINOS E CAPRINOS</option>
+<option value="377">1607 - ICMS - COURO SALMORADO</option>
+<option value="378">1608 - ICMS - COURO SECO</option>
+<option value="379">1609 - ICMS - COURO VERDE</option>
+<option value="380">1610 - ICMS - PRODUTOS PESQUEIROS</option>
+<option value="381">1611 - ICMS - QUEIJO</option>
+<option value="382">1612 - ICMS - RAPADURA</option>
+<option value="383">1613 - ICMS - REDE</option>
+<option value="384">1614 - ICMS - SACOS</option>
+<option value="385">1615 - ICMS - SUCATAS</option>
+<option value="386">1616 - ICMS - TELHAS E PRODUTOS CERAMICOS</option>
+<option value="387">1617 - ICMS - FRETE</option>
+<option value="388">1618 - ICMS - AGUARDENTE</option>
+<option value="389">1619 - ICMS - CAL</option>
+<option value="390">1620 - ICMS - CARVAO VEGETAL</option>
+<option value="391">1621 - ICMS - CERA</option>
+<option value="392">1622 - ICMS - MEL</option>
+<option value="393">1701 - ICMS - ASININOS/EQUINOS/MUARES</option>
+<option value="394">1702 - ICMS - AVICOLA</option>
+<option value="395">1703 - ICMS - BOVINO</option>
+<option value="396">1704 - ICMS - CAPRINO</option>
+<option value="397">1705 - ICMS - OVINO</option>
+<option value="398">1706 - ICMS - SUINO</option>
+<option value="399">1707 - ICMS - LEITE IN NATURA</option>
+<option value="400">1799 - ICMS - OUTROS (PECUARIA)</option>
+<option value="401">1801 - ICMS - MINERAIS</option>
+<option value="548">1928 - ICMS - DILIGENCIADO</option>
+<option value="792">1937 - ICMS - FRETE DILIGENCIADO</option>
+    </select>
+    
+        <input type="hidden" name="hidCdReceitaSefin"
+                value="---">
+    
+    
+
+
+                </td>
+          </tr>
+          
+
+          
+        </table>
+		
+		<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">  
+			<tr class="tdPadrao">
+				<td height="30" colspan="4" align="center" valign="middle" class="tdCabecalho">
+					<input  type="button" name="btnCalcular" class="botoes" value="Calcular" onClick="calcularNovo()">
+			   	</td>
+          	</tr>
+        </table>
+        
+        <br>
+       
+
+
+
+		<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+			<tr class="tdPadrao">
+				<td width = "200" align="left" valign="middle">
+					&nbsp;- Modalidade Frete:
+				</td>
+				<td width = "400" align="left" valign="middle">
+						<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmpMod"
+        class="caixas"            
+        
+        alt="VALIDA_EHVAZIO"
+         title="Modalidade"
+        
+        onChange="verificarTransp();" onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+<option value="0">Sem frete</option>
+<option value="1">Com frete</option>
+    </select>
+    
+    
+
+*
+				</td>
+			</tr>
+		</table>
+
+
+
+
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<!DOCTYPE html>
+
+     
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="JavaScript" src="../js/formatoPlacaAuto.js"></script>
+<script language="JavaScript" src="../js/validaCampos.js"></script>
+<script language="JavaScript" src="../js/mensagens.js"></script>
+<script type="text/javascript" src="../jquery/js/jquery-3.3.1.min.js"></script>
+<script language="JavaScript" src="../js/popup.js"></script>
+<script language="JavaScript" src="../js/validacaoJS.js"></script>
+<script language="JavaScript" src="../js/funcoesValidacaoJS.js"></script>
+<script language="JavaScript">
+<!--
+// Variaveis que armazenarão a placa e a UF que estão sendo manipuladas
+var placaAtual;
+var ufAtual;
+
+// Adiciona uma nova placa na lista de veiculos
+function adicionarPlaca () {
+
+    var frm = frmIncluirNotaAvulsa;
+    var lista = frm.hidListaVeiculoscmpVeiculo;
+
+    if (!validaFormAdicionar(frm)) {
+        return false;
+    }
+
+    var idVeiculo = frm.chbIdVeiculocmpVeiculo.checked
+            ? 0
+            : 1;
+    var dsVeiculo = (idVeiculo == 0)
+            ? "Veiculo/Carreta": "Cavalo";
+ 
+    var texto = dsVeiculo + " - " + placaAtual + (ehVazio(ufAtual) 
+    		? "" : "/" + ufAtual);
+
+    if (inserirListBox("", idVeiculo, texto)) {
+        montarHiddenVeiculos();
+        limparDadosVeiculo();
+    }
+}
+
+// Define o hidden de lista de veiculos
+function montarHiddenVeiculos () {
+
+    var frm = frmIncluirNotaAvulsa;
+    var lista = frm.lstVeiculoscmpVeiculo;
+    var vAdicionados = "";
+
+    for (var i = 0; i < lista.length; i++) {
+        vAdicionados += criarItemLista(lista.options[i].value,
+                obterPlaca(lista.options[i]),
+                obterUF(lista.options[i]),
+                obterIdVeiculo(lista.options[i]),
+                obterSituacao(lista.options[i]));
+    }
+
+    frm.hidListaVeiculoscmpVeiculo.value = vAdicionados
+            + frm.hidVeiculosRemovidoscmpVeiculo.value;
+}
+
+// Retorna os dados no formato correto para o hidden de lista de veiculos
+function criarItemLista (sqVeiculo, placa, uf, idVeiculo, situacao) {
+
+    return "#" + sqVeiculo + ";" + placa + "|hidNoUfPlaca;" + uf
+            + "|hidIdVeiculo;" + idVeiculo + "|hidSituacao;" + situacao;
+}
+
+function listaVeicEstaVazia() {
+    
+    var frm = frmIncluirNotaAvulsa;
+
+    return (frm.lstVeiculoscmpVeiculo.length == 0);
+}
+
+// Limpa as informações atuais de palca, estado e veiculo
+function limparDadosVeiculo () {
+
+    var frm = frmIncluirNotaAvulsa;
+
+    frm.edtPlacacmpVeiculo.value = "";
+    frm.chbIdVeiculocmpVeiculo.checked = false;
+    frm.cmbUFcmpVeiculo.selectedIndex = 0;
+    placaAtual = "";
+    ufAtual = "";
+    frm.edtPlacacmpVeiculo.focus();
+}
+
+// Tenta inserir um option no listbox e os respectivos valores no hidden de
+// lista de veiculos. Retorna true se conseguir incluir e false caso contrário.
+function inserirListBox (valor, nome, texto) {
+
+    var frm = frmIncluirNotaAvulsa;
+    var list = frm.lstVeiculoscmpVeiculo;
+    var newOption = new Option(texto, valor, false, false);
+
+    // Verificando se já existe o texto no listbox ou se já existe um option
+    // com o atributo idVeiculo == 1
+    for (var i = 0; i < list.length; i++) {
+
+        if (nome == 0
+                && obterIdVeiculo(list.options[i]) == nome) {
+            mostraAlerta("Na lista selecionada já existe um outro veículo do"
+                    + " tipo 'Carreta'");
+            return false;
+        }
+
+        if (obterPlaca(list.options[i]) == placaAtual
+                && obterUF(list.options[i]) == ufAtual) {
+            mostraAlerta("Na lista selecionada já existe um outro veículo com"
+                    + " mesma placa e estado");
+            return false;
+        }
+    }
+
+    // Inserindo o novo campo no listbox
+    newOption.name = nome + "¨" + 1;
+    list.options[list.length] = newOption;
+
+    return true;
+}
+
+// Obtém o texto de placa de um option da lista de veiculos
+function obterPlaca (op) {
+
+    var texto = op.text;
+    var id = texto.indexOf("-");
+    
+    return texto.substring(id + 2, id + 9);
+}
+
+// Obtém o texto da uf de um option da lista de veiculos
+function obterUF (op) {
+
+    var texto = op.text;
+    var id = texto.indexOf("-");
+    var placaVeic = texto.substring(id + 2);
+    var idUF = placaVeic.indexOf("/");
+
+	if (idUF == -1) {
+    	
+		return "";
+		
+	}
+
+    return placaVeic.substr(idUF + 1);
+
+}
+
+// Obtém o idVeiculo de um option da lista de veiculos
+function obterIdVeiculo (op) {
+
+    var texto = op.name;
+    var id = texto.indexOf("¨");
+   
+    return texto.substring(0, id);
+}
+
+// Obtém o idVeiculo de um option da lista de veiculos
+function obterSituacao (op) {
+
+    var texto = op.name;
+    var id = texto.indexOf("¨");
+	
+    return texto.substr(id + 1);
+}
+
+// Valida o form para adicionar um veiculo
+function validaFormAdicionar (frm) {
+
+    var placa = frm.edtPlacacmpVeiculo;
+    var uf = frm.cmbUFcmpVeiculo;
+	var ufObrig = frm.hidUFObrigcmpVeiculo;
+
+    if (ehVazio(placa.value)) {
+        mostraAlerta(CAMPO_OBRIGATORIO, 'Placa');
+        placa.focus();
+        return false;
+    }
+
+    if (!validaPlacaAuto(placa.value)) {
+        mostraAlerta(FORMATO_INVALIDO, 'Placa');
+        placa.focus();
+        return false;
+    }
+
+    if (ufObrig.value != 'N' && ehVazio(uf.value)) {
+        mostraAlerta(CAMPO_OBRIGATORIO, 'Estado');
+        uf.focus();
+        return false;
+    }
+	
+    placaAtual = placa.value;
+    var optUF = uf.options[uf.selectedIndex];
+    if (ehInternetExplorer()){
+    	 ufAtual = optUF.name;
+    }else{
+         var idx = optUF.text.indexOf("(")+1;
+    	 ufAtual = optUF.text.substring(idx, optUF.text.indexOf(")"));
+    }
+   
+    var tUF =   ufAtual;
+	ufAtual = (ufAtual == null) ? "" : ufAtual;
+	
+    return true;
+}
+
+// Remove uma nova placa da lista de veiculos
+function removerPlaca () {
+
+    var frm = frmIncluirNotaAvulsa;
+    var lista = frm.lstVeiculoscmpVeiculo;
+    var listaRemovidos = frm.hidVeiculosRemovidoscmpVeiculo;
+    var idSelecionado = lista.selectedIndex;
+
+    // Só realiza a ação se algum estiver selecionado
+    if (idSelecionado < 0) {
+        return;
+    }
+
+    var placa = obterPlaca(lista.options[idSelecionado]);
+    var uf = obterUF(lista.options[idSelecionado]);
+    var idVeiculo = obterIdVeiculo(lista.options[idSelecionado]);
+    var situacao = obterSituacao(lista.options[idSelecionado]);
+    var sqVeiculo = lista.value;
+
+    // Excluindo o option do listbox
+    lista.options[idSelecionado] = null;
+
+    if (situacao == 0) {
+
+        // Inserindo item removido na lista de veiculos removidos
+        listaRemovidos.value += criarItemLista (sqVeiculo, placa, uf,
+                idVeiculo, 2);
+    }
+
+    // Redefinindo a lista de veiculos
+    montarHiddenVeiculos();
+
+    // Setando o foco para o campo placa
+    frm.edtPlacacmpVeiculo.focus();
+}
+
+// Retorna true se existe alguma placa com IdVeiculo de veiculo/cavalo,
+// retorna false caso contrário
+function existePlacaVeiculoCavalo () {
+
+    var frm = frmIncluirNotaAvulsa;
+    var lista = frm.lstVeiculoscmpVeiculo;
+
+    for (var i=0; i<lista.length; i++) {
+        if (obterIdVeiculo(lista.options[i])
+                == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+-->
+</script>
+<table class="fontePadrao" width="600" border="0" cellspacing="1"
+        cellpadding="1" bgColor="#FFFFFF">
+<tbody>
+
+    <tr align="center" class="tdCabecalho">
+        <td align="center" valign="middle" colspan="2">
+            <b>Veículo</b>
+        </td>
+    </tr>
+
+    <tr class="tdPadrao">
+        <td width="200">
+            &nbsp;- Placa:
+        </td>
+        <td width="400">
+            <input  type="text" name="edtPlacacmpVeiculo" class="caixas" value="" onKeyUp="mascaraPlacaAuto(this, event)">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <input  type="checkbox" name="chbIdVeiculocmpVeiculo" value="">Carreta
+			<input  type="hidden" name="hidUFObrigcmpVeiculo" value="N">
+       </td>
+    </tr>
+    <tr class="tdPadrao">
+        <td>
+            &nbsp;- Estado:
+        </td>
+        <td>
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbUFcmpVeiculo"
+        class="caixas"            
+        
+        
+        
+        
+        onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+        <option name=''
+         value="">---</option>
+    
+<option name="AC" value="498">ACRE (AC)</option>
+<option name="AL" value="499">ALAGOAS (AL)</option>
+<option name="AP" value="500">AMAPA (AP)</option>
+<option name="AM" value="501">AMAZONAS (AM)</option>
+<option name="BA" value="502">BAHIA (BA)</option>
+<option name="CE" value="503">CEARA (CE)</option>
+<option name="DF" value="504">DISTRITO FEDERAL (DF)</option>
+<option name="ES" value="505">ESPIRITO SANTO (ES)</option>
+<option name="GO" value="506">GOIAS (GO)</option>
+<option name="MA" value="507">MARANHAO (MA)</option>
+<option name="MT" value="508">MATO GROSSO (MT)</option>
+<option name="MS" value="509">MATO GROSSO DO SUL (MS)</option>
+<option name="MG" value="510">MINAS GERAIS (MG)</option>
+<option name="PA" value="511">PARA (PA)</option>
+<option name="PB" value="1">PARAIBA (PB)</option>
+<option name="PR" value="513">PARANA (PR)</option>
+<option name="PE" value="514">PERNAMBUCO (PE)</option>
+<option name="PI" value="515">PIAUI (PI)</option>
+<option name="RJ" value="516">RIO DE JANEIRO (RJ)</option>
+<option name="RN" value="517">RIO GRANDE DO NORTE (RN)</option>
+<option name="RS" value="518">RIO GRANDE DO SUL (RS)</option>
+<option name="RO" value="519">RONDONIA (RO)</option>
+<option name="RR" value="520">RORAIMA (RR)</option>
+<option name="SC" value="521">SANTA CATARINA (SC)</option>
+<option name="SP" value="522">SAO PAULO (SP)</option>
+<option name="SE" value="523">SERGIPE (SE)</option>
+<option name="TO" value="524">TOCANTINS (TO)</option>
+    </select>
+    
+    
+
+
+        </td>
+    </tr>
+    <tr class="tdPadrao" align="center">
+        <td colspan="2">
+            <input  type="button" name="btnAdicionarcmpVeiculo" class="botoes" value="Adicionar placa" onClick="adicionarPlaca()">
+            <input  type="button" name="btnRemovercmpVeiculo" class="botoes" value="Remover placa" onClick="removerPlaca()">
+        </td>
+    </tr>
+    <tr class="tdPadrao" align="center" valign="middle">
+        <td colspan="2">
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="lstVeiculoscmpVeiculo"
+        class="lista" size="4"            
+        
+        
+        
+        
+        
+        
+        
+        
+         style="width: 200px">
+    
+    </select>
+    
+    
+
+
+            <input  type="hidden" name="hidListaVeiculoscmpVeiculo" value="">
+            <input  type="hidden" name="hidVeiculosRemovidoscmpVeiculo" value="">
+            <script language="JavaScript">
+            <!--
+                // Montando a lista de veiculos no hidden
+                montarHiddenVeiculos ();
+            -->
+            </script>
+        </td>
+    </tr>
+</tbody>
+</table>
+
+
+
+		<table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+			<tr class="tdPadrao">
+				<td width="200" align="left" valign="middle">
+					&nbsp;- Quantidade:
+				</td>
+            	<td colspan="2" align="left" valign="middle">
+            		<input  type="text" name="edtQtVolume" class="caixas" size="15" value="" maxlength="20" onKeyPress="return mascaraInteiro()">
+              	</td>
+          	</tr>
+          	<tr class="tdPadrao">
+          		<td width="200" align="left" valign="middle">
+          			&nbsp;- Espécie:
+          		</td>
+            	<td colspan="2" align="left" valign="middle">
+            		
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script language="JavaScript" src="../js/Hint.js"></script>
+    <select name="cmbEspecieVolume"
+        class="caixas"            
+        
+        
+        
+        
+        onChange="this.form.hidSgunidademedida.value = this.options[this.selectedIndex].text; " onMouseOver="mostraHint(this);" 
+        
+        
+        
+         style="width: 200px">
+    
+        <option 
+         value="">---</option>
+    
+<option value="141">*00</option>
+<option value="140">0</option>
+<option value="272">00</option>
+<option value="200">01</option>
+<option value="296">06</option>
+<option value="306">220m4m</option>
+<option value="307">220m6m</option>
+<option value="308">220m10</option>
+<option value="309">220m15</option>
+<option value="304">220m18</option>
+<option value="303">220m20</option>
+<option value="305">2,0m25</option>
+<option value="191">30</option>
+<option value="173">32</option>
+<option value="238">ACR</option>
+<option value="289">AM</option>
+<option value="239">AMP</option>
+<option value="315">ANP</option>
+<option value="288">AP</option>
+<option value="260">APL</option>
+<option value="13">AR</option>
+<option value="153">B20</option>
+<option value="175">BB</option>
+<option value="152">BBN</option>
+<option value="185">BD</option>
+<option value="266">BG</option>
+<option value="250">BIS</option>
+<option value="261">BL</option>
+<option value="176">BL2</option>
+<option value="251">BLT</option>
+<option value="146">BO</option>
+<option value="210">BR</option>
+<option value="12">CB</option>
+<option value="174">CAF</option>
+<option value="21">CX</option>
+<option value="125">CAR</option>
+<option value="18">CR</option>
+<option value="259">CART</option>
+<option value="235">CARTA</option>
+<option value="246">CAT</option>
+<option value="248">CD</option>
+<option value="7">CT</option>
+<option value="193">CFA</option>
+<option value="237">CFC</option>
+<option value="216">CFD</option>
+<option value="194">CFN</option>
+<option value="149">CFS</option>
+<option value="143">CJ</option>
+<option value="214">CLT</option>
+<option value="316">CMP</option>
+<option value="314">COM</option>
+<option value="274">CONJ</option>
+<option value="219">CONJ.</option>
+<option value="255">CPR</option>
+<option value="126">CTL</option>
+<option value="281">CTO</option>
+<option value="284">cx</option>
+<option value="285">Cx</option>
+<option value="276">CX 12</option>
+<option value="226">CX.</option>
+<option value="290">cx06</option>
+<option value="291">cx12</option>
+<option value="294">cx18</option>
+<option value="292">cx24</option>
+<option value="273">CX720</option>
+<option value="188">CXA</option>
+<option value="215">CXF</option>
+<option value="213">CXL</option>
+<option value="133">CXS</option>
+<option value="127">DCT</option>
+<option value="267">DP</option>
+<option value="254">DSP</option>
+<option value="24">DZ</option>
+<option value="299">Dz</option>
+<option value="179">DZ.</option>
+<option value="147">EA</option>
+<option value="270">EN</option>
+<option value="257">ENV</option>
+<option value="282">ES</option>
+<option value="253">EST</option>
+<option value="269">EV</option>
+<option value="155">FARDO</option>
+<option value="16">FD</option>
+<option value="27">FD/10</option>
+<option value="26">FD/30</option>
+<option value="265">FC</option>
+<option value="230">FR</option>
+<option value="249">FRC</option>
+<option value="202">FRD</option>
+<option value="240">GAR</option>
+<option value="11">GJ</option>
+<option value="301">GAR250</option>
+<option value="302">GAR600</option>
+<option value="244">GF</option>
+<option value="190">GL</option>
+<option value="20">GD</option>
+<option value="2">GR</option>
+<option value="118">h/a</option>
+<option value="120">H/Tec</option>
+<option value="184">JG</option>
+<option value="234">K</option>
+<option value="232">Kg</option>
+<option value="189">KG.</option>
+<option value="183">KGS</option>
+<option value="204">KI</option>
+<option value="231">KIT</option>
+<option value="129">L20</option>
+<option value="25">LA</option>
+<option value="211">l</option>
+<option value="6">L</option>
+<option value="209">LITRO</option>
+<option value="196">Lt</option>
+<option value="122">LT</option>
+<option value="228">LTR</option>
+<option value="131">LTS</option>
+<option value="157">M/3</option>
+<option value="134">M20</option>
+<option value="247">MC</option>
+<option value="23">M</option>
+<option value="4">M3</option>
+<option value="311">m3</option>
+<option value="300">MLIN</option>
+<option value="19">M2</option>
+<option value="148">MH</option>
+<option value="227">mi</option>
+<option value="181">Mil</option>
+<option value="130">MIL</option>
+<option value="208">MILH</option>
+<option value="14">MI</option>
+<option value="15">ML</option>
+<option value="313">ml</option>
+<option value="310">MOLHE</option>
+<option value="223">MT</option>
+<option value="195">MT3</option>
+<option value="197">MWH</option>
+<option value="279">pa</option>
+<option value="283">PA</option>
+<option value="132">PAC</option>
+<option value="22">PAR</option>
+<option value="206">pc</option>
+<option value="123">PC</option>
+<option value="295">PC.</option>
+<option value="262">PCS</option>
+<option value="124">PCT</option>
+<option value="178">PCT.</option>
+<option value="233">PCTS</option>
+<option value="205">PE</option>
+<option value="201">PEC</option>
+<option value="218">peca</option>
+<option value="137">PECA</option>
+<option value="119">pess</option>
+<option value="154">PM3</option>
+<option value="256">POT</option>
+<option value="287">PR</option>
+<option value="258">PT</option>
+<option value="128">PTC</option>
+<option value="207">kg</option>
+<option value="1">KG</option>
+<option value="271">RL</option>
+<option value="203">RM</option>
+<option value="275">ROL</option>
+<option value="286">S01</option>
+<option value="280">S20</option>
+<option value="293">S25</option>
+<option value="268">S50</option>
+<option value="236">SAC</option>
+<option value="187">SACO</option>
+<option value="17">SC</option>
+<option value="28">S/25</option>
+<option value="10">S/30</option>
+<option value="5">S/50</option>
+<option value="8">S/60</option>
+<option value="222">Sc</option>
+<option value="297">SC50</option>
+<option value="199">SC60K</option>
+<option value="217">SCS</option>
+<option value="138">ST</option>
+<option value="151">TAB</option>
+<option value="245">TAN</option>
+<option value="145">TB</option>
+<option value="150">TBB</option>
+<option value="221">TBI</option>
+<option value="182">TL</option>
+<option value="278">TM</option>
+<option value="144">TN</option>
+<option value="142">TO</option>
+<option value="121">TON</option>
+<option value="225">TON.</option>
+<option value="212">t</option>
+<option value="3">T</option>
+<option value="139">u</option>
+<option value="186">U</option>
+<option value="224">UD</option>
+<option value="264">UM</option>
+<option value="156">un</option>
+<option value="229">Un</option>
+<option value="277">und</option>
+<option value="136">UND</option>
+<option value="263">UND.</option>
+<option value="298">uni</option>
+<option value="135">UNI</option>
+<option value="180">UNID</option>
+<option value="177">UNID.</option>
+<option value="243">UNIDA</option>
+<option value="9">UN</option>
+<option value="198">US</option>
+<option value="252">VD</option>
+    </select>
+    
+        <input type="hidden" name="hidSgunidademedida"
+                value="---">
+    
+    
+
+
+
+				</td>
+          	</tr>
+          	<tr class="tdPadrao">
+          		<td width="200" align="left" valign="middle">
+          			&nbsp;- Marca:
+          		</td>
+          		<td colspan="2" align="left" valign="middle">
+          			<input  type="text" name="edtNoMarca" class="caixas" size="40" value="" maxlength="50">
+              	</td>
+			</tr>
+			<tr class="tdPadrao">
+				<td width="200" align="left" valign="middle">
+					&nbsp;- Número:
+				</td>
+				<td colspan="2" align="left" valign="middle">
+					<input  type="text" name="edtNrVolume" class="caixas" size="15" value="" maxlength="20" onKeyPress="return mascaraInteiro()">
+              	</td>
+			</tr>
+			<tr class="tdPadrao">
+				<td width="200" align="left" valign="middle">
+					&nbsp;- Peso Bruto:
+				</td>
+				<td colspan="2" align="left" valign="middle">
+					<input  type="text" name="edtVlPesoBruto" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+				</td>
+          	</tr>
+          	<tr class="tdPadrao">
+          		<td width="200" align="left" valign="middle">
+          			&nbsp;- Peso Líquido:
+          		</td>
+          		<td colspan="2" align="left" valign="middle">
+          			<input  type="text" name="edtVlPesoLiquido" class="caixas" size="15" value="" maxlength="20" onKeyPress="mascaraReal(this, event)">
+              	</td>
+			</tr>
+          	<tr class="tdPadrao">
+          		<td width="200" align="left" valign="middle">
+          			&nbsp;- Informações Adicionais:
+          		</td>
+          		<td colspan="2" align="left" valign="middle">
+						<textarea name="txaInformacoesAdicionais" onKeyPress="verificarLimiteCaract(this)" onChange="verificarLimiteCaract(this)" onKeyUp="verificarLimiteCaract(this)" class="caixas" rows="4" cols="70" title="Informações Adicionais" alt="VALIDA_EHVAZIO + VALIDA_MINIMO_TRES_CARACTERES"></textarea>
+					<br />(caracteres restantes: <span id="restantes" >200</span>)
+					
+            	</td>
+          	</tr>
+			  
+			  	<tr class="tdPadrao">
+            	<td colspan="3" align="left" valign="middle"><b>
+              		<input  type="checkbox" name="chbNFAEPNAE" value="">&nbsp;Nota Fiscal para o PNAE</b>
+              	</td>
+          	</tr>
+          	
+          	<tr class="tdPadrao">
+            	<td colspan="3" align="left" valign="middle"><b>
+              		<input  type="checkbox" name="chbSemLancamento" value="">&nbsp;Sem Lançamento - ICMS da Operação Própria&nbsp;</b>
+              	</td>
+          	</tr>
+          	
+		</table>
+        <table class="fontePadrao" width="600" border="0" cellpadding="1" cellspacing="1">
+        	<tr class="tdPadrao">
+        		<td height="30" colspan="3" align="center" valign="middle" class="tdCabecalho">
+        			<input type = "hidden" name = "idEmissaoDar" value = "">
+        			<input type="hidden" name= "hidNFAePNAE" value="">
+        			<input  type="hidden" name="hidIdGra" value="">
+        			
+ 					<input name="btnIncluirNota" type="button" class="botoes" value="Submeter Nota" onClick="incluirNota(this)">
+ 					<input name="btnLimpar" type="submit" class="botoes" value="Limpar" onClick="document.frmIncluirNotaAvulsa.hidAcao.value='limpar'">
+ 				</td>
+          	</tr>
+		</table>
+		
+
+		
+        </form>
+
+
+
+
+
+		</td>
+	</tr>
+ <script language="JavaScript" src="../js/popup.js"></script>    <tr align="right" valign="middle"> 
+      <td align="left" height="20"> 
+        <font size="1" face="Verdana,Arial,Helvetica"> 
+            <a class="links" href="javascript:mostraDuvidasFuncao('FIS_1698')" > 
+                <img src="../imagens/help.gif" width="17" height="17" vspace="2" 
+                    hspace="2" border="0"> 
+            </a> 
+         
+      </td> 
+      <td height="20"> 
+        <font size="1"            face="Verdana,Arial,Helvetica" > 
+            <a class="links" href="javascript:voltarPagina(-1)" > 
+                <b>&lt;&lt;Voltar&nbsp;</b> 
+            </a> 
+         
+      </td> 
+    </tr> 
+
+</table>
+
+
+
+
+
+</body>
+</html>

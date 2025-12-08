@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Unique identifier for this LaunchAgent -->
+    <key>Label</key>
+    <string>com.fbp.backend</string>
+
+    <!-- Command to execute - run Python from venv to ensure uvicorn is available -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/dnigga/Documents/.venvs/fbp/bin/python3.11</string>
+        <string>-m</string>
+        <string>uvicorn</string>
+        <string>app.main:app</string>
+        <string>--host</string>
+        <string>0.0.0.0</string>
+        <string>--port</string>
+        <string>8000</string>
+        <string>--log-level</string>
+        <string>info</string>
+    </array>
+
+    <!-- Working directory for the process -->
+    <key>WorkingDirectory</key>
+    <string>/Users/dnigga/Documents/FBP_Backend</string>
+
+    <!-- CRITICAL FIX: Provide STDIN to prevent uvicorn from shutting down -->
+    <!-- When STDIN is closed/not available, uvicorn may interpret it as a shutdown signal -->
+    <!-- This is a common issue with LaunchAgents - they don't provide STDIN by default -->
+    <key>StandardInPath</key>
+    <string>/dev/null</string>
+
+    <!-- Keep the service running (restart if it crashes) -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+        <key>Crashed</key>
+        <true/>
+    </dict>
+
+    <!-- Start automatically at login -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Minimum time between restarts (seconds) -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+
+    <!-- Process type: Background daemon -->
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <!-- Standard output log file -->
+    <key>StandardOutPath</key>
+    <string>/Users/dnigga/Documents/FBP_Backend/logs/server.log</string>
+
+    <!-- Standard error log file -->
+    <key>StandardErrorPath</key>
+    <string>/Users/dnigga/Documents/FBP_Backend/logs/server_error.log</string>
+
+    <!-- Environment variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/opt/python@3.11/bin:/Users/dnigga/Documents/.venvs/fbp/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>VIRTUAL_ENV</key>
+        <string>/Users/dnigga/Documents/.venvs/fbp</string>
+        <key>HOME</key>
+        <string>/Users/dnigga</string>
+        <key>PYTHONPATH</key>
+        <string>/Users/dnigga/Documents/FBP_Backend</string>
+        <key>DEBUG</key>
+        <string>false</string>
+        <key>LOG_LEVEL</key>
+        <string>INFO</string>
+    </dict>
+
+    <!-- Process priority (0 = normal) -->
+    <key>Nice</key>
+    <integer>0</integer>
+</dict>
+</plist>

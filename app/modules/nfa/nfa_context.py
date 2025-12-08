@@ -1,81 +1,107 @@
 """NFA Context Resolution Helpers.
 
-Provides unified handling for ATF's NFA form whether it renders in the root DOM
-or inside legacy frames.
+Provides unified handling for ATF's NFA form - now always uses main page (no frames).
 """
+
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Union, cast
 
 from app.core.logging_config import setup_logger
 
 if TYPE_CHECKING:  # pragma: no cover
-    from playwright.async_api import Frame, Page
+    from playwright.async_api import Page
 else:  # pragma: no cover
-    Frame = Any  # type: ignore[assignment]
-    Page = Any  # type: ignore[assignment]
+    Page = None  # type: ignore[assignment]
 
 logger = setup_logger(__name__)
 
-NFAContext = Union["Page", "Frame"]
+NFAContext = "Page"
 
-_FRAME_NAME = "contents"
-_FRAME_URL_KEYWORDS = ("nota", "nfa", "fis")
 _READY_SELECTORS = [
+    "select[name='cmbNaturezaOperacao']",  # Most reliable - main form field
+    "select[name='cmbTpOperacao']",  # Tipo de Operação
+    "table:has-text('Emitente')",  # Emitente table
+    "table:has-text('Destinatário')",  # Destinatário table
+    "textarea[name='txaDsDetalheProduto']",  # Product description
+    "input[name='edtVlProduto']",  # Product value
+    "select[name='cmbUnidMedida']",  # Unit of measure
     "text=Nota Fiscal",
     "text=Repartição Fiscal",
-    "input[name*='CodigoNCM' i]",
     "input",
 ]
 
 
-async def resolve_nfa_context(page: Page) -> NFAContext:
-    """Return the proper context (Page or Frame) for interacting with the NFA form."""
-    logger.debug("Resolving NFA context (root DOM vs iframe).")
+async def resolve_nfa_context(page: Page) -> Page:
+    """Return the page context (no frames - form is directly on main page).
+
+    Args:
+        page: Playwright Page instance
+
+    Returns:
+        Page instance (always main page, no frames)
+    """
+    logger.info("Resolving NFA context (using main page - no frames)")
 
     try:
-        await page.wait_for_load_state("domcontentloaded")
+        await page.wait_for_load_state("domcontentloaded", timeout=10000)
     except Exception:
         logger.debug("DOM content load state wait skipped due to navigation timing.")
 
-    frame = page.frame(name=_FRAME_NAME)
-    if frame:
-        logger.info("NFA context resolved via frame[name='contents'].")
-        return frame
-
-    for candidate in page.frames:
-        candidate_url = (candidate.url or "").lower()
-        if any(keyword in candidate_url for keyword in _FRAME_URL_KEYWORDS):
-            logger.info("NFA context resolved via frame URL: %s", candidate.url)
-            return candidate
-
-    logger.info("Using root page as NFA context.")
+    logger.info("NFA context resolved: using main page")
     return page
 
 
-async def wait_for_nfa_ready(ctx: NFAContext, timeout: int = 45000) -> None:
-    """Wait until the NFA UI exposes key selectors, regardless of DOM context."""
+async def wait_for_nfa_ready(ctx: Page, timeout: int = 45000) -> None:
+    """Wait until the NFA UI exposes key selectors on main page.
+
+    Args:
+        ctx: Page context
+        timeout: Timeout in milliseconds
+    """
     timeout = max(timeout, 1000)
     per_selector_timeout = max(timeout // len(_READY_SELECTORS), 3000)
 
+    logger.info(f"Waiting for NFA form to be ready (timeout: {timeout}ms)...")
+
+    found_selector = None
     for selector in _READY_SELECTORS:
         try:
+            logger.debug(f"Trying selector: {selector}")
             await ctx.wait_for_selector(selector, timeout=per_selector_timeout)
-            logger.debug("NFA context ready via selector %s", selector)
-            return
+            logger.info(f"NFA context ready via selector: {selector}")
+            found_selector = selector
+            break
         except Exception as exc:
-            logger.debug("Selector %s not ready yet: %s", selector, exc)
+            logger.debug(f"Selector {selector} not ready yet: {exc}")
+            continue
 
-    msg = "NFA context not ready: no known selectors found."
-    logger.error(msg)
-    raise RuntimeError(msg)
+    if not found_selector:
+        # Try to get page content for debugging
+        try:
+            content_preview = await ctx.content()
+            # Log first 500 chars of HTML for debugging
+            logger.warning(f"Page content preview: {content_preview[:500]}...")
+        except Exception:
+            pass
+
+        msg = f"NFA context not ready: no known selectors found. Tried: {_READY_SELECTORS}"
+        logger.error(msg)
+        raise RuntimeError(msg)
+
+    logger.info("NFA form is ready and fields are available")
 
 
-def get_page_from_context(ctx: NFAContext) -> Page:
-    """Return the owning Page for the given context."""
-    if hasattr(ctx, "page"):
-        return cast("Frame", ctx).page
-    return cast("Page", ctx)
+def get_page_from_context(ctx: Page) -> Page:
+    """Return the page (always the same since no frames).
+
+    Args:
+        ctx: Page context
+
+    Returns:
+        Page instance
+    """
+    return ctx
 
 
 __all__ = [
@@ -84,4 +110,3 @@ __all__ = [
     "resolve_nfa_context",
     "wait_for_nfa_ready",
 ]
-

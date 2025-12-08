@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "path": "/Users/dnigga/Documents/FBP_Backend"
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "/Users/dnigga/Documents/.venvs/fbp/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "black",
+    "ruff.enable": true,
+    "ruff.args": [
+      "--fix"
+    ],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "cursor.autoOptimize": true,
+    "cursor.autoFixOnSave": true,
+    "terminal.integrated.cwd": "/Users/dnigga/Documents/FBP_Backend",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+    "terminal.integrated.env.osx": {
+      "PATH": "${env:PATH}:/Users/dnigga/Documents/.venvs/fbp/bin"
+    },
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      ".venv": true
+    },
+    "cursorpyright.analysis.typeCheckingMode": "basic"
+  }
+}

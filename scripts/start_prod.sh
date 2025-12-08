@@ -1,0 +1,37 @@
+#!/bin/bash
+# Production mode: run backend without hot reload (for LaunchAgent)
+# Similar to start.sh but without --reload flag
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PRIMARY_VENV="/Users/dnigga/Documents/FBP_Backend/venv"
+FALLBACK_VENV="$HOME/Documents/.venvs/fbp"
+if [ -d "$PRIMARY_VENV" ]; then
+    VENV_PATH="$PRIMARY_VENV"
+else
+    VENV_PATH="$FALLBACK_VENV"
+fi
+
+# Activate venv
+if [ ! -d "$VENV_PATH" ]; then
+    echo "Virtual environment not found at $VENV_PATH"
+    echo "Run: python3 -m venv $VENV_PATH"
+    exit 1
+fi
+
+source "$VENV_PATH/bin/activate"
+
+# Set environment variables
+export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+export DEBUG=false
+export LOG_LEVEL=INFO
+
+# Run uvicorn in production mode (no reload)
+cd "$PROJECT_ROOT"
+exec uvicorn app.main:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --log-level info
+
