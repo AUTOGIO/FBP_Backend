@@ -59,7 +59,9 @@ def wait_for_page_reload(page, timeout=10000):
 def main():
     # Validate credentials are set
     if not USERNAME or not PASSWORD:
-        print("❌ ERROR: NFA_USERNAME and NFA_PASSWORD environment variables must be set!")
+        print(
+            "❌ ERROR: NFA_USERNAME and NFA_PASSWORD environment variables must be set!"
+        )
         print("   Set them in .env or export them before running.")
         return
 

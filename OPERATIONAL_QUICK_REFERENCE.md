@@ -9,6 +9,7 @@
 ## 🚀 INSTANT COMMANDS
 
 ### Health & Diagnostics
+
 ```bash
 # Full diagnostics
 ./ops/nfa_self_test.sh
@@ -21,6 +22,7 @@
 ```
 
 ### Runtime
+
 ```bash
 # Single NFA
 ./ops/run_nfa_now.sh single
@@ -33,6 +35,7 @@ curl http://localhost:8000/health
 ```
 
 ### Debugging
+
 ```bash
 # Follow logs
 tail -f logs/nfa/nfa_debug.log
@@ -80,12 +83,14 @@ app/modules/nfa/
 ## 💾 RULES (Non-negotiable)
 
 ✅ **ALWAYS**:
+
 - Use `delays.py` for ALL waits (zero hardcoded timeouts)
 - Log errors with screenshots
 - Retry failed steps (3x max)
 - Validate CPF/CNPJ before form fill
 
 ❌ **NEVER**:
+
 - Reference NOTAS_AVULSAS (folder deleted)
 - Hardcode selectors (use `atf_selectors.py`)
 - Break existing working logic
@@ -122,6 +127,7 @@ logs/nfa/
 ## 🚨 ESCALATION CHECKLIST
 
 If ANY of these occur, STOP:
+
 - [ ] SEFAZ returns 403/401
 - [ ] Form HTML fundamentally changed
 - [ ] Playwright crashes > 2x per batch
