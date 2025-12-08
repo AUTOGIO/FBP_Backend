@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Production mode: run backend without hot reload (for LaunchAgent)
 # Similar to start.sh but without --reload flag
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"

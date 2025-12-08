@@ -14,9 +14,10 @@ from playwright.sync_api import sync_playwright
 LOGIN_URL = "https://www4.sefaz.pb.gov.br/atf/seg/SEGf_Login.jsp"
 FORM_URL = "https://www4.sefaz.pb.gov.br/atf/fis/FISf_EmitirNFAeReparticao.do?limparSessao=true"
 
-USERNAME = "eduardof"
-PASSWORD = "atf101010"
-EMITENTE_CNPJ = "28.842.017/0001-05"  # Hardcoded emitente CNPJ
+# Credentials loaded from environment - NEVER hardcode secrets
+USERNAME = os.getenv("NFA_USERNAME", "")
+PASSWORD = os.getenv("NFA_PASSWORD", "")
+EMITENTE_CNPJ = os.getenv("NFA_EMITENTE_CNPJ", "28.842.017/0001-05")
 DOWNLOAD_DIR = "/Users/dnigga/Downloads/NFA_Outputs"
 
 
@@ -56,6 +57,12 @@ def wait_for_page_reload(page, timeout=10000):
 
 
 def main():
+    # Validate credentials are set
+    if not USERNAME or not PASSWORD:
+        print("❌ ERROR: NFA_USERNAME and NFA_PASSWORD environment variables must be set!")
+        print("   Set them in .env or export them before running.")
+        return
+
     # Create download directory if it doesn't exist
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
     print(f"📁 Download directory ready: {DOWNLOAD_DIR}")

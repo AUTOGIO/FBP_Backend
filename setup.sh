@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Initial setup script for FBP Backend
 # Creates venv, installs dependencies, sets up Playwright
 
-set -e
+set -euo pipefail
 
 VENV_PATH="$HOME/Documents/.venvs/fbp"
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

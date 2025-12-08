@@ -21,9 +21,11 @@ from playwright.sync_api import sync_playwright
 # --- Configuration ---
 LOGIN_URL = "https://www4.sefaz.pb.gov.br/atf/seg/SEGf_Login.jsp"
 FORM_URL = "https://www4.sefaz.pb.gov.br/atf/fis/FISf_EmitirNFAeReparticao.do?limparSessao=true"
-USERNAME = "eduardof"
-PASSWORD = "atf101010"
-EMITENTE_CNPJ = "28.842.017/0001-05"
+
+# Credentials loaded from environment - NEVER hardcode secrets
+USERNAME = os.getenv("NFA_USERNAME", "")
+PASSWORD = os.getenv("NFA_PASSWORD", "")
+EMITENTE_CNPJ = os.getenv("NFA_EMITENTE_CNPJ", "28.842.017/0001-05")
 DOWNLOAD_DIR = "/Users/dnigga/Downloads/NFA_Outputs"
 LOGS_DIR = "logs"
 
@@ -82,6 +84,13 @@ def setup_logging():
 logger = setup_logging()
 # Global notice about deprecated UI steps
 logger.info("Serviço and Imprimir permanently removed from workflow.")
+
+# Validate credentials at import time
+if not USERNAME or not PASSWORD:
+    logger.warning(
+        "NFA_USERNAME and/or NFA_PASSWORD not set. "
+        "Set them in .env or export before running batch processing."
+    )
 
 # --- Helper Functions ---
 

@@ -28,8 +28,8 @@
 # Batch NFA
 ./ops/run_nfa_now.sh batch
 
-# API health
-curl http://localhost:9500/health
+# API health (FBP runs on port 8000)
+curl http://localhost:8000/health
 ```
 
 ### Debugging

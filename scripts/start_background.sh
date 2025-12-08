@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Background server launcher for macOS LaunchAgent
 # Ensures FastAPI server runs persistently even when terminal closes
 
@@ -56,24 +56,11 @@ source "$VENV_ACTIVATE" || {
 # Set PYTHONPATH
 export PYTHONPATH="$ROOT:$PYTHONPATH"
 
-# Run dev.sh in background with nohup
-# Redirect both stdout and stderr to log file
-# LaunchAgent will also capture these, but this ensures we have logs even if LaunchAgent fails
-# Note: We don't use 'exec' here because we want the script to continue running
-# LaunchAgent's KeepAlive will restart this if it exits
-nohup "$DEV_SCRIPT" >> "$LOG_DIR/server.log" 2>> "$LOG_DIR/server_error.log" &
+# Run dev.sh directly using exec
+# When managed by LaunchAgent (KeepAlive=true), do NOT use nohup.
+# LaunchAgent handles process supervision; 'exec' replaces this shell with the server process.
+# Redirect stdout and stderr to log files for diagnostics.
+exec "$DEV_SCRIPT" >> "$LOG_DIR/server.log" 2>> "$LOG_DIR/server_error.log"
 
-# Store PID for reference (optional, LaunchAgent tracks it)
-echo $! > "$LOG_DIR/server.pid"
-
-# Wait a moment to ensure process started
-sleep 2
-
-# Verify process is still running
-if ! kill -0 $! 2>/dev/null; then
-    printf "ERROR: Process failed to start\n" >> "$LOG_DIR/server_error.log" 2>&1
-    exit 1
-fi
-
-# Exit successfully - LaunchAgent will keep the nohup process alive
-exit 0
+# Note: exec replaces the current process, so lines below are never reached.
+# If you need foreground mode for debugging, run dev.sh directly instead.

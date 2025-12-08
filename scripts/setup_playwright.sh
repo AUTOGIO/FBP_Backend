@@ -1,11 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Setup Playwright browsers
 # Installs all required browsers for Playwright
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-VENV_PATH="$HOME/Documents/.venvs/fbp"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Venv resolution: project-local first, then centralized fallback
+PRIMARY_VENV="$PROJECT_ROOT/venv"
+FALLBACK_VENV="$HOME/Documents/.venvs/fbp"
+if [ -d "$PRIMARY_VENV" ]; then
+    VENV_PATH="$PRIMARY_VENV"
+else
+    VENV_PATH="$FALLBACK_VENV"
+fi
 
 # Activate venv
 if [ ! -d "$VENV_PATH" ]; then

@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # FBP NFA End-to-End Runner Script
 # Uses the unified backend from LaunchAgent (port 8000)
 # Does NOT start a server - relies on LaunchAgent-managed backend
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"

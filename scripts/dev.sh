@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Development mode: run backend with hot reload
 # Same as start.sh but with DEBUG mode enabled
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
