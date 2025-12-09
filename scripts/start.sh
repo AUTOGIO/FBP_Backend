@@ -9,7 +9,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Venv resolution: project-local first, then centralized fallback
 PRIMARY_VENV="$PROJECT_ROOT/venv"
-FALLBACK_VENV="$HOME/Documents/.venvs/fbp"
+FALLBACK_VENV="$HOME/.venvs/fbp"
 if [ -d "$PRIMARY_VENV" ]; then
     VENV_PATH="$PRIMARY_VENV"
 else
@@ -27,7 +27,7 @@ fi
 source "$VENV_PATH/bin/activate"
 
 # Set environment variables
-export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+export PYTHONPATH="$PROJECT_ROOT:${PYTHONPATH:-}"
 
 # UNIX Socket configuration (2025 Apple Silicon best practices)
 SOCKET_PATH="${FBP_SOCKET_PATH:-/tmp/fbp.sock}"
