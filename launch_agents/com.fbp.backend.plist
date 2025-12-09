@@ -7,16 +7,21 @@
     <string>com.fbp.backend</string>
 
     <!-- Command to execute - run Python from venv to ensure uvicorn is available -->
+    <!-- UNIX Socket mode (2025 Apple Silicon best practices) -->
     <key>ProgramArguments</key>
     <array>
         <string>/Users/dnigga/Documents/.venvs/fbp/bin/python3.11</string>
         <string>-m</string>
         <string>uvicorn</string>
         <string>app.main:app</string>
-        <string>--host</string>
-        <string>0.0.0.0</string>
-        <string>--port</string>
-        <string>8000</string>
+        <string>--uds</string>
+        <string>/tmp/fbp.sock</string>
+        <string>--workers</string>
+        <string>4</string>
+        <string>--loop</string>
+        <string>uvloop</string>
+        <string>--http</string>
+        <string>httptools</string>
         <string>--log-level</string>
         <string>info</string>
     </array>
@@ -52,6 +57,10 @@
     <key>ProcessType</key>
     <string>Background</string>
 
+    <!-- Modern macOS: Interactive spawn type for better socket handling -->
+    <key>POSIXSpawnType</key>
+    <string>Interactive</string>
+
     <!-- Standard output log file -->
     <key>StandardOutPath</key>
     <string>/Users/dnigga/Documents/FBP_Backend/logs/server.log</string>
@@ -75,6 +84,8 @@
         <string>false</string>
         <key>LOG_LEVEL</key>
         <string>INFO</string>
+        <key>FBP_SOCKET_PATH</key>
+        <string>/tmp/fbp.sock</string>
     </dict>
 
     <!-- Process priority (0 = normal) -->

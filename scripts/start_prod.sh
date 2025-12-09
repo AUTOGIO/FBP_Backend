@@ -28,10 +28,29 @@ export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 export DEBUG=false
 export LOG_LEVEL=INFO
 
-# Run uvicorn in production mode (no reload)
+# UNIX Socket configuration (2025 Apple Silicon best practices)
+SOCKET_PATH="${FBP_SOCKET_PATH:-/tmp/fbp.sock}"
+
+# Fallback to PORT mode if FBP_PORT is explicitly set (debug only)
+if [[ -n "${FBP_PORT:-}" ]]; then
+    echo "⚠️  PORT mode enabled (debug): Using TCP port $FBP_PORT"
+    cd "$PROJECT_ROOT"
+    exec uvicorn app.main:app \
+        --host 0.0.0.0 \
+        --port "$FBP_PORT" \
+        --log-level info
+fi
+
+# UNIX Socket mode (default production)
+echo "🚀 Starting FBP on UNIX socket: $SOCKET_PATH (production mode)"
+rm -f "$SOCKET_PATH"
+
 cd "$PROJECT_ROOT"
+# Production: 4 workers, uvloop, httptools for optimal Apple Silicon performance
 exec uvicorn app.main:app \
-    --host 0.0.0.0 \
-    --port 8000 \
+    --uds "$SOCKET_PATH" \
+    --workers 4 \
+    --loop uvloop \
+    --http httptools \
     --log-level info
 

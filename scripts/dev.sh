@@ -28,11 +28,35 @@ export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 export DEBUG=true
 export LOG_LEVEL=DEBUG
 
-# Run uvicorn in dev mode
+# UNIX Socket configuration (2025 Apple Silicon best practices)
+SOCKET_PATH="${FBP_SOCKET_PATH:-/tmp/fbp.sock}"
+
+# Fallback to PORT mode if FBP_PORT is explicitly set (debug only)
+if [[ -n "${FBP_PORT:-}" ]]; then
+    echo "⚠️  PORT mode enabled (debug): Using TCP port $FBP_PORT"
+    cd "$PROJECT_ROOT"
+    exec uvicorn app.main:app \
+        --host 0.0.0.0 \
+        --port "$FBP_PORT" \
+        --reload \
+        --reload-exclude ".venvs/*" \
+        --reload-exclude "**/__pycache__/*" \
+        --reload-exclude "tests/*" \
+        --log-level debug
+fi
+
+# UNIX Socket mode (default)
+echo "🚀 Starting FBP on UNIX socket: $SOCKET_PATH"
+rm -f "$SOCKET_PATH"
+
 cd "$PROJECT_ROOT"
+# Note: In dev mode with --reload, uvicorn manages socket lifecycle
+# Socket permissions follow umask (typically 022 = 755)
 exec uvicorn app.main:app \
-    --host 0.0.0.0 \
-    --port 8000 \
+    --uds "$SOCKET_PATH" \
+    --workers 1 \
+    --loop uvloop \
+    --http httptools \
     --reload \
     --reload-exclude ".venvs/*" \
     --reload-exclude "**/__pycache__/*" \

@@ -49,6 +49,10 @@ class Settings(BaseSettings):
     PORT: int = 8000
     DEBUG: bool = False
 
+    # UNIX Socket settings (2025 Apple Silicon best practices)
+    SOCKET_PATH: str = "/tmp/fbp.sock"
+    USE_SOCKET: bool = True  # Use UNIX socket by default, fallback to PORT if False
+
     # Logging
     LOG_LEVEL: str = "INFO"
 
@@ -102,6 +106,11 @@ class Settings(BaseSettings):
     def paths(self) -> PathsConfig:
         """Get paths configuration."""
         return PathsConfig(project_root=self.PROJECT_ROOT)
+
+    @property
+    def socket_path(self) -> Path:
+        """Get UNIX socket path as Path object."""
+        return Path(self.SOCKET_PATH)
 
 
 # Global settings instance

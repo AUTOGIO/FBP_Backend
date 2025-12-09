@@ -78,3 +78,23 @@ async def root() -> dict:
         "version": settings.PROJECT_VERSION,
         "status": "running",
     }
+
+
+@app.get("/socket-health")
+async def socket_health() -> dict:
+    """UNIX socket health check endpoint.
+    
+    Returns:
+        Socket status and path information
+    """
+    import os
+    socket_path = settings.socket_path
+    socket_exists = socket_path.exists() if socket_path else False
+    
+    return {
+        "status": "ok",
+        "via": "unix",
+        "socket_path": str(socket_path),
+        "socket_exists": socket_exists,
+        "socket_permissions": oct(os.stat(socket_path).st_mode)[-3:] if socket_exists else None,
+    }
