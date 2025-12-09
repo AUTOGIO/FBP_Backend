@@ -6,6 +6,12 @@ pydantic-settings>=2.1.0
 httpx>=0.25.0
 playwright>=1.40.0
 
+# Google API dependencies (for REDESIM Gmail integration)
+google-auth>=2.40.0
+google-auth-oauthlib>=1.2.0
+google-auth-httplib2>=0.2.0
+google-api-python-client>=2.100.0
+
 # Development dependencies (install with: pip install -r requirements.txt -r requirements-dev.txt)
 # Or use: pip install -e ".[dev]"
 
