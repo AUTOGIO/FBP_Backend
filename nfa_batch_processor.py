@@ -25,14 +25,7 @@ FORM_URL = "https://www4.sefaz.pb.gov.br/atf/fis/FISf_EmitirNFAeReparticao.do?li
 # Credentials loaded from environment - NEVER hardcode secrets
 USERNAME = os.getenv("NFA_USERNAME", "")
 PASSWORD = os.getenv("NFA_PASSWORD", "")
-# Get EMITENTE_CNPJ from env, with fallback default
-EMITENTE_CNPJ_ENV = os.getenv("NFA_EMITENTE_CNPJ", "")
-# If env value is placeholder or empty, use default
-if not EMITENTE_CNPJ_ENV or EMITENTE_CNPJ_ENV == "00000000000000":
-    EMITENTE_CNPJ = "28.842.017/0001-05"  # Default CNPJ
-else:
-    # Clean and format the CNPJ from env
-    EMITENTE_CNPJ = EMITENTE_CNPJ_ENV.strip().strip('"').strip("'")
+EMITENTE_CNPJ = os.getenv("NFA_EMITENTE_CNPJ", "28.842.017/0001-05")
 DOWNLOAD_DIR = "/Users/dnigga/Downloads/NFA_Outputs"
 LOGS_DIR = "logs"
 
@@ -264,18 +257,50 @@ def process_single_nfa(
         page.select_option("select[name='cmbMotivo']", "1")
         sleep(0.5)
 
-        # 3 - Repartição Fiscal
-        reparticao_frame = page.frame(name="cmpElementoOrg")
-        if reparticao_frame:
-            reparticao_frame.locator("input[type='text']").first.fill("90102008")
-            click_pesquisar_and_wait(reparticao_frame, 2)
+        # 3 - Repartição Fiscal (usando seletor direto moderno)
+        try:
+            reparticao_input = page.locator("input[name='txtCdReparticaoFiscal']").first
+            reparticao_input.wait_for(state="visible", timeout=6000)
+            reparticao_input.clear()
+            reparticao_input.fill("90102008")
+            log.info("✓ Repartição Fiscal filled: 90102008")
+        except Exception as e:
+            log.warning(f"Repartição Fiscal filling failed: {e}")
+            # Fallback: try frame method
+            try:
+                reparticao_frame = page.frame(name="cmpElementoOrg")
+                if reparticao_frame:
+                    reparticao_frame.locator("input[type='text']").first.fill("90102008")
+                    click_pesquisar_and_wait(reparticao_frame, 2)
+                    log.info("✓ Repartição Fiscal filled via frame fallback")
+            except Exception:
+                pass
         sleep(0.5)
 
-        # 4 - Código Município
-        municipio_frame = page.frame(name="cmpMunicipioGiva")
-        if municipio_frame:
-            municipio_frame.locator("input[type='text']").first.fill("2051-6")
-            click_pesquisar_and_wait(municipio_frame, 1.5)
+        # 4 - Código Município (usando seletor direto moderno)
+        try:
+            municipio_input = page.locator("input[name='txtCdMunicipio']").first
+            municipio_input.wait_for(state="visible", timeout=6000)
+            municipio_input.clear()
+            # Try with and without dash
+            for codigo_format in ["2051-6", "20516"]:
+                try:
+                    municipio_input.fill(codigo_format)
+                    log.info(f"✓ Código Município filled: {codigo_format}")
+                    break
+                except Exception:
+                    continue
+        except Exception as e:
+            log.warning(f"Código Município filling failed: {e}")
+            # Fallback: try frame method
+            try:
+                municipio_frame = page.frame(name="cmpMunicipioGiva")
+                if municipio_frame:
+                    municipio_frame.locator("input[type='text']").first.fill("2051-6")
+                    click_pesquisar_and_wait(municipio_frame, 1.5)
+                    log.info("✓ Código Município filled via frame fallback")
+            except Exception:
+                pass
         sleep(0.5)
 
         # 5 - Tipo Operação
@@ -301,142 +326,118 @@ def process_single_nfa(
         sleep(1)
         wait_for_page_load_soft(page)
 
-        # 7 - Emitente (CNPJ fixo, com retries) - MODERNIZED: Direct selectors, no frames
-        page.select_option("select[name='cmbTpDoccmpEmitente']", "2")
-        sleep(0.5)
-        emitente_filled = False
-        emitente_cnpj_clean = extract_clean_cpf(EMITENTE_CNPJ)
-
-        for attempt in range(5):
-            try:
-                # Try direct input selector (modern approach - no frames)
-                cnpj_input = page.locator("input[name*='Emitente' i][type='text']").first
-                if not cnpj_input.is_visible(timeout=3000):
-                    # Fallback: try any text input near emitente area
-                    cnpj_input = page.locator("input[type='text']").nth(0)
-                
-                if cnpj_input.is_visible(timeout=5000):
-                    cnpj_input.click()
-                    cnpj_input.clear()
-                    cnpj_input.fill(emitente_cnpj_clean)
-                    log.info(f"✓ Emitente CNPJ input filled: {emitente_cnpj_clean}")
-                    sleep(0.5)
+        # 7 - Emitente (CNPJ fixo, usando seletores diretos - sem frames)
+        try:
+            # Select CNPJ option (2 = CNPJ) in main form
+            tipo_doc_select = page.locator("select[name='cmbTpDoccmpEmitente']").first
+            tipo_doc_select.wait_for(state="visible", timeout=6000)
+            tipo_doc_select.select_option("2")  # CNPJ
+            log.info("✓ Selected CNPJ as document type")
+            sleep(0.5)
+            
+            # Fill CNPJ in main page (remove formatting for input)
+            emitente_cnpj_clean = "".join(
+                filter(str.isdigit, EMITENTE_CNPJ.replace("/", "").replace("-", ""))
+            )
+            
+            # Try multiple selectors for CNPJ input
+            emitente_filled = False
+            for attempt in range(3):
+                try:
+                    cnpj_input = page.locator("input[name*='Emitente' i][type='text']").first
+                    if not cnpj_input.is_visible(timeout=2000):
+                        # Fallback selector
+                        cnpj_input = page.locator("input[type='text']").filter(has_text="").first
                     
-                    # Click Pesquisar button (try multiple selectors)
-                    pesquisar_clicked = False
-                    for btn_selector in [
-                        "button:has-text('Pesquisar')",
-                        "input[value='Pesquisar']",
-                        "input[type='button'][value*='Pesquisar' i]"
-                    ]:
-                        try:
-                            btn = page.locator(btn_selector).first
-                            if btn.is_visible(timeout=2000):
-                                btn.click()
-                                pesquisar_clicked = True
-                                log.info("✓ Clicked Pesquisar for Emitente")
-                                sleep(2)  # Wait for search results
-                                break
-                        except Exception:
-                            continue
-                    
-                    if pesquisar_clicked:
+                    if cnpj_input.is_visible(timeout=5000):
+                        cnpj_input.clear()
+                        cnpj_input.fill(emitente_cnpj_clean)
+                        log.info(f"✓ CNPJ filled: {emitente_cnpj_clean}")
                         emitente_filled = True
                         break
-                    else:
-                        log.warning("Pesquisar button not found, but CNPJ filled")
-                        emitente_filled = True  # Consider filled if input is OK
-                        break
-                else:
-                    log.warning(f"Emitente input not visible, attempt {attempt + 1}/5")
+                except Exception as e:
+                    log.warning(f"Emitente fill attempt {attempt + 1} failed: {e}")
                     sleep(1)
-                    
-            except Exception as e:
-                log.warning(f"Emitente fill attempt {attempt + 1}/5 failed: {e}")
-                sleep(1)
-
-        if not emitente_filled:
-            log.error("Emitente CNPJ could not be filled after retries")
-            raise Exception("Failed to fill Emitente CNPJ")
-        sleep(0.5)
-
-        # 8 - Destinatário - MODERNIZED: Direct selectors, no frames
-        page.select_option("select[name='cmbTpDoccmpDestinatario']", "3")
-        sleep(0.5)
-        
-        try:
-            # Try direct input selector (modern approach - no frames)
-            cpf_input = page.locator("input[name*='Destinatario' i][type='text']").first
-            if not cpf_input.is_visible(timeout=3000):
-                # Fallback: try any text input after destinatario select
-                cpf_input = page.locator("input[type='text']").nth(1)
             
-            if cpf_input.is_visible(timeout=5000):
-                cpf_input.click()
-                cpf_input.clear()
-                cpf_input.fill(cpf)
-                log.info(f"✓ Destinatario CPF filled: {cpf}")
-                sleep(0.5)
-                
+            if emitente_filled:
                 # Click Pesquisar button
-                for btn_selector in [
-                    "button:has-text('Pesquisar')",
-                    "input[value='Pesquisar']",
-                    "input[type='button'][value*='Pesquisar' i]"
-                ]:
-                    try:
-                        btn = page.locator(btn_selector).nth(1)  # Second pesquisar button
-                        if btn.is_visible(timeout=2000):
-                            btn.click()
-                            log.info("✓ Clicked Pesquisar for Destinatario")
-                            sleep(2)  # Wait for search results
-                            break
-                    except Exception:
-                        continue
+                sleep(0.5)
+                try:
+                    pesquisar_btn = page.get_by_role("button", name="Pesquisar").first
+                    if not pesquisar_btn.is_visible(timeout=2000):
+                        pesquisar_btn = page.locator("input[value='Pesquisar']").first
+                    if pesquisar_btn.is_visible(timeout=3000):
+                        pesquisar_btn.click()
+                        log.info("✓ Clicked Pesquisar for Emitente")
+                        sleep(2)
+                except Exception as e:
+                    log.warning(f"Could not click Pesquisar: {e}")
             else:
-                log.warning("Destinatario input not found, trying frame fallback...")
-                # Fallback to old frame approach if direct selector fails
-                destinatario_frame = page.frame(name="cmpDestinatario")
-                if destinatario_frame:
-                    hardened_interaction(
-                        destinatario_frame,
-                        "input[type='text']",
-                        "Destinatario CPF",
-                        "fill",
-                        cpf,
-                    )
-                    click_pesquisar_and_wait(destinatario_frame, 2)
+                log.error("Emitente CNPJ could not be filled after retries")
         except Exception as e:
-            log.warning(f"Destinatario fill error: {e}, trying frame fallback...")
-            try:
-                destinatario_frame = page.frame(name="cmpDestinatario")
-                if destinatario_frame:
-                    hardened_interaction(
-                        destinatario_frame,
-                        "input[type='text']",
-                        "Destinatario CPF",
-                        "fill",
-                        cpf,
-                    )
-                    click_pesquisar_and_wait(destinatario_frame, 2)
-            except Exception as frame_error:
-                log.error(f"Both direct and frame approaches failed: {frame_error}")
-        
+            log.error(f"Error filling emitente: {e}")
         sleep(0.5)
 
-        # 9 - NCM - MODERNIZED: Direct selectors with frame fallback
+        # 8 - Destinatário (usando seletores diretos - sem frames)
+        try:
+            # Select CPF option (3 = CPF) in main form
+            tipo_doc_select = page.locator("select[name='cmbTpDoccmpDestinatario']").first
+            tipo_doc_select.wait_for(state="visible", timeout=6000)
+            tipo_doc_select.select_option("3")  # CPF
+            log.info("✓ Selected CPF as document type")
+            sleep(0.5)
+            
+            # Clean CPF (remove formatting)
+            cpf_clean = "".join(filter(str.isdigit, cpf.replace("/", "").replace("-", "")))
+            
+            # Fill CPF in main page
+            destinatario_filled = False
+            for attempt in range(3):
+                try:
+                    doc_input = page.locator("input[name*='Destinatario' i][type='text']").first
+                    if not doc_input.is_visible(timeout=2000):
+                        # Fallback selector
+                        doc_input = page.locator("input[type='text']").filter(has_text="").nth(1)
+                    
+                    if doc_input.is_visible(timeout=5000):
+                        doc_input.clear()
+                        doc_input.fill(cpf_clean)
+                        log.info(f"✓ CPF filled: {cpf_clean}")
+                        destinatario_filled = True
+                        break
+                except Exception as e:
+                    log.warning(f"Destinatario fill attempt {attempt + 1} failed: {e}")
+                    sleep(1)
+            
+            if destinatario_filled:
+                # Click Pesquisar button
+                sleep(0.5)
+                try:
+                    pesquisar_btn = page.get_by_role("button", name="Pesquisar").first
+                    if not pesquisar_btn.is_visible(timeout=2000):
+                        pesquisar_btn = page.locator("input[value='Pesquisar']").first
+                    if pesquisar_btn.is_visible(timeout=3000):
+                        pesquisar_btn.click()
+                        log.info("✓ Clicked Pesquisar for Destinatario")
+                        sleep(2)
+                except Exception as e:
+                    log.warning(f"Could not click Pesquisar: {e}")
+            else:
+                log.error("Destinatario CPF could not be filled after retries")
+        except Exception as e:
+            log.error(f"Error filling destinatario: {e}")
+        sleep(0.5)
+
+        # 9 - NCM (usando seletores diretos - sem frames)
         sleep(1)
         ncm_filled = False
-        
         for attempt in range(5):
             try:
-                # Try direct selector first (modern approach)
-                ncm_input = page.locator("input[name*='Produto' i][type='text']").first
+                # Try to find NCM input using multiple selectors
+                ncm_input = page.locator("input[name*='NCM' i][type='text']").first
                 if not ncm_input.is_visible(timeout=2000):
-                    # Try alternative selectors
-                    ncm_input = page.locator("input[type='text'][placeholder*='NCM' i]").first
-                if not ncm_input.is_visible(timeout=2000):
-                    ncm_input = page.locator("input[type='text']").nth(2)  # Fallback to nth input
+                    # Alternative selector
+                    ncm_input = page.locator("input[type='text']:not([name='hintedit'])").filter(has_text="").first
                 
                 if ncm_input.is_visible(timeout=3000):
                     ncm_input.click()
@@ -445,43 +446,21 @@ def process_single_nfa(
                     log.info("✓ NCM filled: 0000.00.00")
                     sleep(0.5)
                     
-                    # Click Pesquisar for NCM
-                    for btn_selector in [
-                        "button:has-text('Pesquisar')",
-                        "input[value='Pesquisar']",
-                        "input[type='button'][value*='Pesquisar' i]"
-                    ]:
-                        try:
-                            btn = page.locator(btn_selector).nth(2)  # Third pesquisar button
-                            if btn.is_visible(timeout=2000):
-                                btn.click()
-                                log.info("✓ Clicked Pesquisar for NCM")
-                                sleep(1.5)
-                                ncm_filled = True
-                                break
-                        except Exception:
-                            continue
+                    # Click Pesquisar button for NCM
+                    try:
+                        pesquisar_btn = page.get_by_role("button", name="Pesquisar").first
+                        if not pesquisar_btn.is_visible(timeout=2000):
+                            pesquisar_btn = page.locator("input[value='Pesquisar']").first
+                        if pesquisar_btn.is_visible(timeout=3000):
+                            pesquisar_btn.click()
+                            sleep(1.5)
+                    except Exception:
+                        pass
                     
-                    if ncm_filled:
-                        break
-                        
-                # Fallback to frame approach
-                produto_frame = page.frame(name="cmpProduto")
-                if produto_frame:
-                    ncm_input_frame = produto_frame.locator(
-                        "input[type='text']:not([name='hintedit'])"
-                    ).first
-                    if ncm_input_frame.is_visible(timeout=2000):
-                        ncm_input_frame.click()
-                        ncm_input_frame.clear()
-                        ncm_input_frame.fill("0000.00.00")
-                        sleep(0.5)
-                        click_pesquisar_and_wait(produto_frame, 1.5)
-                        ncm_filled = True
-                        break
-                        
+                    ncm_filled = True
+                    break
             except Exception as e:
-                log.debug(f"NCM fill attempt {attempt + 1}/5 failed: {e}")
+                log.warning(f"NCM fill attempt {attempt + 1} failed: {e}")
                 sleep(1)
 
         if not ncm_filled:
@@ -537,67 +516,58 @@ def process_single_nfa(
         hardened_interaction(page, "input[name='btnAdicionarItem']", "ADICIONAR ITEM")
         sleep(3)
 
-        # 15 - CST (Hardened) - IMPROVED: Multiple fallback strategies
+        # 15 - CST (Hardened with multiple retry strategies)
         # Value 6 = 41 - NÃO TRIBUTADA
         cst_selected = False
-        wait_for_page_load_soft(page)  # Ensure page is stable
-        sleep(2)  # Extra wait for CST select to be ready after ADICIONAR ITEM
-        
-        for attempt in range(3):
+        for attempt in range(5):
             try:
+                # Wait for CST select to be available
                 cst_select = page.locator("select[name='cmbNrCST']").first
-                # Wait for select to be visible and enabled
                 cst_select.wait_for(state="visible", timeout=10000)
                 
-                # Wait a bit more for options to load
-                sleep(0.5)
+                # Wait a bit more for options to be populated
+                sleep(1)
                 
-                # Try multiple selection strategies
-                strategies = [
-                    lambda: cst_select.select_option(value="6"),  # By value
-                    lambda: cst_select.select_option(label="41 - NÃO TRIBUTADA"),  # By label
-                    lambda: cst_select.select_option(index=6),  # By index
-                ]
-                
-                for strategy_idx, strategy in enumerate(strategies):
-                    try:
-                        strategy()
-                        log.info(f"✓ CST selected using strategy {strategy_idx + 1}")
-                        cst_selected = True
-                        break
-                    except Exception as strategy_error:
-                        log.debug(f"CST strategy {strategy_idx + 1} failed: {strategy_error}")
-                        continue
-                
-                if cst_selected:
+                # Try by value first
+                try:
+                    cst_select.select_option(value="6")
+                    log.info("✓ CST selected by value: 6")
+                    cst_selected = True
                     break
+                except Exception:
+                    pass
+                
+                # Try by label
+                try:
+                    cst_select.select_option(label="41 - NÃO TRIBUTADA")
+                    log.info("✓ CST selected by label: 41 - NÃO TRIBUTADA")
+                    cst_selected = True
+                    break
+                except Exception:
+                    pass
+                
+                # Try by text content
+                try:
+                    options = cst_select.locator("option")
+                    option_count = options.count()
+                    for i in range(option_count):
+                        option_text = options.nth(i).inner_text()
+                        if "41" in option_text and "NÃO TRIBUTADA" in option_text:
+                            cst_select.select_option(index=i)
+                            log.info(f"✓ CST selected by index {i}: {option_text}")
+                            cst_selected = True
+                            break
+                    if cst_selected:
+                        break
+                except Exception:
+                    pass
                     
-                # Last resort: iterate through options
-                if not cst_selected:
-                    try:
-                        options = cst_select.locator("option")
-                        option_count = options.count()
-                        log.info(f"Found {option_count} CST options, searching for '41'...")
-                        for i in range(min(option_count, 50)):  # Limit search
-                            option_text = options.nth(i).inner_text()
-                            if "41" in option_text or "NÃO TRIBUTADA" in option_text.upper():
-                                cst_select.select_option(index=i)
-                                log.info(f"✓ CST selected by iteration (index {i}): {option_text}")
-                                cst_selected = True
-                                break
-                    except Exception as iter_error:
-                        log.warning(f"Option iteration failed: {iter_error}")
-                        
             except Exception as e:
-                log.warning(f"CST selection attempt {attempt + 1}/3 failed: {e}")
-                if attempt < 2:
-                    sleep(1)
-                    wait_for_page_load_soft(page)
-                else:
-                    log.error("CST selection failed after all attempts")
+                log.warning(f"CST selection attempt {attempt + 1} failed: {e}")
+                sleep(1)
         
         if not cst_selected:
-            log.error("⚠️  CST could not be selected - continuing anyway")
+            log.error("CST could not be selected after all retries")
         sleep(0.5)
 
         # 16 - Receita
