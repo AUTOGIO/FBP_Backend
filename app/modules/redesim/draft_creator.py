@@ -1,12 +1,13 @@
 """Gmail Draft Creator for REDESIM
 Consolidated service for creating and managing Gmail drafts.
 """
+
 from __future__ import annotations
 
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 from app.core.config import settings
 from app.modules.redesim.email_client import GmailClient
@@ -34,14 +35,11 @@ class GmailService:
         # Use settings or default paths
         if credentials_path is None:
             credentials_path = (
-                settings.GMAIL_CREDENTIALS_FILE
-                or self._get_default_credentials_path()
+                settings.GMAIL_CREDENTIALS_FILE or self._get_default_credentials_path()
             )
 
         if token_path is None:
-            token_path = (
-                settings.GMAIL_TOKEN_FILE or self._get_default_token_path()
-            )
+            token_path = settings.GMAIL_TOKEN_FILE or self._get_default_token_path()
 
         self.client = GmailClient(
             credentials_path=credentials_path,
@@ -52,21 +50,21 @@ class GmailService:
     def _get_default_credentials_path() -> str:
         """Get default credentials path."""
         project_root = Path(__file__).parent.parent.parent.parent
-        auth_dir = project_root / "config" / "auth"
+        auth_dir = project_root / "credentials"
         auth_dir.mkdir(parents=True, exist_ok=True)
-        return str(auth_dir / "credentials.json")
+        return str(auth_dir / "gmail_credentials.json")
 
     @staticmethod
     def _get_default_token_path() -> str:
         """Get default token path."""
         project_root = Path(__file__).parent.parent.parent.parent
-        auth_dir = project_root / "config" / "auth"
+        auth_dir = project_root / "credentials"
         auth_dir.mkdir(parents=True, exist_ok=True)
-        return str(auth_dir / "token.json")
+        return str(auth_dir / "gmail_token.json")
 
     def create_draft(
         self,
-        to: str,
+        to: str | Sequence[str],
         subject: str,
         body: str,
         attachments: list[str] | None = None,
@@ -85,11 +83,14 @@ class GmailService:
         """
         try:
             # Normalize 'to' parameter
-            if isinstance(to, list):
-                to = ", ".join(to)
+            to_value = (
+                ", ".join(to)
+                if isinstance(to, Sequence) and not isinstance(to, str)
+                else to
+            )
 
             draft = self.client.create_draft(
-                to=to,
+                to=to_value,
                 subject=subject,
                 message_text=body,
                 attachments=attachments,
@@ -97,7 +98,7 @@ class GmailService:
 
             if draft:
                 logger.info(
-                    f"Draft created successfully: {draft.get('id', 'unknown')}",
+                    "Draft created successfully: %s", draft.get("id", "unknown")
                 )
                 return draft
             logger.warning("Failed to create draft (returned None)")
@@ -145,7 +146,8 @@ class GmailService:
             return False
 
     def create_draft_from_json(
-        self, json_path: Path,
+        self,
+        json_path: Path,
     ) -> dict[str, Any] | None:
         """Create Gmail draft from JSON file.
 
@@ -169,11 +171,7 @@ class GmailService:
                 logger.warning(f"No recipients in {json_path.name}")
                 return None
 
-            to = (
-                ", ".join(recipients)
-                if isinstance(recipients, list)
-                else recipients
-            )
+            to = ", ".join(recipients) if isinstance(recipients, list) else recipients
             subject = data.get("subject", "Assunto não definido")
             body = data.get("body", "Corpo do email não definido.")
             attachments = [
@@ -203,12 +201,14 @@ class GmailService:
             return None
 
     def find_draft_files_with_recipients(
-        self, traces_dir: Path | None = None,
+        self,
+        traces_dir: Path | None = None,
     ) -> list[Path]:
         """Find draft JSON files that have recipients information.
 
         Args:
-            traces_dir: Optional directory to search. Defaults to project traces/
+            traces_dir: Optional directory to search.
+                Defaults to project traces/
 
         Returns:
             List of Path objects to draft JSON files
@@ -239,7 +239,8 @@ class GmailService:
         return draft_files
 
     def create_all_drafts_from_traces(
-        self, traces_dir: Path | None = None,
+        self,
+        traces_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Create all drafts from trace files that have recipient information.
 

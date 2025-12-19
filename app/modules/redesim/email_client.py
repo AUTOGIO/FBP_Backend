@@ -1,11 +1,11 @@
 """Gmail API Client for REDESIM Email Extractor
 Handles Gmail OAuth and draft creation.
 """
+
 from __future__ import annotations
 
 import base64
 import logging
-import os.path
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
@@ -13,16 +13,17 @@ from email.mime.text import MIMEText
 from mimetypes import guess_type
 from pathlib import Path
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-logger = logging.getLogger(__name__)
+from app.modules.redesim.gmail_auth import (
+    DEFAULT_CREDENTIALS_PATH,
+    DEFAULT_TOKEN_PATH,
+    SCOPES,
+    get_gmail_credentials,
+)
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = ["https://www.googleapis.com/auth/gmail.compose"]
+logger = logging.getLogger(__name__)
 
 
 class GmailClient:
@@ -40,70 +41,36 @@ class GmailClient:
         """Initialize Gmail client.
 
         Args:
-            credentials_path: Path to credentials.json (defaults to config/auth/credentials.json)
-            token_path: Path to token.json (defaults to config/auth/token.json)
+            credentials_path: Path to credentials.json (defaults to credentials/gmail_credentials.json)
+            token_path: Path to token.json (defaults to credentials/gmail_token.json)
 
         """
-        # Use FBP project root for default paths (consolidated in config/auth/)
-        if credentials_path is None:
-            project_root = Path(__file__).parent.parent.parent.parent
-            auth_dir = project_root / "config" / "auth"
-            auth_dir.mkdir(parents=True, exist_ok=True)
-            credentials_path = str(auth_dir / "credentials.json")
-
-        if token_path is None:
-            project_root = Path(__file__).parent.parent.parent.parent
-            auth_dir = project_root / "config" / "auth"
-            auth_dir.mkdir(parents=True, exist_ok=True)
-            token_path = str(auth_dir / "token.json")
+        resolved_credentials_path = Path(
+            credentials_path or DEFAULT_CREDENTIALS_PATH,
+        ).expanduser()
+        resolved_token_path = Path(token_path or DEFAULT_TOKEN_PATH).expanduser()
 
         self.creds = None
         self.service = None
 
         try:
-            # The file token.json stores the user's access and refresh tokens, and is
-            # created automatically when the authorization flow completes for the first
-            # time.
-            if os.path.exists(token_path):
-                self.creds = Credentials.from_authorized_user_file(
-                    token_path, SCOPES,
-                )
-                logger.debug(f"Loaded credentials from {token_path}")
-
-            # If there are no (valid) credentials available, let the user log in.
-            if not self.creds or not self.creds.valid:
-                if (
-                    self.creds
-                    and self.creds.expired
-                    and self.creds.refresh_token
-                ):
-                    logger.info("Refreshing expired credentials...")
-                    self.creds.refresh(Request())
-                else:
-                    if not os.path.exists(credentials_path):
-                        msg = (
-                            f"Credentials file not found: {credentials_path}. "
-                            "Please download credentials.json from Google Cloud Console."
-                        )
-                        raise FileNotFoundError(
-                            msg,
-                        )
-                    logger.info("Starting OAuth flow...")
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        credentials_path, SCOPES,
-                    )
-                    self.creds = flow.run_local_server(port=0)
-                # Save the credentials for the next run
-                with open(token_path, "w") as token:
-                    token.write(self.creds.to_json())
-                logger.info(f"Credentials saved to {token_path}")
-
-            self.service = build("gmail", "v1", credentials=self.creds)
+            self.creds = get_gmail_credentials(
+                credentials_path=resolved_credentials_path,
+                token_path=resolved_token_path,
+                scopes=SCOPES,
+            )
+            self.service = build(
+                "gmail",
+                "v1",
+                credentials=self.creds,
+                cache_discovery=False,
+            )
             logger.info("Gmail API service initialized successfully")
 
         except Exception as e:
             logger.error(
-                f"Error initializing Gmail client: {e}", exc_info=True,
+                f"Error initializing Gmail client: {e}",
+                exc_info=True,
             )
             raise
 
@@ -128,7 +95,10 @@ class GmailClient:
         """
         try:
             mime_message = self._build_message(
-                to, subject, message_text, attachments,
+                to,
+                subject,
+                message_text,
+                attachments,
             )
             create_message = {
                 "message": {
@@ -154,7 +124,8 @@ class GmailClient:
             return None
         except Exception as error:
             logger.error(
-                f"Unexpected error creating draft: {error}", exc_info=True,
+                f"Unexpected error creating draft: {error}",
+                exc_info=True,
             )
             return None
 
