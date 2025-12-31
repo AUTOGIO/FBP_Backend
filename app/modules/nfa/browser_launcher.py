@@ -1,5 +1,7 @@
 """Browser Launcher with Persistent Context and Anti-Bot Bypass
+
 Hardened browser launch for SEFAZ PB ATF automation.
+Optimized for: iMac M3 (Mac15,5) | 8 cores | 16GB | macOS 26.0 Tahoe
 """
 
 from __future__ import annotations
@@ -42,11 +44,24 @@ async def launch_persistent_browser(
 
     # Create user data directory if not provided
     if user_data_dir is None:
-        user_data_dir = str(Path(tempfile.gettempdir()) / "fbp_playwright_user_data")
+        # Use unique directory per execution to avoid conflicts
+        import uuid
+        unique_id = uuid.uuid4().hex[:8]
+        user_data_dir = str(Path(tempfile.gettempdir()) / f"fbp_playwright_user_data_{unique_id}")
         os.makedirs(user_data_dir, exist_ok=True)
         logger.info(f"Using temporary user data dir: {user_data_dir}")
 
+    # Clean up SingletonLock if it exists (prevents "profile already in use" error)
+    singleton_lock = Path(user_data_dir) / "SingletonLock"
+    if singleton_lock.exists():
+        try:
+            singleton_lock.unlink()
+            logger.info("Removed existing SingletonLock file")
+        except Exception as e:
+            logger.warning(f"Could not remove SingletonLock: {e}")
+
     # Browser launch args for anti-bot evasion
+    # Add crash prevention flags
     launch_args = [
         "--disable-blink-features=AutomationControlled",
         "--disable-web-security",
@@ -54,6 +69,9 @@ async def launch_persistent_browser(
         "--disable-dev-shm-usage",
         "--no-sandbox",
         "--disable-setuid-sandbox",
+        "--disable-crash-reporter",
+        "--disable-background-networking",
+        "--disable-breakpad",
         "--disable-background-networking",
         "--disable-background-timer-throttling",
         "--disable-backgrounding-occluded-windows",
@@ -96,9 +114,9 @@ async def launch_persistent_browser(
             "height": 1080,
         },
         user_agent=(
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Macintosh; Apple M3 Mac OS X 26_0) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+            "Version/18.0 Safari/605.1.15"
         ),
         locale="pt-BR",
         timezone_id="America/Recife",

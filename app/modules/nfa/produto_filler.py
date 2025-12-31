@@ -173,6 +173,45 @@ async def adicionar_item(
         except Exception as e:
             logger.warning(f"Could not click add/update button: {e}")
 
+        # After adding item, ensure it is selected (some flows require selecting items)
+        try:
+            select_all_row = page.locator("tr:has-text('Selecionar Todos')").first
+            select_all_checkbox = select_all_row.locator("input[type='checkbox']").first
+            if await select_all_checkbox.is_visible(timeout=1500):
+                if not await select_all_checkbox.is_checked():
+                    await select_all_checkbox.check()
+                logger.info("✓ Selected 'Selecionar Todos' checkbox")
+                await page.wait_for_timeout(800)
+                await save_screenshot(
+                    page, screenshots_dir, filename="produto_select_all.png"
+                )
+        except Exception as e:
+            logger.debug(f"Select-all checkbox not found/usable: {e}")
+
+        # Trigger tax calculation if available (button 'Calcular')
+        try:
+            calcular_selectors = [
+                "input[type='submit'][value='Calcular']",
+                "input[type='button'][value='Calcular']",
+                "input[value*='Calcular' i]",
+                "button:has-text('Calcular')",
+            ]
+            for selector in calcular_selectors:
+                try:
+                    element = page.locator(selector).first
+                    if await element.is_visible(timeout=1500):
+                        await element.click()
+                        logger.info("✓ Clicked 'Calcular' (tax calculation)")
+                        await page.wait_for_timeout(2500)
+                        await save_screenshot(
+                            page, screenshots_dir, filename="produto_calcular.png"
+                        )
+                        break
+                except Exception:
+                    continue
+        except Exception as e:
+            logger.debug(f"Could not click 'Calcular': {e}")
+
         logger.info(
             f"Item added successfully: {descricao[:50] if descricao else 'N/A'}..."
         )

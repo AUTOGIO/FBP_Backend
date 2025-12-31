@@ -5,6 +5,7 @@ Handles authentication with ATF system.
 from __future__ import annotations
 
 import logging
+import time
 
 try:
     from playwright.async_api import Page
@@ -76,16 +77,82 @@ async def wait_for_post_login(page: Page, timeout: int = 30000) -> bool:
         True if post-login page loaded, False otherwise
 
     """
+    screenshots_dir = settings.paths.project_root / "output" / "nfa" / "screenshots"
+    screenshots_dir.mkdir(parents=True, exist_ok=True)
+
+    def _looks_logged_in(url: str) -> bool:
+        # Login page is /atf/seg/SEGf_Login.jsp.
+        # ATF may keep /atf/ but should not keep this path.
+        return "SEGf_Login.jsp" not in (url or "")
+
+    # Best-effort authenticated endpoint probe (shares cookies with page/context)
+    menu_url = "https://www4.sefaz.pb.gov.br/atf/seg/SEGf_MontarMenu.jsp"
+
+    deadline = time.monotonic() + (timeout / 1000.0)
+    last_error: str | None = None
+
+    while time.monotonic() < deadline:
+        remaining_ms = max(250, int((deadline - time.monotonic()) * 1000))
+        try:
+            # 1) Let network settle (SEFAZ does async redirects / session setup)
+            try:
+                await page.wait_for_load_state(
+                    "networkidle",
+                    timeout=min(remaining_ms, 5000),
+                )
+            except Exception:
+                # networkidle isn't guaranteed; keep going with other signals
+                pass
+
+            current_url = page.url
+
+            # 2) Session-based URL validation: not stuck on the login JSP anymore
+            if _looks_logged_in(current_url):
+                logger.info("Login validated (session-based): URL left login page")
+                return True
+
+            # 3) Probe a known authenticated endpoint.
+            # If we bounce back to login, keep waiting.
+            try:
+                resp = await page.request.get(
+                    menu_url,
+                    timeout=min(remaining_ms, 8000),
+                )
+                final_url = getattr(resp, "url", "") or ""
+                if resp.ok and _looks_logged_in(final_url):
+                    logger.info(
+                        "Login validated (session-based): authenticated endpoint reachable"
+                    )
+                    return True
+            except Exception as probe_error:
+                last_error = f"probe_error: {probe_error}"
+
+            await page.wait_for_timeout(300)
+
+        except Exception as e:
+            last_error = str(e)
+            await page.wait_for_timeout(300)
+
+    # Failure: capture diagnostics without requiring any specific iframe name
     try:
-        await page.wait_for_selector(
-            "frame[name='mainFrame']",
-            timeout=timeout,
-        )
-        logger.debug("Post-login page loaded")
-        return True
-    except Exception as e:
-        logger.exception(f"Error waiting for post-login: {e}")
-        return False
+        current_url = page.url
+        title = await page.title()
+    except Exception:
+        current_url = "<unavailable>"
+        title = "<unavailable>"
+
+    logger.error(
+        "Login validation failed (session-based). url=%s title=%s last_error=%s",
+        current_url,
+        title,
+        last_error,
+    )
+    await save_screenshot(
+        page,
+        screenshots_dir,
+        filename="login_validation_failed.png",
+    )
+    return False
 
 
 async def select_function_fis_1698(page: Page, timeout: int = 30000) -> bool:

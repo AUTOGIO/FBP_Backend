@@ -1,4 +1,5 @@
-"""Global FastAPI router - Unified endpoints for FBP backend orchestration."""
+"""Global FastAPI router - Unified endpoints for FBP backend execution."""
+
 from __future__ import annotations
 
 import platform
@@ -60,27 +61,32 @@ def _validate_cpf(cpf: str) -> bool:
 
 
 def _get_machine_id() -> str:
-    """Get machine identifier (M3/M4 detection).
+    """Get machine identifier - returns exact hardware profile.
 
     Returns:
-        Machine identifier string
+        Machine identifier string for iMac M3 (Mac15,5)
 
     """
-    try:
-        # Try to detect Apple Silicon model
-        machine = platform.machine()
-        processor = platform.processor()
+    from app.core.config import HARDWARE_PROFILE
 
-        if "arm64" in machine.lower() or "arm" in processor.lower():
-            # Try to get more specific info
-            if "M3" in processor or "M3" in platform.platform():
-                return "M3"
-            if "M4" in processor or "M4" in platform.platform():
-                return "M4"
-            return "Apple Silicon (ARM)"
-        return f"{machine} ({processor})"
+    try:
+        # Return exact hardware profile
+        return f"{HARDWARE_PROFILE['chip']} ({HARDWARE_PROFILE['model']})"
     except Exception:
-        return "Unknown"
+        # Fallback to platform detection
+        try:
+            machine = platform.machine()
+            processor = platform.processor()
+
+            if "arm64" in machine.lower() or "arm" in processor.lower():
+                if "M3" in processor or "M3" in platform.platform():
+                    return "Apple M3"
+                if "M4" in processor or "M4" in platform.platform():
+                    return "Apple M4"
+                return "Apple Silicon (ARM)"
+            return f"{machine} ({processor})"
+        except Exception:
+            return "Unknown"
 
 
 def _check_gmail_credentials() -> dict[str, Any]:
@@ -93,9 +99,7 @@ def _check_gmail_credentials() -> dict[str, Any]:
     credentials_file = settings.GMAIL_CREDENTIALS_FILE
     token_file = settings.GMAIL_TOKEN_FILE
 
-    credentials_exists = (
-        Path(credentials_file).exists() if credentials_file else False
-    )
+    credentials_exists = Path(credentials_file).exists() if credentials_file else False
     token_exists = Path(token_file).exists() if token_file else False
 
     return {
@@ -315,4 +319,3 @@ async def global_health_endpoint() -> dict[str, Any]:
             status_code=500,
             detail=f"Health check failed: {e}",
         ) from e
-

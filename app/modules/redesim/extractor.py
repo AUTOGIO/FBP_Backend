@@ -1,6 +1,7 @@
-"""REDESIM Email Extractor - Main Orchestrator
-Dual-mode orchestrator supporting Cursor Browser Agent and Playwright CDP fallback.
+"""REDESIM Email Extractor - Main Execution Engine
+Dual-mode execution engine supporting Cursor Browser Agent and Playwright CDP fallback.
 """
+
 from __future__ import annotations
 
 import csv
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class REDESIMExtractor:
-    """Main orchestrator for REDESIM email extraction.
+    """Main execution engine for REDESIM email extraction.
     Supports dual-mode extraction: Cursor Browser Agent + Playwright CDP fallback.
     """
 
@@ -43,12 +44,14 @@ class REDESIMExtractor:
         project_root = Path(__file__).parent.parent.parent.parent
         self.traces_dir = Path(
             self.config.get("paths", {}).get(
-                "traces", str(project_root / "traces"),
+                "traces",
+                str(project_root / "traces"),
             ),
         )
         self.reports_dir = Path(
             self.config.get("paths", {}).get(
-                "reports", str(project_root / "reports"),
+                "reports",
+                str(project_root / "reports"),
             ),
         )
 
@@ -57,7 +60,8 @@ class REDESIMExtractor:
         self.reports_dir.mkdir(parents=True, exist_ok=True)
 
     def _load_config(
-        self, config_path: str | None = None,
+        self,
+        config_path: str | None = None,
     ) -> dict[str, Any]:
         """Load configuration from YAML file."""
         if config_path is None:
@@ -313,7 +317,8 @@ RECEITA ESTADUAL."""
         """
         timestamp = datetime.now().strftime(
             self.config.get("output", {}).get(
-                "timestamp_format", "%Y%m%d_%H%M%S",
+                "timestamp_format",
+                "%Y%m%d_%H%M%S",
             ),
         )
         csv_path = self.reports_dir / f"atf_redesim_{timestamp}.csv"
@@ -397,7 +402,8 @@ RECEITA ESTADUAL."""
                         "cep": process_data.get("cep", ""),
                         "cep_valid": process_data.get("cep_valid", False),
                         "endereco_completo": process_data.get(
-                            "endereco_completo", "",
+                            "endereco_completo",
+                            "",
                         ),
                         "codigo_ibge": process_data.get("codigo_ibge", ""),
                         "coordenadas": str(
@@ -417,7 +423,8 @@ RECEITA ESTADUAL."""
                         {
                             "processo": process_data.get("processo", ""),
                             "razao_social": process_data.get(
-                                "razao_social", "",
+                                "razao_social",
+                                "",
                             ),
                             "timestamp": datetime.now().isoformat(),
                         },

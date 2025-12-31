@@ -29,7 +29,7 @@
 │  │    └─ logarSistema() evaluation               │  │
 │  │    └─ 4s wait + force NFA URL nav              │  │
 │  │                                                │  │
-│  │ 🗐 form_filler.py (ORCHESTRATOR)             │  │
+│  │ 🗐 form_filler.py (EXECUTION ENGINE)         │  │
 │  │    └─ Calls all fillers sequentially            │  │
 │  │    └─ Manages section state & delays            │  │
 │  │    └─ Captures screenshots per step             │  │
@@ -117,7 +117,7 @@
 
         ↓
 
-3. SERVICE ORCHESTRATES (nfa_service.py)
+3. SERVICE EXECUTES (nfa_service.py)
    - Initialize context (nfa_context.py)
    - Launch browser (anti-bot config)
    - Return page object to form_filler.py
@@ -135,7 +135,7 @@
 
         ↓
 
-5. FORM ORCHESTRATION BEGINS (form_filler.py)
+5. FORM EXECUTION BEGINS (form_filler.py)
    - Log page frames (atf_frames.py) — for debugging only
    - Call each filler sequentially with delays.py constants
 
@@ -223,7 +223,8 @@
 
 ## 🔧 CRITICAL DEPENDENCY TREE
 
-### form_filler.py (ORCHESTRATOR) depends on:
+### form_filler.py (EXECUTION ENGINE) depends on:
+
 ```
 form_filler.py
  ├── atf_login.py (login MUST succeed first)
@@ -250,6 +251,7 @@ form_filler.py
 ## 🔍 SELECTOR RELIABILITY MATRIX
 
 ### Label-Based Approach (Current)
+
 ```python
 def get_selector(field_name: str) -> str:
     """Get CSS selector using label-based strategy."""
@@ -263,15 +265,18 @@ def get_selector(field_name: str) -> str:
 ```
 
 **Advantages**:
+
 - ✅ Resistant to HTML restructuring
 - ✅ Matches semantic meaning
 - ✅ Easy to verify in Chrome DevTools
 
 **Risks**:
+
 - ❌ Label text changes → selector fails
 - ❌ Multiple inputs with same placeholder → ambiguity
 
 **Mitigation**:
+
 - Always add context (parent container + sibling elements)
 - Use `nth-child()` as fallback ONLY if label-based fails
 - Test against live SEFAZ before deploying
@@ -311,6 +316,7 @@ def get_selector(field_name: str) -> str:
 ## ⏳ DELAY STRATEGY & TUNING
 
 ### Current Delays (in milliseconds)
+
 ```python
 DEFAULT_DELAY = 1500              # Default wait
 FIELD_DELAY = 800                 # Field-level interactions
@@ -326,11 +332,13 @@ AFTER_PRODUTO_DELAY = 1000
 ```
 
 ### When to Increase Delays
+
 - ⚠️ Timeout errors on slow networks
 - ⚠️ SEFAZ returns 504/502 responses
 - ⚠️ JavaScript rendering incomplete
 
 ### When to Decrease Delays
+
 - 🚀 Fast network connection (< 50ms latency)
 - 🚀 Local testing / staging environments
 - 🚀 Performance benchmarking
@@ -342,6 +350,7 @@ AFTER_PRODUTO_DELAY = 1000
 ## 📺 SCREENSHOT STRATEGY
 
 ### Automatic Capture Points
+
 ```
 ✅ After login success
 ✅ Before form fill starts
@@ -352,6 +361,7 @@ AFTER_PRODUTO_DELAY = 1000
 ```
 
 ### Organization
+
 ```
 output/nfa/screenshots/<cpf>/
  ├── login_success.png              # Login phase
@@ -366,6 +376,7 @@ output/nfa/screenshots/<cpf>/
 ```
 
 ### Debug Usage
+
 ```bash
 # View all screenshots for a CPF
 open output/nfa/screenshots/12345678900/
@@ -382,6 +393,7 @@ find output/nfa/screenshots -name "*error*"
 ## 📳 ERROR HANDLING & RECOVERY
 
 ### Retry Strategy (Exponential Backoff)
+
 ```python
 BASE_DELAY = 2000  # milliseconds
 
@@ -396,6 +408,7 @@ await page.wait_for_timeout(delay_ms)
 ```
 
 ### Error Capture (Every Failure)
+
 ```python
 try:
     await page.fill(selector, value)
@@ -403,12 +416,12 @@ except Exception as e:
     # Capture error context
     logger.error(f"Fill failed for {selector}: {e}")
     await save_screenshot(page, dir, "error_fill.png")
-    
+
     # Extract HTML for inspection
     html_dump = await page.content()
     with open(f"logs/nfa/html_dump_{timestamp}.html", "w") as f:
         f.write(html_dump)
-    
+
     # Retry OR escalate
     if attempt < 3:
         await page.wait_for_timeout(BASE_DELAY * (2 ** attempt))
@@ -421,31 +434,34 @@ except Exception as e:
 
 ## 🚨 FAILURE MODES & RECOVERY
 
-| Failure | Symptom | Root Cause | Recovery |
-|---------|---------|-----------|----------|
-| **Login Timeout** | `wait_for_selector(mainFrame)` fails | SEFAZ down / network issue | Retry login 3x + alert |
-| **Selector Not Found** | `Error: failed to find element matching selector" | HTML changed on SEFAZ | Extract HTML + update `atf_selectors.py` |
-| **CEP Lookup Fails** | Endereço fields remain empty | Invalid ZIP / API error | Log warning + skip auto-fill |
-| **PDF Download Fails** | File size 0 bytes | Browser context lost | Close + reopen context + retry 3x |
-| **Form Submit Fails** | Validation error on form | Missing required field | Screenshot + extract error message |
-| **Browser Crash** | Process exits | OOM / Playwright issue | Rebuild context + retry CPF |
+| Failure                | Symptom                                           | Root Cause                 | Recovery                                 |
+| ---------------------- | ------------------------------------------------- | -------------------------- | ---------------------------------------- |
+| **Login Timeout**      | `wait_for_selector(mainFrame)` fails              | SEFAZ down / network issue | Retry login 3x + alert                   |
+| **Selector Not Found** | `Error: failed to find element matching selector" | HTML changed on SEFAZ      | Extract HTML + update `atf_selectors.py` |
+| **CEP Lookup Fails**   | Endereço fields remain empty                      | Invalid ZIP / API error    | Log warning + skip auto-fill             |
+| **PDF Download Fails** | File size 0 bytes                                 | Browser context lost       | Close + reopen context + retry 3x        |
+| **Form Submit Fails**  | Validation error on form                          | Missing required field     | Screenshot + extract error message       |
+| **Browser Crash**      | Process exits                                     | OOM / Playwright issue     | Rebuild context + retry CPF              |
 
 ---
 
 ## 🔐 SECURITY CONSIDERATIONS
 
 ### Credential Handling
+
 - ✅ NFA_USERNAME in `.env` (never in code)
 - ✅ NFA_PASSWORD in `.env` (never in code)
 - ✅ No credential logging (sanitize logs)
 
 ### Form Data
+
 - ✅ Data isolation per CPF
 - ✅ Screenshots saved locally only
 - ✅ PDFs encrypted at rest (optional)
 - ✅ No data sent to external services (except CEP lookup)
 
 ### Anti-Bot
+
 - ✅ Realistic user-agent (handled by Playwright)
 - ✅ Proper delays between actions (delays.py)
 - ✅ No rapid form resubmission
@@ -456,6 +472,7 @@ except Exception as e:
 ## 📊 TESTING STRATEGY
 
 ### Pre-Deployment Checklist
+
 ```bash
 # 1. Syntax check
 python -m py_compile app/modules/nfa/*.py
@@ -477,6 +494,7 @@ python -c "from app.modules.nfa import *; print('OK')"
 ```
 
 ### Validation Criteria
+
 - ✅ Exit code 0 (success)
 - ✅ Logs contain "Form submitted successfully"
 - ✅ PDFs exist and > 0 bytes
@@ -488,12 +506,14 @@ python -c "from app.modules.nfa import *; print('OK')"
 ## 🚀 DEPLOYMENT & SCALING
 
 ### Single Instance (Current)
+
 - Port: 9500
 - venv: `~/Documents/.venvs/fbp`
 - Processes: 1 (sequential CPF processing)
 - Time per NFA: 45-60 seconds
 
 ### Parallel Scaling (Future)
+
 - Use `asyncio.gather()` for 3-5 concurrent contexts
 - Isolate state per context (browser session unique)
 - Aggregate results after all complete

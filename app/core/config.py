@@ -1,4 +1,7 @@
-"""Configuration management for FBP."""
+"""Configuration management for FBP.
+
+Optimized for: iMac M3 (Mac15,5) | 8 cores (4P+4E) | 16GB RAM | macOS 26.0 Tahoe
+"""
 
 from __future__ import annotations
 
@@ -7,6 +10,32 @@ from pathlib import Path
 from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HARDWARE PROFILE: iMac M3 (Mac15,5)
+# ═══════════════════════════════════════════════════════════════════════════════
+HARDWARE_PROFILE = {
+    "model": "iMac (Mac15,5)",
+    "chip": "Apple M3",
+    "cpu_cores": 8,
+    "performance_cores": 4,
+    "efficiency_cores": 4,
+    "gpu_cores": 10,
+    "neural_engine_cores": 16,
+    "neural_engine_tops": 18,  # 18 TOPS
+    "memory_gb": 16,
+    "os": "macOS 26.0 Tahoe (Beta)",
+}
+
+# M3-optimized concurrency limits (based on 16GB unified memory)
+M3_LIMITS = {
+    "max_concurrent_browsers": 3,  # ~1.5GB per Playwright instance
+    "max_concurrent_jobs": 4,      # Leave headroom for system
+    "browser_memory_mb": 1536,     # Expected memory per browser
+    "safe_memory_threshold": 0.80, # Don't exceed 80% memory usage
+    "batch_size_default": 10,      # Optimal batch size for M3
+}
 
 
 class PathsConfig:
@@ -38,7 +67,7 @@ class PathsConfig:
 
 
 class Settings(BaseSettings):
-    """Application settings."""
+    """Application settings optimized for iMac M3."""
 
     # Project metadata
     PROJECT_NAME: str = "FBP"
@@ -56,8 +85,8 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str = "INFO"
 
-    # Machine info (can be overridden via env)
-    MACHINE_INFO: str = "iMac M3 / MacBook Air M4"
+    # Machine info - iMac M3 (Mac15,5)
+    MACHINE_INFO: str = "iMac M3 (Mac15,5) | 8 cores | 16GB | macOS 26.0"
 
     # Paths configuration
     PROJECT_ROOT: Optional[str] = None  # Optional override for project root
@@ -82,6 +111,10 @@ class Settings(BaseSettings):
     # Job backend settings
     JOB_BACKEND: str = "in_memory"  # "in_memory", "redis", "db"
     JOB_TIMEOUT_SECONDS: int = 3600  # Default job timeout (1 hour)
+
+    # Cloudflare Zero Trust tunnel settings
+    EXTERNAL_URL: str = "https://fbp.giovannini.us"  # External access URL
+    ALLOWED_ORIGINS: str = "http://localhost,http://127.0.0.1,https://foks.giovannini.us,https://fbp.giovannini.us,https://giovannini.us"
 
     model_config = SettingsConfigDict(
         env_file=".env",

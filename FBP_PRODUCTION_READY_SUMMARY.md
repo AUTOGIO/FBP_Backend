@@ -1,4 +1,4 @@
-# FBP NFA System - Production Ready Summary ✅
+<<# FBP NFA System - Production Ready Summary ✅
 
 **Date**: $(date)  
 **Status**: ✅ PRODUCTION READY  
@@ -9,6 +9,7 @@
 ## 🎯 System Status
 
 ### ✅ Complete Consolidation
+
 - **FBP is the ONLY source of truth** for NFA automation
 - **NOTAS_AVULSAS is NO LONGER NEEDED** - folder deleted, no code references
 - All NFA logic consolidated in `app/modules/nfa/`
@@ -18,6 +19,7 @@
 ## 📁 Component Inventory
 
 ### Core NFA Modules (17 files)
+
 All components verified and production-ready:
 
 1. ✅ `atf_login.py` - Login automation with retry logic
@@ -43,7 +45,9 @@ All components verified and production-ready:
 ## 🔧 Production Scripts
 
 ### Operations Scripts
+
 1. ✅ `ops/run_nfa_now.sh` - End-to-end NFA runner
+
    - Uses absolute venv paths
    - Port 9500 consistently
    - Validates Playwright + Chromium
@@ -51,18 +55,21 @@ All components verified and production-ready:
    - Creates screenshots + PDFs correctly
 
 2. ✅ `ops/nfa_self_test.sh` - Self-test diagnostics
+
    - Health check
    - Module imports
    - Directory validation
    - Playwright verification
 
 3. ✅ `ops/scripts/foks_env_autofix.sh` - Environment auto-fix
+
    - Creates venv if missing
    - Installs dependencies
    - Verifies Playwright + Chromium
    - Creates output directories
 
 4. ✅ `ops/scripts/foks_boot.sh` - Server boot script
+
    - Activates venv
    - Validates dependencies
    - Starts server on port 9500
@@ -79,9 +86,11 @@ All components verified and production-ready:
 ## ⚙️ Configuration
 
 ### Universal Delay System
+
 **File**: `app/modules/nfa/delays.py`
 
 All delays centralized - **NO hardcoded waits**:
+
 - `DEFAULT_DELAY = 1500ms`
 - `FIELD_DELAY = 800ms`
 - `NETWORK_IDLE_TIMEOUT = 30000ms`
@@ -90,12 +99,12 @@ All delays centralized - **NO hardcoded waits**:
 - Plus section-specific delays
 
 ### CPF Batch Input
+
 **File**: `input/cpf_batch.json`
+
 ```json
 {
-  "destinatarios": [
-    "73825506215"
-  ]
+  "destinatarios": ["73825506215"]
 }
 ```
 
@@ -104,6 +113,7 @@ All delays centralized - **NO hardcoded waits**:
 ## 🚀 Usage
 
 ### Quick Start
+
 ```bash
 # 1. Fix environment
 ./ops/scripts/foks_env_autofix.sh
@@ -122,6 +132,7 @@ All delays centralized - **NO hardcoded waits**:
 ```
 
 ### API Endpoints
+
 - **Health**: `http://localhost:9500/health`
 - **Single NFA**: `POST http://localhost:9500/api/nfa/create`
 - **Batch NFA**: `POST http://localhost:9500/api/nfa/batch`
@@ -132,6 +143,7 @@ All delays centralized - **NO hardcoded waits**:
 ## 📊 Features
 
 ### ✅ Production-Ready Features
+
 1. **Universal Delay System** - All waits use `delays.py` constants
 2. **Dynamic Iframe Detection** - Scans all iframes automatically
 3. **Label-Based Selectors** - More stable than nth() selectors
@@ -148,6 +160,7 @@ All delays centralized - **NO hardcoded waits**:
 ## 🔍 Validation Checklist
 
 ### Code Quality
+
 - ✅ No hardcoded delays (all use `delays.py`)
 - ✅ No NOTAS_AVULSAS references in code
 - ✅ All components exist and are correct
@@ -156,6 +169,7 @@ All delays centralized - **NO hardcoded waits**:
 - ✅ PDF retry logic (3 attempts)
 
 ### Scripts
+
 - ✅ All scripts use absolute venv paths
 - ✅ Port 9500 used consistently
 - ✅ Playwright + Chromium validation
@@ -163,6 +177,7 @@ All delays centralized - **NO hardcoded waits**:
 - ✅ CPF batch file support
 
 ### System
+
 - ✅ FBP is only source of truth
 - ✅ No external workspace dependencies
 - ✅ All delays configurable via `delays.py`
@@ -211,11 +226,13 @@ logs/nfa/
 ## ✅ Final Confirmation
 
 ### NOTAS_AVULSAS Status
+
 - ✅ Folder deleted: `/Users/dnigga/Projects/NOTAS_AVULSAS` (NOT_FOUND)
 - ✅ No code references to NOTAS_AVULSAS
 - ✅ Only documentation references (historical reports)
 
 ### FBP Status
+
 - ✅ **FBP is the ONLY source of truth**
 - ✅ All NFA logic in `app/modules/nfa/`
 - ✅ All delays in `app/modules/nfa/delays.py`
@@ -236,3 +253,5 @@ logs/nfa/
 **System Status**: ✅ **PRODUCTION READY**  
 **Last Updated**: $(date)  
 **Validated By**: Automated System Validation
+
+> >

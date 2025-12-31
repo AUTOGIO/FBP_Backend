@@ -51,7 +51,7 @@ FBP_Backend/
 │   ├── routers/           # FastAPI routers
 │   │   ├── n8n_*.py     # n8n-compatible endpoints
 │   │   └── *.py         # Other endpoints
-│   └── services/          # Service layer (orchestration)
+│   └── services/          # Service layer (execution)
 ├── docs/                  # Documentation
 ├── tests/                 # Test suite
 ├── scripts/               # Utility scripts
@@ -95,12 +95,14 @@ Runs server with:
 The FastAPI backend is **ALWAYS** started by the LaunchAgent (port 8000).
 
 **Key Principles:**
+
 - Automation scripts do **NOT** start backend servers
 - All scripts always call `API_URL=http://localhost:8000`
 - Playwright flows use the same backend → ensures consistency, correct inputs, no mismatched payloads
 - Single source of truth: LaunchAgent is the sole owner of the backend process
 
 **Benefits:**
+
 - Deterministic behavior: same backend instance for all operations
 - No port conflicts: single port (8000) for all services
 - Consistent state: all automations share the same backend state
@@ -233,7 +235,7 @@ Dev:
 ## 🏗️ Architecture
 
 - **Routers**: HTTP endpoints (no business logic)
-- **Services**: Orchestration layer
+- **Services**: Execution layer
 - **Modules**: Business logic (reusable)
 - **Core**: Shared utilities
 

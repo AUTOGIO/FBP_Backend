@@ -16,5 +16,5 @@ else
 fi
 curl -s http://localhost:8000/health
 cp data_input_final input/cpf_batch.json
-python nfa_batch_processor.py input/cpf_batch.json --max-forms 10
+python nfa_batch_processor.py input/cpf_batch.json --max-forms 20
 echo "=== AUTOMATION COMPLETE ==="

@@ -68,6 +68,8 @@ logs/
 # Gmail API
 config/auth/token.json
 config/auth/credentials.json
+credentials/
+credentials/*.json
 *.json.backup_*
 
 # Project specific

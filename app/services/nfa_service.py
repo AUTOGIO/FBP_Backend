@@ -1,4 +1,10 @@
-"""NFA Service - Orchestrates NFA automation using migrated modules."""
+"""NFA Service - Executes NFA automation using migrated modules.
+
+⚠️ ARCHITECTURAL GUARDRAIL:
+This service OWNS execution. Do NOT add orchestration logic here.
+Do NOT delegate execution to external systems. Do NOT add workflow engines,
+background job frameworks, or schedulers. Keep execution deterministic and resumable.
+"""
 
 from __future__ import annotations
 
@@ -133,6 +139,17 @@ async def create_nfa_batch(
 
     """
     try:
+        # If credentials not provided, fall back to backend settings/env.
+        # This matches create_nfa() behavior and avoids requiring clients to send secrets.
+        if not credentials:
+            from app.core.config import settings
+
+            if settings.NFA_USERNAME and settings.NFA_PASSWORD:
+                credentials = {
+                    "usuario": settings.NFA_USERNAME,
+                    "senha": settings.NFA_PASSWORD,
+                }
+
         processor = BatchNFAProcessor(config=config or {})
         results = await processor.process_batch(
             form_data_list,

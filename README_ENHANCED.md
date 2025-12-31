@@ -3,6 +3,7 @@
 **Global FastAPI Backend for SEFAZ-PB NFA automation and tax compliance workflows.**
 
 **Status**: ✅ **PRODUCTION READY** | **Location**: `/Users/dnigga/Documents/FBP_Backend`  
+**Service Type**: **ON-DEMAND** (optional, can be intentionally stopped)  
 **Powered by**: NFA_AUTOMATION_SPECIALIST_AI | **Mode**: Self-Healing & Self-Testing
 
 ---
@@ -12,6 +13,8 @@
 This system is the **ONLY source of truth** for SEFAZ-PB NFA automation. It consolidates all NFA logic, provides self-healing capabilities, and maintains zero-regression discipline.
 
 **Key Principle**: _Working code is sacred. Never break it._
+
+**Service Classification**: FBP is an **ON-DEMAND service**—it can be intentionally stopped without affecting system health. The morning brain monitoring system (FoKS Intelligence) treats FBP as optional and will not trigger alerts when FBP is down.
 
 ---
 
@@ -47,12 +50,24 @@ pip install -e ".[dev]"
 **Option A: Manual Start (for development)**
 
 ```bash
-# Production mode
+# Production mode (UNIX socket - default)
 ./scripts/start.sh
 
-# OR Development mode (hot reload)
+# OR Development mode (hot reload, UNIX socket)
 ./scripts/dev.sh
+
+# OR TCP Port mode (for debugging/monitoring integration)
+FBP_PORT=9500 ./scripts/start.sh  # Runs on port 9500 (for morning brain monitoring)
+FBP_PORT=8000 ./scripts/start.sh  # Runs on port 8000 (default TCP port)
 ```
+
+**Port Configuration:**
+
+- **Default**: UNIX socket at `/tmp/fbp.sock` (recommended for production, no port conflicts)
+- **TCP Port 8000**: Default TCP port when `FBP_PORT=8000` is set (from `app/core/config.py`)
+- **TCP Port 9500**: Used for monitoring integration (morning brain system expects this port)
+- Set `FBP_PORT` environment variable to enable TCP port mode
+- **Note**: FBP is ON-DEMAND—stopping it does not affect system health monitoring
 
 **Option B: Background Service (persistent, survives terminal closure)**
 
@@ -93,8 +108,13 @@ launchctl list | grep com.fbp.backend
 - Keep running even when terminal windows close
 - Log output to `logs/server.log` and `logs/server_error.log`
 
-Server available at: `http://localhost:8000`  
-API Docs: `http://localhost:8000/docs`
+**Server Access:**
+
+- **UNIX Socket Mode (Default)**: `/tmp/fbp.sock` (production, Apple Silicon optimized)
+- **TCP Port Mode (Debug)**: `http://localhost:8000` or `http://localhost:9500` (when `FBP_PORT` is set)
+- **API Docs**: `http://localhost:8000/docs` (when running in TCP port mode)
+
+**Note**: FBP is an **ON-DEMAND service**—it can be intentionally stopped without affecting system health. The morning brain monitoring system treats FBP as optional.
 
 ### 4. Run NFA Automation
 
@@ -105,8 +125,11 @@ API Docs: `http://localhost:8000/docs`
 # Batch NFA (from file: input/cpf_batch.json)
 ./ops/run_nfa_now.sh batch
 
-# Health check
-curl http://localhost:8000/health
+# Health check (UNIX socket mode)
+curl --unix-socket /tmp/fbp.sock http://localhost/health
+
+# Health check (TCP port mode - when FBP_PORT is set)
+curl http://localhost:8000/health  # or http://localhost:9500/health
 ```
 
 ---
@@ -127,7 +150,7 @@ FBP_Backend/
 │   │   │   ├── atf_login.py              # Login + forced navigation
 │   │   │   ├── atf_frames.py             # Dynamic iframe detection
 │   │   │   ├── atf_selectors.py          # CSS selectors (label-based)
-│   │   │   ├── form_filler.py            # Main orchestrator
+│   │   │   ├── form_filler.py            # Main execution engine
 │   │   │   ├── produto_filler.py         # Product/item filling
 │   │   │   ├── emitente_filler.py        # Emitente section
 │   │   │   ├── destinatario_filler.py    # Destinatario section
@@ -154,8 +177,8 @@ FBP_Backend/
 │   │   ├── health_router.py       # Health check endpoints
 │   │   └── *.py                   # Other routers
 │   │
-│   ├── services/                  # Orchestration layer
-│   │   └── nfa_service.py        # NFA orchestrator
+│   ├── services/                  # Execution layer
+│   │   └── nfa_service.py        # NFA execution engine
 │   │
 │   └── main.py                    # FastAPI app entry point
 │
@@ -220,6 +243,31 @@ FBP_Backend/
 
 ## ⚙️ Configuration
 
+### Server Mode & Ports
+
+FBP supports two operation modes:
+
+**1. UNIX Socket Mode (Default - Production)**
+
+- Uses `/tmp/fbp.sock` for communication
+- Optimized for Apple Silicon performance
+- No port conflicts
+- Access via: `curl --unix-socket /tmp/fbp.sock http://localhost/health`
+
+**2. TCP Port Mode (Debug/Monitoring)**
+
+- Set `FBP_PORT` environment variable to enable
+- Default port: `8000` (from `app/core/config.py`)
+- Monitoring port: `9500` (for morning brain system integration)
+- Access via: `curl http://localhost:9500/health`
+
+**Service Classification:**
+
+- FBP is **ON-DEMAND** (optional service)
+- Can be intentionally stopped without affecting system health
+- Morning brain monitoring system treats FBP as optional
+- System health remains "healthy" even when FBP is down
+
 ### Universal Delay System
 
 **File**: `app/modules/nfa/delays.py`
@@ -255,11 +303,19 @@ PDF_WAIT = 5000               # ms - PDF download
 ### Health & Status
 
 ```bash
-GET /health
+# UNIX Socket Mode (default)
+curl --unix-socket /tmp/fbp.sock http://localhost/health
+→ {"status": "healthy", "components": {...}}
+
+# TCP Port Mode (when FBP_PORT is set)
+curl http://localhost:8000/health  # or http://localhost:9500/health
 → {"status": "healthy", "components": {...}}
 
 GET /api/nfa/health
 → {"status": "ready", "playwright": "ok", "chromium": "ok"}
+
+GET /socket-health
+→ {"status": "ok", "via": "unix", "socket_path": "/tmp/fbp.sock", ...}
 ```
 
 ### NFA Operations
@@ -364,6 +420,19 @@ In n8n workflow:
 # ✅ Selectors valid
 # ✅ Scripts executable
 # ✅ Playwright ready
+```
+
+### Service Status Check
+
+```bash
+# Check if FBP is running (UNIX socket)
+curl --unix-socket /tmp/fbp.sock http://localhost/health 2>/dev/null && echo "✅ FBP running (socket)" || echo "⚪ FBP not running"
+
+# Check if FBP is running (TCP port 9500 - for monitoring)
+curl http://localhost:9500/health 2>/dev/null && echo "✅ FBP running (port 9500)" || echo "⚪ FBP not running (on-demand)"
+
+# Check if FBP is running (TCP port 8000)
+curl http://localhost:8000/health 2>/dev/null && echo "✅ FBP running (port 8000)" || echo "⚪ FBP not running"
 ```
 
 ### Component Testing
@@ -658,6 +727,30 @@ docker run -e SEFAZ_LOGIN=... -e SEFAZ_PASSWORD=... \
 
 ---
 
+## 🔗 Integration with Morning Brain System
+
+FBP integrates with the **Daily Morning Brain** monitoring system (FoKS Intelligence):
+
+- **Monitoring Port**: `9500` (when `FBP_PORT=9500` is set)
+- **Service Classification**: **ON-DEMAND** (optional, not required for system health)
+- **Health Endpoint**: `/health` (used by morning brain dashboard)
+- **Behavior**: System remains "healthy" even when FBP is intentionally stopped
+
+**To enable monitoring integration:**
+
+```bash
+# Start FBP on port 9500 for monitoring
+FBP_PORT=9500 ./scripts/start.sh
+
+# Or set in environment
+export FBP_PORT=9500
+./scripts/start.sh
+```
+
+**Note**: FBP can run in UNIX socket mode (default) or TCP port mode. The morning brain system checks TCP port 9500, so set `FBP_PORT=9500` if you want monitoring integration.
+
+---
+
 ## 🚀 Production Deployment
 
 ### Pre-Deployment Checklist
@@ -680,6 +773,10 @@ grep ERROR logs/nfa/*.log
 
 # 6. Confirm PDFs generated
 ls -la output/nfa/pdf/*/
+
+# 7. Verify service mode (socket vs TCP port)
+curl --unix-socket /tmp/fbp.sock http://localhost/health || \
+curl http://localhost:${FBP_PORT:-8000}/health
 ```
 
 ### Deployment Steps
@@ -750,5 +847,8 @@ MIT
 ---
 
 **System Status**: ✅ **PRODUCTION READY**  
-**Last Updated**: 2025-12-05  
+**Service Type**: **ON-DEMAND** (optional, can be intentionally stopped)  
+**Default Mode**: UNIX Socket (`/tmp/fbp.sock`)  
+**Monitoring Port**: `9500` (when `FBP_PORT=9500` is set)  
+**Last Updated**: 2025-12-22  
 **Maintained By**: NFA_AUTOMATION_SPECIALIST_AI

@@ -1,6 +1,7 @@
 """Browser Extractor for REDESIM
 Handles HTML extraction with Cursor Browser Agent and Playwright CDP fallback.
 """
+
 from __future__ import annotations
 
 import logging
@@ -17,7 +18,8 @@ try:
     CURSOR_AVAILABLE = True
 except ImportError:
     CURSOR_AVAILABLE = False
-    logger.warning("Cursor Browser API not available")
+    # Silent: Cursor browser is only available inside Cursor IDE, not in terminal.
+    # Playwright is the primary automation method for terminal execution.
 
 
 class BrowserExtractor:
@@ -79,11 +81,13 @@ class BrowserExtractor:
             raise
 
     async def _extract_processes_from_html(
-        self, html: str,
+        self,
+        html: str,
     ) -> list[dict[str, Any]]:
         """Extract process data from HTML content."""
         row_pattern = self.config.get("browser", {}).get(
-            "results_row_pattern", r"<tr[^>]*>.*?</tr>",
+            "results_row_pattern",
+            r"<tr[^>]*>.*?</tr>",
         )
         rows = re.findall(row_pattern, html, re.DOTALL | re.IGNORECASE)
         logger.info(f"Found {len(rows)} table rows")
@@ -94,7 +98,8 @@ class BrowserExtractor:
         for i, row in enumerate(rows, 1):
             processo_match = re.search(
                 extraction_config.get(
-                    "campo_processo", self.PROCESSO_RE.pattern,
+                    "campo_processo",
+                    self.PROCESSO_RE.pattern,
                 ),
                 row,
                 re.IGNORECASE,
@@ -117,9 +122,7 @@ class BrowserExtractor:
                     "processo": self.normalize_text(processo_match.group(0)),
                     "razao_social": self.normalize_text(razao_match.group(0)),
                     "cnpj": (
-                        self.normalize_text(cnpj_match.group(0))
-                        if cnpj_match
-                        else ""
+                        self.normalize_text(cnpj_match.group(0)) if cnpj_match else ""
                     ),
                     "emails": emails,
                     "row_index": i,

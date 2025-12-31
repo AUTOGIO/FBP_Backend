@@ -2,6 +2,8 @@
 All responses follow n8n-friendly format: {success, data, errors}.
 """
 
+from __future__ import annotations
+
 import logging
 from typing import Any
 

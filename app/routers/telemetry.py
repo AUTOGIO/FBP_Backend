@@ -1,0 +1,34 @@
+"""Telemetry Router - System Metrics API for FBP Backend"""
+
+from fastapi import APIRouter
+from app.services.telemetry import (
+    get_system_metrics,
+    check_system_health,
+    get_browser_recommendation
+)
+
+router = APIRouter(prefix="/api/v1/telemetry", tags=["telemetry"])
+
+
+@router.get("/")
+async def health():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "telemetry"}
+
+
+@router.get("/metrics")
+async def metrics():
+    """Get full system metrics"""
+    return get_system_metrics()
+
+
+@router.get("/health")
+async def system_health():
+    """Check system health for batch processing"""
+    return check_system_health()
+
+
+@router.get("/browser-capacity")
+async def browser_capacity():
+    """Get recommended max concurrent browser instances"""
+    return get_browser_recommendation()

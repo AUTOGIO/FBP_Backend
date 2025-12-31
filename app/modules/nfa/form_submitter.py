@@ -6,11 +6,59 @@ from __future__ import annotations
 
 import logging
 import random
+import re
+from urllib.parse import parse_qs, urlparse
 
 from app.modules.nfa.delays import AFTER_SUBMIT_DELAY, BEFORE_SUBMIT_DELAY
 from app.modules.nfa.nfa_context import NFAContext, get_page_from_context
 
 logger = logging.getLogger(__name__)
+
+
+def _extract_nfa_number_from_text(text: str) -> str | None:
+    if not text:
+        return None
+
+    # Prefer matches explicitly anchored to NFA wording.
+    patterns = [
+        r"\bNFA\b\D{0,40}?(\d{4,})",
+        r"\bNota\s+Fiscal\s+Avulsa\b\D{0,60}?(\d{4,})",
+        r"\bNota\s+Fiscal\b\D{0,60}?(\d{4,})",
+        r"\bN[úu]mero\b\D{0,20}?(\d{4,})",
+    ]
+
+    candidates: list[str] = []
+    for pattern in patterns:
+        for match in re.finditer(pattern, text, flags=re.IGNORECASE | re.DOTALL):
+            candidates.append(match.group(1))
+
+    if not candidates:
+        return None
+
+    # Filter out obvious document numbers (CPF 11 digits / CNPJ 14 digits).
+    filtered = [c for c in candidates if len(c) not in (11, 14)]
+    if not filtered:
+        filtered = candidates
+
+    # Choose the most plausible: longest (often includes leading zeros), then last.
+    filtered.sort(key=lambda v: (len(v), candidates.index(v)))
+    return filtered[-1]
+
+
+def _extract_nfa_number_from_url(url: str) -> str | None:
+    if not url:
+        return None
+    try:
+        parsed = urlparse(url)
+        qs = parse_qs(parsed.query)
+        for key in ("nfa", "nrNfa", "nr_nfa", "numeroNfa", "numero", "nr"):
+            if key in qs and qs[key]:
+                val = re.sub(r"\D+", "", qs[key][0])
+                if len(val) >= 4:
+                    return val
+    except Exception:
+        return None
+    return None
 
 
 async def submeter_nfa(ctx: NFAContext) -> tuple[bool, str | None]:
@@ -75,30 +123,46 @@ async def submeter_nfa(ctx: NFAContext) -> tuple[bool, str | None]:
         except Exception:
             pass
 
-        # Try to extract NFA number from page
-        nfa_number = None
-        nfa_extract_selectors = [
-            "text=/NFA[\\s\\-]?[0-9]+/i",
-            "text=/Nota[\\s]+Fiscal[\\s]+[0-9]+/i",
-            "td:has-text('NFA') + td",
-            "td:has-text('Nota Fiscal') + td",
-        ]
+        # Try to extract NFA number from URL first (sometimes present after submit)
+        nfa_number = _extract_nfa_number_from_url(page.url)
+        if nfa_number:
+            logger.info(f"✓ Extracted NFA number from URL: {nfa_number}")
 
-        for selector in nfa_extract_selectors:
+        # Then try targeted DOM locations
+        if not nfa_number:
+            nfa_extract_selectors = [
+                "td:has-text('NFA') + td",
+                "td:has-text('Nota Fiscal Avulsa') + td",
+                "td:has-text('Nota Fiscal') + td",
+                "text=/\\bNFA\\b/i",
+                "text=/Nota\\s+Fiscal/i",
+            ]
+
+            for selector in nfa_extract_selectors:
+                try:
+                    element = ctx.locator(selector).first
+                    if await element.is_visible(timeout=2500):
+                        text = (await element.text_content()) or ""
+                        candidate = _extract_nfa_number_from_text(text)
+                        if candidate:
+                            nfa_number = candidate
+                            logger.info(
+                                f"✓ Extracted NFA number via selector {selector}: {nfa_number}"
+                            )
+                            break
+                except Exception:
+                    continue
+
+        # Finally, search the full page text anchored by NFA wording.
+        if not nfa_number:
             try:
-                element = ctx.locator(selector).first
-                if await element.is_visible(timeout=3000):
-                    text = await element.text_content()
-                    # Extract numbers from text
-                    import re
-
-                    numbers = re.findall(r"\d+", text or "")
-                    if numbers:
-                        nfa_number = numbers[0]
-                        logger.info(f"✓ Extracted NFA number: {nfa_number}")
-                        break
+                body_text = await page.locator("body").inner_text()
+                candidate = _extract_nfa_number_from_text(body_text)
+                if candidate:
+                    nfa_number = candidate
+                    logger.info(f"✓ Extracted NFA number from page text: {nfa_number}")
             except Exception:
-                continue
+                pass
 
         if nfa_number:
             logger.info(f"NFA submitted successfully. NFA Number: {nfa_number}")

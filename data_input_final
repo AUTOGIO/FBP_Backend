@@ -1,42 +1,1132 @@
 [
   {
-    "loja": "MG18- Remessa por conta de contrato de locação",
-    "cpf": "109.090.266-29"
+    "loja": "RR02- Remessa por conta de contrato de locação",
+    "cpf": "013.627.532-03",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG21- Remessa por conta de contrato de locação",
-    "cpf": "222.348.966-49"
+    "loja": "RS01- Remessa por conta de contrato de locação",
+    "cpf": "925.420.930-91",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG23- Remessa por conta de contrato de locação",
-    "cpf": "030.281.116-83"
+    "loja": "RS02- Remessa por conta de contrato de locação",
+    "cpf": "435.643.640-72",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG26- Remessa por conta de contrato de locação",
-    "cpf": "607.410.923-01"
+    "loja": "RS01- Remessa por conta de contrato de locação",
+    "cpf": "925.420.930-91",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG16- Remessa por conta de contrato de locação",
-    "cpf": "046.075.496-30"
+    "loja": "RS05- Remessa por conta de contrato de locação",
+    "cpf": "022.496.910-29",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG29- Remessa por conta de contrato de locação",
-    "cpf": "100.695.616-64"
+    "loja": "RS02- Remessa por conta de contrato de locação",
+    "cpf": "435.643.640-72",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MG30- Remessa por conta de contrato de locação",
-    "cpf": "084.683.286-00"
+    "loja": "RS07- Remessa por conta de contrato de locação",
+    "cpf": "959.354.870-04",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MS02- Remessa por conta de contrato de locação",
-    "cpf": "778.381.731-91"
+    "loja": "RS08- Remessa por conta de contrato de locação",
+    "cpf": "820.188.630-53",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MS04- Remessa por conta de contrato de locação",
-    "cpf": "885.014.421-00"
+    "loja": "RS09- Remessa por conta de contrato de locação",
+    "cpf": "649.416.202-91",
+    "test": "Remessa por conta de contrato de locação"
   },
   {
-    "loja": "MS05- Remessa por conta de contrato de locação",
-    "cpf": "822.501.701-34"
+    "loja": "RS10- Remessa por conta de contrato de locação",
+    "cpf": "014.227.630-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS01- Remessa por conta de contrato de locação",
+    "cpf": "925.420.930-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS02- Remessa por conta de contrato de locação",
+    "cpf": "435.643.640-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS15- Remessa por conta de contrato de locação",
+    "cpf": "014.513.842-97",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS16- Remessa por conta de contrato de locação",
+    "cpf": "184.872.030-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS17- Remessa por conta de contrato de locação",
+    "cpf": "688.576.240-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS18- Remessa por conta de contrato de locação",
+    "cpf": "027.600.830-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS07- Remessa por conta de contrato de locação",
+    "cpf": "959.354.870-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS25- Remessa por conta de contrato de locação",
+    "cpf": "351.093.511-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS29- Remessa por conta de contrato de locação",
+    "cpf": "956.935.720-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS32- Remessa por conta de contrato de locação",
+    "cpf": "911.089.000-97",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS34- Remessa por conta de contrato de locação",
+    "cpf": "001.590.210-22",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS02- Remessa por conta de contrato de locação",
+    "cpf": "435.643.640-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS36- Remessa por conta de contrato de locação",
+    "cpf": "008.772.790-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS01- Remessa por conta de contrato de locação",
+    "cpf": "925.420.930-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS20- Remessa por conta de contrato de locação",
+    "cpf": "134.692.814-17",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS22- Remessa por conta de contrato de locação",
+    "cpf": "833.934.204-53",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS26- Remessa por conta de contrato de locação",
+    "cpf": "150.646.754-70",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC05- Remessa por conta de contrato de locação",
+    "cpf": "084.821.279-77",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC06- Remessa por conta de contrato de locação",
+    "cpf": "053.792.259-85",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC07- Remessa por conta de contrato de locação",
+    "cpf": "945.576.401-68",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC09- Remessa por conta de contrato de locação",
+    "cpf": "548.917.529-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC10- Remessa por conta de contrato de locação",
+    "cpf": "006.880.799-62",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC11- Remessa por conta de contrato de locação",
+    "cpf": "961.679.550-34",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC11- Remessa por conta de contrato de locação",
+    "cpf": "961.679.550-34",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC13- Remessa por conta de contrato de locação",
+    "cpf": "093.929.469-96",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC15- Remessa por conta de contrato de locação",
+    "cpf": "053.517.009-21",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC16- Remessa por conta de contrato de locação",
+    "cpf": "833.465.542-87",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC18- Remessa por conta de contrato de locação",
+    "cpf": "027.381.419-27",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC02- Remessa por conta de contrato de locação",
+    "cpf": "015.116.039-25",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SE01- Remessa por conta de contrato de locação",
+    "cpf": "589.489.535-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SE02- Remessa por conta de contrato de locação",
+    "cpf": "034.070.015-76",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SE01- Remessa por conta de contrato de locação",
+    "cpf": "589.489.535-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SE06- Remessa por conta de contrato de locação",
+    "cpf": "800.201.195-34",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP04- Remessa por conta de contrato de locação",
+    "cpf": "350.258.188-69",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP05- Remessa por conta de contrato de locação",
+    "cpf": "091.610.146-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP11- Remessa por conta de contrato de locação",
+    "cpf": "294.644.938-60",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP13- Remessa por conta de contrato de locação",
+    "cpf": "052.343.434-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP14- Remessa por conta de contrato de locação",
+    "cpf": "131.553.408-86",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP15- Remessa por conta de contrato de locação",
+    "cpf": "313.229.758-50",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP16- Remessa por conta de contrato de locação",
+    "cpf": "152.432.998-39",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP18- Remessa por conta de contrato de locação",
+    "cpf": "760.333.763-15",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP21- Remessa por conta de contrato de locação",
+    "cpf": "089.241.218-63",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP125- Remessa por conta de contrato de locação",
+    "cpf": "409.013.628-83",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP25- Remessa por conta de contrato de locação",
+    "cpf": "294.524.468-38",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP155- Remessa por conta de contrato de locação",
+    "cpf": "108.463.757-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP28- Remessa por conta de contrato de locação",
+    "cpf": "614.314.862-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP02- Remessa por conta de contrato de locação",
+    "cpf": "091.745.028-08",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP31- Remessa por conta de contrato de locação",
+    "cpf": "148.280.048-90",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP101- Remessa por conta de contrato de locação",
+    "cpf": "151.868.668-06",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP42- Remessa por conta de contrato de locação",
+    "cpf": "111.446.728-64",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP48- Remessa por conta de contrato de locação",
+    "cpf": "326.221.968-14",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP50- Remessa por conta de contrato de locação",
+    "cpf": "339.585.718-24",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP101- Remessa por conta de contrato de locação",
+    "cpf": "151.868.668-06",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP155- Remessa por conta de contrato de locação",
+    "cpf": "108.463.757-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP58- Remessa por conta de contrato de locação",
+    "cpf": "276.568.058-26",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP136- Remessa por conta de contrato de locação",
+    "cpf": "468.667.016-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP68- Remessa por conta de contrato de locação",
+    "cpf": "100.229.328-60",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP142- Remessa por conta de contrato de locação",
+    "cpf": "086.176.404-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP82- Remessa por conta de contrato de locação",
+    "cpf": "107.806.238-27",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP83- Remessa por conta de contrato de locação",
+    "cpf": "329.401.408-20",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP49- Remessa por conta de contrato de locação",
+    "cpf": "190.709.658-28",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP92- Remessa por conta de contrato de locação",
+    "cpf": "091.312.168-11",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP95- Remessa por conta de contrato de locação",
+    "cpf": "132.479.638-39",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP96- Remessa por conta de contrato de locação",
+    "cpf": "453.315.518-90",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP101- Remessa por conta de contrato de locação",
+    "cpf": "151.868.668-06",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP104- Remessa por conta de contrato de locação",
+    "cpf": "227.465.668-18",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP109- Remessa por conta de contrato de locação",
+    "cpf": "326.166.148-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP114- Remessa por conta de contrato de locação",
+    "cpf": "030.476.241-51",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP115- Remessa por conta de contrato de locação",
+    "cpf": "370.111.678-46",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP117- Remessa por conta de contrato de locação",
+    "cpf": "292.516.928-74",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP119- Remessa por conta de contrato de locação",
+    "cpf": "187.516.278-09",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP02- Remessa por conta de contrato de locação",
+    "cpf": "091.745.028-08",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP130- Remessa por conta de contrato de locação",
+    "cpf": "281.868.788-82",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP142- Remessa por conta de contrato de locação",
+    "cpf": "086.176.404-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP144- Remessa por conta de contrato de locação",
+    "cpf": "126.842.538-97",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP145- Remessa por conta de contrato de locação",
+    "cpf": "148.392.878-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP150- Remessa por conta de contrato de locação",
+    "cpf": "273.416.958-46",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP151- Remessa por conta de contrato de locação",
+    "cpf": "049.428.408-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP154- Remessa por conta de contrato de locação",
+    "cpf": "103.116.918-03",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP155- Remessa por conta de contrato de locação",
+    "cpf": "108.463.757-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP158- Remessa por conta de contrato de locação",
+    "cpf": "254.855.788-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP162- Remessa por conta de contrato de locação",
+    "cpf": "808.011.531-15",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP166- Remessa por conta de contrato de locação",
+    "cpf": "174.853.548-09",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP167- Remessa por conta de contrato de locação",
+    "cpf": "071.387.264-06",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP168- Remessa por conta de contrato de locação",
+    "cpf": "394.147.818-46",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP178- Remessa por conta de contrato de locação",
+    "cpf": "168.474.928-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP189- Remessa por conta de contrato de locação",
+    "cpf": "297.153.608-40",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP191- Remessa por conta de contrato de locação",
+    "cpf": "326.486.538-64",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP193- Remessa por conta de contrato de locação",
+    "cpf": "082.581.318-26",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP214- Remessa por conta de contrato de locação",
+    "cpf": "054.974.399-50",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP217- Remessa por conta de contrato de locação",
+    "cpf": "111.208.318-90",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP218- Remessa por conta de contrato de locação",
+    "cpf": "011.511.838-14",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP247- Remessa por conta de contrato de locação",
+    "cpf": "394.066.848-61",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP01- Remessa por conta de contrato de locação",
+    "cpf": "083.135.469-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "AM13- Remessa por conta de contrato de locação",
+    "cpf": "844.652.042-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP01- Remessa por conta de contrato de locação",
+    "cpf": "083.135.469-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP66- Remessa por conta de contrato de locação",
+    "cpf": "084.266.018-63",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP03- Remessa por conta de contrato de locação",
+    "cpf": "303.692.308-09",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP01- Remessa por conta de contrato de locação",
+    "cpf": "083.135.469-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "BA46- Remessa por conta de contrato de locação",
+    "cpf": "474.057.245-15",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "BA47- Remessa por conta de contrato de locação",
+    "cpf": "866.937.606-78",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "BA48- Remessa por conta de contrato de locação",
+    "cpf": "006.381.945-71",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "BA34- Remessa por conta de contrato de locação",
+    "cpf": "052.418.794-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "CE26- Remessa por conta de contrato de locação",
+    "cpf": "242.087.443-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "CE49- Remessa por conta de contrato de locação",
+    "cpf": "011.492.433-33",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "DF13- Remessa por conta de contrato de locação",
+    "cpf": "049.061.481-74",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "DF14- Remessa por conta de contrato de locação",
+    "cpf": "179.622.851-68",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "DF15- Remessa por conta de contrato de locação",
+    "cpf": "824.820.801-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "ES15- Remessa por conta de contrato de locação",
+    "cpf": "093.029.707-52",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "MA19- Remessa por conta de contrato de locação",
+    "cpf": "066.947.886-57",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "MG27- Remessa por conta de contrato de locação",
+    "cpf": "015.411.296-87",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "MG33- Remessa por conta de contrato de locação",
+    "cpf": "004.961.252-22",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "MG34- Remessa por conta de contrato de locação",
+    "cpf": "326.759.088-43",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "MG39- Remessa por conta de contrato de locação",
+    "cpf": "019.532.236-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "PA37- Remessa por conta de contrato de locação",
+    "cpf": "006.012.652-38",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "PE32- Remessa por conta de contrato de locação",
+    "cpf": "028.388.664-19",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "PR27- Remessa por conta de contrato de locação",
+    "cpf": "075.548.208-50",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RJ05- Remessa por conta de contrato de locação",
+    "cpf": "945.836.412-49",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RJ23- Remessa por conta de contrato de locação",
+    "cpf": "129.190.417-46",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RN15- Remessa por conta de contrato de locação",
+    "cpf": "090.232.514-07",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "RS49- Remessa por conta de contrato de locação",
+    "cpf": "804.362.421-68",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SC17- Remessa por conta de contrato de locação",
+    "cpf": "401.947.388-92",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP01- Remessa por conta de contrato de locação",
+    "cpf": "083.135.469-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP02- Remessa por conta de contrato de locação",
+    "cpf": "091.745.028-08",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP03- Remessa por conta de contrato de locação",
+    "cpf": "303.692.308-09",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP06- Remessa por conta de contrato de locação",
+    "cpf": "279.698.708-64",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP07- Remessa por conta de contrato de locação",
+    "cpf": "424.420.458-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP10- Remessa por conta de contrato de locação",
+    "cpf": "396.136.628-47",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP12- Remessa por conta de contrato de locação",
+    "cpf": "220.402.368-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP19- Remessa por conta de contrato de locação",
+    "cpf": "073.899.878-80",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP32- Remessa por conta de contrato de locação",
+    "cpf": "286.773.348-07",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "AM13- Remessa por conta de contrato de locação",
+    "cpf": "844.652.042-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "AM13- Remessa por conta de contrato de locação",
+    "cpf": "844.652.042-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "AM13- Remessa por conta de contrato de locação",
+    "cpf": "844.652.042-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP236- Remessa por conta de contrato de locação",
+    "cpf": "299.715.388-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP43- Remessa por conta de contrato de locação",
+    "cpf": "345.336.128-81",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP44- Remessa por conta de contrato de locação",
+    "cpf": "894.392.794-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP47- Remessa por conta de contrato de locação",
+    "cpf": "090.192.538-16",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP49- Remessa por conta de contrato de locação",
+    "cpf": "190.709.658-28",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP10- Remessa por conta de contrato de locação",
+    "cpf": "396.136.628-47",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP59- Remessa por conta de contrato de locação",
+    "cpf": "353.027.978-10",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP61- Remessa por conta de contrato de locação",
+    "cpf": "396.863.518-33",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP62- Remessa por conta de contrato de locação",
+    "cpf": "320.371.378-00",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP178- Remessa por conta de contrato de locação",
+    "cpf": "168.474.928-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP65- Remessa por conta de contrato de locação",
+    "cpf": "384.097.228-01",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP59- Remessa por conta de contrato de locação",
+    "cpf": "353.027.978-10",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP178- Remessa por conta de contrato de locação",
+    "cpf": "168.474.928-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP71- Remessa por conta de contrato de locação",
+    "cpf": "317.101.798-99",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP73- Remessa por conta de contrato de locação",
+    "cpf": "167.570.278-01",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP75- Remessa por conta de contrato de locação",
+    "cpf": "308.199.918-99",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP236- Remessa por conta de contrato de locação",
+    "cpf": "299.715.388-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP80- Remessa por conta de contrato de locação",
+    "cpf": "570.846.456-91",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP238- Remessa por conta de contrato de locação",
+    "cpf": "302.246.008-26",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP84- Remessa por conta de contrato de locação",
+    "cpf": "136.397.918-35",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP93- Remessa por conta de contrato de locação",
+    "cpf": "090.441.146-03",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP94- Remessa por conta de contrato de locação",
+    "cpf": "339.625.728-64",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP241- Remessa por conta de contrato de locação",
+    "cpf": "228.953.718-73",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP99- Remessa por conta de contrato de locação",
+    "cpf": "163.546.688-17",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP105- Remessa por conta de contrato de locação",
+    "cpf": "530.669.058-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP107- Remessa por conta de contrato de locação",
+    "cpf": "147.292.908-01",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP108- Remessa por conta de contrato de locação",
+    "cpf": "021.753.027-33",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP110- Remessa por conta de contrato de locação",
+    "cpf": "248.754.268-36",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP111- Remessa por conta de contrato de locação",
+    "cpf": "391.340.438-45",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP236- Remessa por conta de contrato de locação",
+    "cpf": "299.715.388-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP116- Remessa por conta de contrato de locação",
+    "cpf": "332.374.788-73",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP122- Remessa por conta de contrato de locação",
+    "cpf": "253.555.748-74",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP124- Remessa por conta de contrato de locação",
+    "cpf": "103.832.091-70",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP125- Remessa por conta de contrato de locação",
+    "cpf": "409.013.628-83",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP128- Remessa por conta de contrato de locação",
+    "cpf": "296.087.188-05",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP131- Remessa por conta de contrato de locação",
+    "cpf": "339.698.328-96",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP137- Remessa por conta de contrato de locação",
+    "cpf": "328.729.168-81",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP139- Remessa por conta de contrato de locação",
+    "cpf": "258.840.598-33",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP140- Remessa por conta de contrato de locação",
+    "cpf": "229.298.618-35",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP236- Remessa por conta de contrato de locação",
+    "cpf": "299.715.388-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP146- Remessa por conta de contrato de locação",
+    "cpf": "228.949.518-25",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP147- Remessa por conta de contrato de locação",
+    "cpf": "939.713.111-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP10- Remessa por conta de contrato de locação",
+    "cpf": "396.136.628-47",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP147- Remessa por conta de contrato de locação",
+    "cpf": "939.713.111-72",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP157- Remessa por conta de contrato de locação",
+    "cpf": "366.329.598-22",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP159- Remessa por conta de contrato de locação",
+    "cpf": "315.444.558-79",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP161- Remessa por conta de contrato de locação",
+    "cpf": "341.351.168-84",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP164- Remessa por conta de contrato de locação",
+    "cpf": "296.878.148-02",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP165- Remessa por conta de contrato de locação",
+    "cpf": "183.010.008-48",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP169- Remessa por conta de contrato de locação",
+    "cpf": "106.562.858-77",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP171- Remessa por conta de contrato de locação",
+    "cpf": "367.191.748-27",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP175- Remessa por conta de contrato de locação",
+    "cpf": "347.766.878-28",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP177- Remessa por conta de contrato de locação",
+    "cpf": "256.002.598-16",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP179- Remessa por conta de contrato de locação",
+    "cpf": "248.939.658-75",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP181- Remessa por conta de contrato de locação",
+    "cpf": "257.903.798-50",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP182- Remessa por conta de contrato de locação",
+    "cpf": "093.971.948-79",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP183- Remessa por conta de contrato de locação",
+    "cpf": "470.711.568-32",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP186- Remessa por conta de contrato de locação",
+    "cpf": "199.345.108-04",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP188- Remessa por conta de contrato de locação",
+    "cpf": "381.608.288-29",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP190- Remessa por conta de contrato de locação",
+    "cpf": "001.999.497-43",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP196- Remessa por conta de contrato de locação",
+    "cpf": "395.550.918-46",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP199- Remessa por conta de contrato de locação",
+    "cpf": "409.793.948-30",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP203- Remessa por conta de contrato de locação",
+    "cpf": "304.110.758-96",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP205- Remessa por conta de contrato de locação",
+    "cpf": "166.947.418-63",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP208- Remessa por conta de contrato de locação",
+    "cpf": "385.574.078-07",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP181- Remessa por conta de contrato de locação",
+    "cpf": "257.903.798-50",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP212- Remessa por conta de contrato de locação",
+    "cpf": "219.454.218-35",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP213- Remessa por conta de contrato de locação",
+    "cpf": "429.857.198-01",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP215- Remessa por conta de contrato de locação",
+    "cpf": "009.680.578-10",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP216- Remessa por conta de contrato de locação",
+    "cpf": "076.742.438-77",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP219- Remessa por conta de contrato de locação",
+    "cpf": "288.161.898-78",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP222- Remessa por conta de contrato de locação",
+    "cpf": "205.123.108-74",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP223- Remessa por conta de contrato de locação",
+    "cpf": "346.922.548-66",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP224- Remessa por conta de contrato de locação",
+    "cpf": "482.389.098-13",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP227- Remessa por conta de contrato de locação",
+    "cpf": "045.225.749-24",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP228- Remessa por conta de contrato de locação",
+    "cpf": "228.240.248-01",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP233- Remessa por conta de contrato de locação",
+    "cpf": "113.684.248-99",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP242- Remessa por conta de contrato de locação",
+    "cpf": "512.810.178-92",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP244- Remessa por conta de contrato de locação",
+    "cpf": "816.296.484-34",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP250- Remessa por conta de contrato de locação",
+    "cpf": "229.936.828-06",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "SP254- Remessa por conta de contrato de locação",
+    "cpf": "128.183.248-07",
+    "test": "Remessa por conta de contrato de locação"
+  },
+  {
+    "loja": "TO01- Remessa por conta de contrato de locação",
+    "cpf": "892.822.131-53",
+    "test": "Remessa por conta de contrato de locação"
   }
 ]

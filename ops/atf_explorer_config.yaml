@@ -1,0 +1,53 @@
+# ATF System Explorer Configuration
+# Advanced exploration settings
+
+exploration:
+  max_depth: 5                    # Maximum navigation depth
+  max_pages_per_depth: 50         # Limit pages per depth level
+  rate_limit_delay: 1.0           # Seconds between requests
+  request_timeout: 30000          # Milliseconds
+  max_retries: 3                  # Retry attempts for failed requests
+  retry_delay: 2.0               # Seconds between retries
+
+credentials:
+  username: "eduardof"
+  password: "atf101010"
+
+urls:
+  base: "https://www4.sefaz.pb.gov.br/atf"
+  login: "https://www4.sefaz.pb.gov.br/atf/seg/SEGf_Login.jsp"
+  nfa_form: "https://www4.sefaz.pb.gov.br/atf/fis/FISf_EmitirNFAeReparticao.do?limparSessao=true"
+  menu: "https://www4.sefaz.pb.gov.br/atf/seg/SEGf_MontarMenu.jsp"
+
+output:
+  directory: "output/atf_exploration"
+  screenshots: true
+  detailed_logs: true
+  generate_summary: true
+  generate_markdown: true
+
+filters:
+  # URLs to skip
+  skip_patterns:
+    - "logout"
+    - "timeout"
+    - "error"
+    - ".pdf"
+    - ".jpg"
+    - ".png"
+  
+  # URLs to prioritize
+  priority_patterns:
+    - "nfa"
+    - "nota"
+    - "fiscal"
+    - "documento"
+    - "form"
+
+analysis:
+  extract_forms: true
+  extract_tables: true
+  extract_buttons: true
+  classify_pages: true
+  detect_patterns: true
+  generate_flow_diagram: false

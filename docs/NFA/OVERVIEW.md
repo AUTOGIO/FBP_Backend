@@ -12,7 +12,7 @@ The module is organized into several components:
 - **Form Fillers**: Individual form section fillers (emitente, destinatario, endereco, produto)
 - **Data Validation**: CPF, CNPJ, CEP, phone validation
 - **Batch Processing**: Batch NFA creation with retry logic
-- **Services**: High-level orchestration
+- **Services**: High-level execution
 
 ## Module Structure
 
@@ -26,7 +26,7 @@ app/modules/nfa/
 ├── destinatario_filler.py   # Destinatario (recipient) form filler
 ├── endereco_filler.py       # Address form filler
 ├── produto_filler.py        # Product/item form filler
-├── form_filler.py           # Main form orchestrator
+├── form_filler.py           # Main form execution engine
 ├── data_validator.py        # Data validation utilities
 └── batch_processor.py      # Batch processing handler
 ```
@@ -95,4 +95,3 @@ config = {
 - Credentials stored in environment variables or config (never hard-coded)
 - No credential leaks in logs
 - Structured logging for all operations
-

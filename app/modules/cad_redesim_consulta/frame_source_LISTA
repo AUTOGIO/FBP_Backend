@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+
+
+
+<!DOCTYPE html>
+
+
+
+
+     
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="../js/canvasloader-min-0.9.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+<title>Listagem de Processos REDESIM</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="../estilos.css">
+
+<script language="JavaScript" src="../js/validaCampos.js"></script>
+<script language="JavaScript" src="../js/mensagens.js"></script>
+<script type="text/javascript" src="../jquery/js/jquery-3.3.1.min.js"></script>
+<script language="JavaScript" src="../js/popup.js"></script>
+<script language="JavaScript" src="../js/radioButtonUtil.js"></script>
+<script language="JavaScript" src="../js/funcoesValidacaoJS.js"></script>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+
+//Define a acao que será executada
+function defineAcao(obj) {
+
+    var frm = frmListagemPendeciaProc;
+
+    frm.hidAcao.value = obj.value.toLowerCase();
+    
+    // setando a acao do formulario
+    // Chama a funcao consultar dos respectivos servlets
+    if (frm.hidAcao.value == 'mensagens') {
+        
+    	frm.action = '../cad/CADf_EnviarMensagemREDESIM.do'; 
+        
+    } else if (frm.hidAcao.value == 'detalhar') {
+
+    	frm.action = '../cad/CADf_DetalharPendenciasProc.do';
+    	
+    } else if (frm.hidAcao.value == 'parecer/vistoria') {
+
+    	frm.action = '../cad/CADf_InformarVistoriaREDESIM.do';
+    	
+    } else if (frm.hidAcao.value == 'inconsistências') {
+
+        frm.action = '../cad/CADf_LiberarInconsREDESIM.do';
+        
+    } // else-if
+    
+    frm.hidAcao.value = 'detalhar';
+
+} //defineAcao
+
+function reconsideracao() {
+	
+	var frm = frmListagemPendeciaProc;
+	
+	if (!algumMarcado(frm.rdbChavePrimaria)) {
+        
+		mostraAlerta(SELECIONE_UM_ITEM, 'Processos REDESIM encontrados');          
+		return false;
+                
+	} // if()
+		
+	if (frm.hidStFac.value != 3) {
+	
+		mostraAlerta('Situação do processo não permite operação');          
+		return false;
+	
+	} //if
+
+    abrirJanelaATF('../cad/CADf_IncluirPedidoReconsideracaoREDESIM.do'
+    		+ "?hidAcao=reconsideracao&hidNrProcesso=" + frm.hidNrProcesso.value,
+            'PedidoReconsideracaoREDESIM', 'scrollbars=yes,width=750,height=600');
+
+}//reconsideracao
+
+function conformacao() {
+	
+	var frm = frmListagemPendeciaProc;
+	
+	if (!algumMarcado(frm.rdbChavePrimaria)) {
+        
+		mostraAlerta(SELECIONE_UM_ITEM, 'Processos REDESIM encontrados');          
+		return false;
+                
+	} // if()
+		
+	if (frm.hidStFac.value == 2
+		|| frm.hidStFac.value == 3) {
+	
+		mostraAlerta('Situação do processo não permite operação');          
+		return false;
+	
+	} //if
+	
+    abrirJanelaATF('../cad/CADf_ConformacaoDadosREDESIM.do'
+    		+ "?hidAcao=detalhar&hidNrProcesso=" + frm.hidNrProcesso.value,
+            'conformacaoDados', 'scrollbars=yes,width=1000,height=800');
+
+}//conformacao
+
+// Validação do form de acordo com a ação executada.
+function validarForm(formulario) {
+
+	if (!algumMarcado(formulario.rdbChavePrimaria)) {
+                
+		mostraAlerta(SELECIONE_UM_ITEM, 'Processos REDESIM encontrados');          
+		return false;
+                
+	} // if()
+		
+    return true;
+    
+} //validarForm
+
+function defineCamposHid(nrProcesso, stFac, sqNatSolicitacao) {
+	
+    var frm = frmListagemPendeciaProc;
+    
+    frm.hidNrProcesso.value = nrProcesso;
+    frm.hidStFac.value = stFac;
+    frm.hidSqNatSolicitacao.value = sqNatSolicitacao;
+	
+} //defineCamposHid
+
+function continuarProcConf() {
+	
+	document.location = '../cad/CADf_ConsultarProcessosREDESIM.do?limparSessao=true';
+	
+} //continuarProcConf
+
+function deferir() {
+
+	var frm = frmListagemPendeciaProc;
+	
+	if (!algumMarcado(frm.rdbChavePrimaria)) {
+        
+		mostraAlerta(SELECIONE_UM_ITEM, 'Processos REDESIM encontrados');          
+		return false;
+                
+	} // if()
+		
+   	document.location = '../cad/CADf_HomologarFac.jsp?nrProcesso=' + frm.hidNrProcesso.value;
+
+   	return true;
+	
+} // deferir()
+
+function imprimirEtiqueta() {
+
+    var frm = frmListagemPendeciaProc;
+    
+    var campo = '?edtNrProcesso=' + frm.hidNrProcesso.value;
+
+	abrirJanelaATF('../pro/PROf_ImprimirEtiquetaProcesso.jsp' + campo, 
+			'ImprimirEtiqueta', 'scrollbars=yes,width=616,height=400');
+    
+} // imprimirEtiqueta
+
+function formataOrgao(sgSubordinante, sgElementoOrg) {
+
+	if (ehVazio(sgElementoOrg)) {
+		
+		return "---";
+
+	} else {
+		
+		return sgSubordinante + " - " + sgElementoOrg;
+		
+	} //if-else
+		
+}//formataOrgao
+
+
+function tratarVazio(valor) {
+
+	if (ehVazio(valor)) {
+		
+		return "---";
+
+	} else {
+		
+		return valor;
+		
+	} //if-else
+		
+}//tratarVazio
+
+
+
+//-->
+</script>
+</head>
+
+
+
+
+
+<body  bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<table class="fontePadrao" width="100%" border="0" cellpadding="1" cellspacing="0" height="99%">
+    <tr class="tdCabecalho" valign="middle">
+      <td class="tdCabecalho" align="left"><b>
+      <b>Listagem de Processos REDESIM</b></b></td>
+      <td align="right">
+
+ 
+
+
+
+
+
+<head>
+	<link rel="stylesheet" href="/atf/jquery/css/thickbox.css" type="text/css" media="screen" />
+ 	<script type="text/javascript" src="/atf/jquery/js/jquery-3.3.1.min.js"></script>
+ 	<script type="text/javascript" src="/atf/jquery/js/thickbox.js"></script>
+	<script type="text/javascript" src="/atf/js/contador.js"></script>
+	
+	<script type="text/javascript">
+	
+		function iniciarContador(){
+			resetContador(15, 00, document.getElementById('cronometro'), document.getElementById('cronometro_div'));
+		}
+
+	</script>
+	
+</head>
+<body>
+	<div id="cronometro_div">
+	
+	
+	Sua Sessão Expira em:
+		<span id="cronometro"></span>
+	 
+			Login: 
+		<span>eduardof    </span>
+			 Função: 
+		<span>CAD_371</span>
+			Data: 
+		<span>18/12/2025 21:43:39</span>
+		<span>Produ&ccedil;&atilde;o</span>
+	</div>
+	
+	<script type="text/javascript">
+		contador(15, 00, document.getElementById('cronometro'), document.getElementById('cronometro_div'));
+	</script>
+</body></td>
+    </tr>
+    <tr align="center" valign="middle">
+      <td colspan="2" height="100%">
+      <form name="frmListagemPendeciaProc"	method="POST" onsubmit="return validarForm(this)">
+      <table class="fontePadrao" width="750" border="0" cellspacing="1" cellpadding="1">
+		<tr align="center" valign="middle" class="tdCabecalho">
+          <td colspan="18"><b>Resultado da consulta</b></td>
+        </tr>
+
+
+
+        <tr>
+        	<td colspan="16" align="center" valign="middle" class="tdCabecalho">
+        		<b>Processos REDESIM Encontrados</b>
+        	</td>
+        </tr>
+        <tr align="center" valign="middle" class="tdSubCabecalho">
+          <td><b></b></td>
+          <td><b>Processo</b></td>
+          <td><b>Protocolo</b></td>
+          <td><b>Insc. Est.</b></td>
+          <td><b>Sit. Cadastral Atual</b></td>
+          <td><b>CPF/CNPJ</b></td>
+          <td><b>Razão Social </b></td>
+          <td><b>Natureza da Solicitação</b></td>
+          <td><b>Evento</b></td>
+          <td><b>data</b></td>
+          <td><b>Criação do processo</b></td>
+          <td><b>Sit. do Processo</b></td>
+          <td><b>desde</b></td>
+          <td><b>Elem. Organiz. Resp. </b></td>          
+          <td><b>Situação do Conjunto de Inconsistências</b></td>
+          <td><b>Funcionário - Operação</b></td>
+        </tr>
+
+<tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2753442025-3', '2', '1');" value='2753442025-3' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2753442025-3</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500204889'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.749-1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>63.998.241/0001-91</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SILVA COMERCIO DE GAS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>05/12/2025</td><td align='center'><nobr>10/12/2025 09:22:13</td><td align='left'>DEFERIDO</td><td align='center'><nobr>10/12/2025 09:22:27</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2757212025-3', '2', '1');" value='2757212025-3' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2757212025-3</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBN2547511545'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.905.922-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>08.989.619/0001-82</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('VENKOPARTS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>601</td><td align='center'><nobr>10/12/2025</td><td align='center'><nobr>10/12/2025 14:33:08</td><td align='left'>DEFERIDO</td><td align='center'><nobr>13/12/2025 13:11:45</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2757372025-4', '2', '1');" value='2757372025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2757372025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500203611'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.805-6'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.004.631/0001-61</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('TOPSAT CONNECT LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>04/12/2025</td><td align='center'><nobr>10/12/2025 14:48:48</td><td align='left'>DEFERIDO</td><td align='center'><nobr>10/12/2025 14:49:12</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2757812025-5', '2', '1');" value='2757812025-5' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2757812025-5</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500204980'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.810-2'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.006.558/0001-67</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SHADAY FARMA LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101</td><td align='center'><nobr>05/12/2025</td><td align='center'><nobr>10/12/2025 15:36:52</td><td align='left'>DEFERIDO</td><td align='center'><nobr>10/12/2025 15:37:16</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2757822025-0', '2', '1');" value='2757822025-0' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2757822025-0</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504754363'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.811-0'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>63.949.363/0002-79</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('OPTICA BOA VISTA CHILLI BEANS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>102 102</td><td align='center'><nobr>08/12/2025</td><td align='center'><nobr>10/12/2025 15:37:29</td><td align='left'>DEFERIDO</td><td align='center'><nobr>10/12/2025 15:37:53</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2763252025-2', '2', '1');" value='2763252025-2' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2763252025-2</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504735623'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.908-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>62.456.797/0001-93</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LUZ DO SERTAO MOBILIDADE ELETRICA LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>202 209 232 244 247 693</td><td align='center'><nobr>05/12/2025</td><td align='center'><nobr>11/12/2025 10:49:53</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 10:50:43</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2764762025-8', '2', '1');" value='2764762025-8' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2764762025-8</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500206319'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.911-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.017.988/0001-84</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('REFRIGERACAO TEM DE TUDO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>09/12/2025</td><td align='center'><nobr>11/12/2025 11:41:45</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 11:42:26</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2765142025-0', '2', '1');" value='2765142025-0' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2765142025-0</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500174834'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.913-3'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.018.918/0001-40</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('DANIELLA BEZERRA MAISON LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>13/10/2025</td><td align='center'><nobr>11/12/2025 12:21:50</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 12:22:26</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2765802025-7', '2', '1');" value='2765802025-7' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2765802025-7</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504722870'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.942-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>58.728.203/0001-89</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ROMINI MÓVEIS PLANEJADOS E DECORAÇÃO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>211 220 221 232 244 247 248 249 693 211 220 221 232 244 247 248 249 693</td><td align='center'><nobr>04/12/2025</td><td align='center'><nobr>11/12/2025 13:50:35</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 13:51:23</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2766432025-9', '2', '1');" value='2766432025-9' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2766432025-9</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500206805'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.951-6'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.022.461/0001-48</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('D S DA SILVA COMÉRCIO DE FERRAGENS E MATERIAIS DE CONSTRUÇÃO'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>10/12/2025</td><td align='center'><nobr>11/12/2025 15:06:42</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 15:07:12</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2766472025-7', '2', '1');" value='2766472025-7' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2766472025-7</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500206243'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.952-4'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.022.688/0001-93</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('UNIQUE FARMA LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>09/12/2025</td><td align='center'><nobr>11/12/2025 15:11:13</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 15:11:40</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2766952025-6', '2', '1');" value='2766952025-6' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2766952025-6</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500204251'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.549.963-0'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SUSPENSO'));</script></td><td align='center'><nobr>64.024.141/0001-27</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ARMAZZEM SUNVILLE LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101</td><td align='center'><nobr>04/12/2025</td><td align='center'><nobr>11/12/2025 16:07:14</td><td align='left'>DEFERIDO</td><td align='center'><nobr>11/12/2025 16:07:53</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2769632025-4', '2', '1');" value='2769632025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2769632025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504708518'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.010-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>55.244.729/0001-03</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SOLUCOES BATERIAS COMERCIO E SERVICOS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>211 220 225 232 244 247 248 249 211 220 225 232 244 247 248 249</td><td align='center'><nobr>03/12/2025</td><td align='center'><nobr>12/12/2025 09:19:09</td><td align='left'>DEFERIDO</td><td align='center'><nobr>12/12/2025 09:19:19</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2769902025-1', '2', '1');" value='2769902025-1' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2769902025-1</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504464739'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.014-0'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SUSPENSO'));</script></td><td align='center'><nobr>54.476.165/0001-63</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('MANAÍRA VIP EVENTOS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>202 244 247</td><td align='center'><nobr>07/11/2025</td><td align='center'><nobr>12/12/2025 09:38:26</td><td align='left'>DEFERIDO</td><td align='center'><nobr>12/12/2025 09:38:38</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2770772025-3', '2', '1');" value='2770772025-3' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2770772025-3</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBN2584057067'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.905.925-1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>40.685.334/0001-60</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('XVENDAS REFRIGERACAO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>601</td><td align='center'><nobr>12/12/2025</td><td align='center'><nobr>12/12/2025 11:01:06</td><td align='left'>DEFERIDO</td><td align='center'><nobr>13/12/2025 18:28:08</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2771172025-4', '2', '1');" value='2771172025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2771172025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500206727'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.039-5'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.034.450/0001-88</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('3A MANGABEIRA COMERCIO DE ALIMENTOS LTDA.'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>10/12/2025</td><td align='center'><nobr>12/12/2025 11:56:16</td><td align='left'>DEFERIDO</td><td align='center'><nobr>12/12/2025 11:56:27</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2778122025-0', '2', '1');" value='2778122025-0' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2778122025-0</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500206104'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.158-8'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.053.774/0001-63</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('DIEGO OLIVEIRA TAMBAÚ COMERCIO DE ROUPAS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>09/12/2025</td><td align='center'><nobr>15/12/2025 10:57:22</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 10:57:45</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2780402025-2', '2', '1');" value='2780402025-2' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2780402025-2</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500191938'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.194-4'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SUSPENSO'));</script></td><td align='center'><nobr>64.059.423/0001-60</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('JWTELECOM LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>12/11/2025</td><td align='center'><nobr>15/12/2025 15:06:55</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 15:07:20</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2780672025-1', '2', '1');" value='2780672025-1' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2780672025-1</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500208850'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.202-9'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.060.208/0001-89</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('JN FOOD SERVICE LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>15/12/2025 15:31:31</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 15:31:52</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2780892025-8', '2', '1');" value='2780892025-8' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2780892025-8</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504860995'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.203-7'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('SUSPENSO'));</script></td><td align='center'><nobr>08.979.527/0011-93</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('RORIZ COMERCIO E IMPORTACAO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>102</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>15/12/2025 15:59:25</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 15:59:54</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('NÃO LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2781992025-4', '2', '1');" value='2781992025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2781992025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBN2531134429'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.905.933-2'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>20.159.090/0001-75</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('GAMARRA TECNOLOGIA E COMERCIO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>601</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>15/12/2025 20:16:15</td><td align='left'>DEFERIDO</td><td align='center'><nobr>16/12/2025 18:19:46</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('LIBERADAS'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2782122025-6', '2', '1');" value='2782122025-6' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2782122025-6</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504866920'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.225-8'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>59.481.679/0002-01</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('CLICK BIJU COMERCIO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>102 102</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>15/12/2025 21:00:09</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 21:00:37</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2782162025-4', '2', '1');" value='2782162025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2782162025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500208480'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.226-6'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.066.270/0001-88</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('PARAÍBA CARGO BRASIL LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>13/12/2025</td><td align='center'><nobr>15/12/2025 21:21:32</td><td align='left'>DEFERIDO</td><td align='center'><nobr>15/12/2025 21:21:54</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2785932025-8', '2', '1');" value='2785932025-8' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2785932025-8</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500202220'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.278-9'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.073.535/0001-75</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('RESTAURANTE HAYTSU LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>02/12/2025</td><td align='center'><nobr>16/12/2025 12:17:17</td><td align='left'>DEFERIDO</td><td align='center'><nobr>16/12/2025 12:17:29</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2786812025-8', '2', '1');" value='2786812025-8' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2786812025-8</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500207420'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.293-2'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.074.815/0001-06</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('FRANCY HARLEN COSTA LEAL'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101</td><td align='center'><nobr>11/12/2025</td><td align='center'><nobr>16/12/2025 13:26:12</td><td align='left'>DEFERIDO</td><td align='center'><nobr>16/12/2025 13:26:21</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('EM TRATAMENTO'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2788852025-1', '2', '1');" value='2788852025-1' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2788852025-1</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500210020'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.330-0'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.080.263/0001-30</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('GALERIA TECIDOS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>16/12/2025</td><td align='center'><nobr>16/12/2025 17:36:23</td><td align='left'>DEFERIDO</td><td align='center'><nobr>16/12/2025 17:36:33</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2792712025-5', '2', '1');" value='2792712025-5' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2792712025-5</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500209040'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.370-0'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.089.051/0001-14</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('THE FLASH PIZZARIA LTDA.'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>17/12/2025 12:02:01</td><td align='left'>DEFERIDO</td><td align='center'><nobr>17/12/2025 12:02:12</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2793852025-0', '2', '1');" value='2793852025-0' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2793852025-0</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBB2500208821'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.382-3'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>64.093.072/0001-03</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('NEXAR SOLUÇÕES COMERCIAIS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>101 101</td><td align='center'><nobr>15/12/2025</td><td align='center'><nobr>17/12/2025 15:16:41</td><td align='left'>DEFERIDO</td><td align='center'><nobr>17/12/2025 15:17:00</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,0)' class='tdPadrao'><td align='center'><input onClick="defineCamposHid('2794412025-0', '2', '1');" value='2794412025-0' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2794412025-0</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504760460'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.400-5'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>40.613.449/0002-20</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('BELLOOBRAS - SOLUCOES MATERIAIS CONSTRUCAO LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>102 102</td><td align='center'><nobr>09/12/2025</td><td align='center'><nobr>17/12/2025 16:47:00</td><td align='left'>DEFERIDO</td><td align='center'><nobr>17/12/2025 16:47:09</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr onMouseOver='AJXchangeColor(this)' onMouseOut='AJXbackColor(this,1)' class='tdAlternada'><td align='center'><input onClick="defineCamposHid('2804592025-4', '2', '1');" value='2804592025-4' name='rdbChavePrimaria' type='radio'></td><td align='center'><nobr>2804592025-4</td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('PBP2504523084'));</script></td><td align='center'><nobr><script language='JavaScript'>document.write(tratarVazio('16.550.438-2'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ATIVO'));</script></td><td align='center'><nobr>35.519.909/0011-07</td><td align='left'><script language='JavaScript'>document.write(tratarVazio('ORTOPLAN COMERCIO DE IMPLANTES ORTOPEDICOS LTDA'));</script></td><td align='left'>CADASTRAMENTO</td><td align='left'>102</td><td align='center'><nobr>13/11/2025</td><td align='center'><nobr>17/12/2025 22:56:40</td><td align='left'>DEFERIDO</td><td align='center'><nobr>17/12/2025 22:56:49</td><td align='left'><script language='JavaScript'>document.write(formataOrgao('GR1', 'CAC-GR1'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio('EM TRATAMENTO'));</script></td><td align='left'><script language='JavaScript'>document.write(tratarVazio(''));</script></td></tr><tr><td colspan='16' class='footer'>30 Registro(s) encontrado(s)</td></tr><tr><td colspan='16'>Exportar:&nbsp;<a href="#" onClick="submeterListagem(1, 0.972235560609305)"><img src="../imagens/ico_file_pdf.png"  border="0" />PDF</a>&nbsp;<a href="#" onClick="submeterListagem(2,0.972235560609305)"><img src="../imagens/ico_file_excel.png"  border="0"/>Excel</a>&nbsp;<a href="#" onClick="submeterListagem(3,0.972235560609305)"><img src="../imagens/ico_file_csv.png"  border="0" />CSV</a>&nbsp;<a href="#" onClick="submeterListagem(4,0.972235560609305)"><img src="../imagens/ico_file_xml.png"  border="0" />XML</a></td></tr>
+<script language="JavaScript" src="../js/popup.js"></script>
+<script language="JavaScript">
+<!--
+function verificarObrigatorioListagem (chave, obj) {
+
+	if (obj == null) return;
+	if (chave[0] != null) {
+		for (var i = 0; i < chave.length; i++) {
+			obj[i].alt = (chave[i].checked)
+					? insereObrigatorio(obj[i].alt)
+					: retiraObrigatorio(obj[i].alt);
+		}
+	}else {
+		obj.alt = (chave.checked)
+				? insereObrigatorio(obj.alt)
+				: retiraObrigatorio(obj.alt);
+	}
+}
+function retiraObrigatorio (formato) {
+
+	var padrao1 = /\+ VALIDA_EHVAZIO/g;
+	var padrao2 = /VALIDA_EHVAZIO \+/g;
+	var padrao3 = /VALIDA_EHVAZIO/g;
+	var trim = / \b/;
+	var mirt = / \B/g;
+
+	var retorno = formato.replace(padrao1, "");
+	retorno = retorno.replace(padrao2, "");
+	retorno = retorno.replace(padrao3, "");
+	retorno = retorno.replace(trim, "");
+	retorno = retorno.replace(mirt, "");
+	return retorno;
+}
+function insereObrigatorio (formato) {
+
+	formato = retiraObrigatorio(formato)
+	var trim = / \b/;
+	var mirt = / \B/g;
+
+	var retorno = formato.replace(trim, "");
+	retorno = retorno.replace(mirt, "");
+	return (retorno == "")
+			? "VALIDA_EHVAZIO"
+			: retorno + " + VALIDA_EHVAZIO";
+}
+function submeterListagem(tpExport, id){
+	abrirJanelaATF('../seg/SEGf_Listagem.do?hidAcao=exportar&&tpExport=' + tpExport+'&&id=' + id,'Listagem', 'scrollbars=yes,menubar=yes,width=800,height=600');
+}
+-->
+</script><script>
+function AJXchangeColor(tr)
+{
+tr.className = 'onLight';
+}
+function AJXbackColor(tr, index)
+{
+if(index == 0)
+{
+tr.className = 'tdPadrao'
+}else if(index == 1)
+{
+tr.className = 'tdAlternada';
+}else
+{
+tr.className = 'tdErro';
+}
+}
+</script>
+
+		<tr align="center" valign="middle" class="tdCabecalho">
+          <td colspan="18" height="30">
+	 		<input  type="hidden" name="hidHistorico" value="">
+		    <input  type="hidden" name="hidAcao" value="listar">
+		    <input  type="hidden" name="hidNrProcesso" value="">
+		    <input  type="hidden" name="hidStFac" value="">
+		    <input  type="hidden" name="hidSqNatSolicitacao" value="">
+  	 	   	<input  type="submit" name="btnConsultar" class="botoes" value="Detalhar" onClick="defineAcao(this)">
+  	 	   	<input  type="submit" name="btnAtualizar" class="botoes" value="Inconsistências" onClick="defineAcao(this)">
+			<input  type="submit" name="btnMensagens" class="botoes" value="Mensagens" onClick="defineAcao(this)">
+			<input  type="submit" name="btnVistoria" class="botoes" value="Parecer/Vistoria" onClick="defineAcao(this)">
+			<input  type="button" name="btnGerarEtiqueta" class="botoes" value="Gerar Etiqueta" onClick="imprimirEtiqueta()">
+
+			<input  type="button" name="btnConformacao" class="botoes" value="Conformação de Dados" onClick="conformacao()">
+
+			<input  type="button" name="btnDeferir" class="botoes" value="Deferir/Indeferir" onClick="deferir()">
+			<input  type="button" name="btnReconsideracao" class="botoes" value="Reconsideração" onClick="reconsideracao()">
+          </td>
+        </tr>
+      </table>
+      </form>
+    </td>
+  </tr>
+   <script language="JavaScript" src="../js/popup.js"></script>    <tr align="right" valign="middle"> 
+      <td align="left" height="20"> 
+        <font size="1" face="Verdana,Arial,Helvetica"> 
+            <a class="links" href="javascript:mostraDuvidasFuncao('CAD_371')" > 
+                <img src="../imagens/help.gif" width="17" height="17" vspace="2" 
+                    hspace="2" border="0"> 
+            </a> 
+         
+      </td> 
+      <td height="20"> 
+        <font size="1"            face="Verdana,Arial,Helvetica" > 
+            <a class="links" href="javascript:voltarPagina(-1)" > 
+                <b>&lt;&lt;Voltar&nbsp;</b> 
+            </a> 
+         
+      </td> 
+    </tr> 
+
+</table>
+</body>
+</html>

@@ -1,5 +1,10 @@
-"""NFA Form Filler - Main Orchestrator
+"""NFA Form Filler - Main Execution Engine
 Coordinates filling all sections of the NFA form.
+
+⚠️ ARCHITECTURAL GUARDRAIL:
+This module OWNS execution logic. Do NOT add orchestration abstractions here.
+Do NOT delegate execution to external systems. Keep execution deterministic,
+resumable, and within FBP boundaries.
 """
 
 from __future__ import annotations

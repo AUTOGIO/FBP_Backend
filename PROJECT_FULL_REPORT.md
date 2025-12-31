@@ -36,7 +36,7 @@ O FBP segue uma arquitetura em camadas bem definida:
 └──────────────┬──────────────────────────┘
                │
 ┌──────────────▼──────────────────────────┐
-│        Service Layer (Orchestration)     │
+│        Service Layer (Execution)         │
 │  - nfa_service.py, redesim_service.py   │
 └──────────────┬──────────────────────────┘
                │
@@ -56,27 +56,32 @@ O FBP segue uma arquitetura em camadas bem definida:
 #### 1. **Core Layer** (`app/core/`)
 
 **config.py**
+
 - Gerenciamento de configurações via Pydantic Settings
 - Suporte a variáveis de ambiente (`.env`)
 - Configurações para NFA, REDESIM, Gmail API, Job Backend
 
 **jobs.py**
+
 - Sistema de rastreamento de jobs assíncronos
 - Estados: `QUEUED`, `RUNNING`, `COMPLETED`, `FAILED`, `TIMEOUT`, `CANCELLED`
 - Limpeza automática de jobs expirados
 - Armazenamento em memória (extensível para Redis/DB)
 
 **clients.py**
+
 - Abstração para clientes de automação (HTTP/Local)
 - Factory functions para NFA e REDESIM clients
 - Suporte a modo HTTP (serviço externo) e Local (biblioteca)
 
 **browser.py**
+
 - Wrapper para Playwright
 - Gerenciamento de instâncias de navegador
 - Suporte a modo headless/visual
 
 **exceptions.py**
+
 - Hierarquia de exceções customizadas:
   - `FBPException` (base)
   - `ValidationException` (400)
@@ -85,6 +90,7 @@ O FBP segue uma arquitetura em camadas bem definida:
   - `AutomationException` (500)
 
 **logging_config.py**
+
 - Logging estruturado
 - Formatação JSON-compatível
 - Níveis configuráveis via settings
@@ -92,6 +98,7 @@ O FBP segue uma arquitetura em camadas bem definida:
 #### 2. **Module Layer** (`app/modules/`)
 
 **NFA Module** (`app/modules/nfa/`)
+
 - `atf_login.py`: Autenticação no sistema ATF
 - `atf_frames.py`: Navegação e gerenciamento de frames
 - `atf_selectors.py`: Seletores CSS/XPath para elementos
@@ -104,6 +111,7 @@ O FBP segue uma arquitetura em camadas bem definida:
 - `data_validator.py`: Validação de dados de entrada
 
 **REDESIM Module** (`app/modules/redesim/`)
+
 - `extractor.py`: Orquestrador principal de extração
 - `browser_extractor.py`: Extração via browser (Cursor/Playwright)
 - `email_extractor.py`: Extração de emails de HTML/texto
@@ -116,26 +124,31 @@ O FBP segue uma arquitetura em camadas bem definida:
 - `devtools_extractor.py`: Extração via DevTools
 
 **Utils Module** (`app/modules/utils/`)
+
 - `cep_validator.py`: Validação e enriquecimento de CEP
 
 **Organizer Module** (`app/modules/organizer/`)
+
 - Módulo para gerenciamento de janelas (em desenvolvimento)
 
 #### 3. **Service Layer** (`app/services/`)
 
 **nfa_service.py**
+
 - `create_nfa()`: Criação de NFA única
 - `create_nfa_batch()`: Criação em lote
 - Integração com `BatchNFAProcessor`
 - Validação de dados via `data_validator`
 
 **redesim_service.py**
+
 - `create_redesim_job()`: Criação de job de extração
 - `get_redesim_job_status()`: Consulta de status
 - Execução assíncrona em background
 - Integração com clientes HTTP/Local
 
 **echo_service.py**
+
 - Serviço de teste/echo para validação de conectividade
 
 #### 4. **Router Layer** (`app/routers/`)
@@ -143,12 +156,15 @@ O FBP segue uma arquitetura em camadas bem definida:
 **Endpoints Principais:**
 
 **health.py**
+
 - `GET /health`: Health check básico
 
 **echo.py**
+
 - `POST /echo`: Endpoint de teste/echo
 
 **global_router.py**
+
 - `POST /global/nfa/test`: Teste de NFA com dados mínimos
 - `POST /global/nfa/test/scenario-c`: Teste completo Scenario C
 - `POST /global/nfa/visual`: Lançamento de teste visual
@@ -157,23 +173,28 @@ O FBP segue uma arquitetura em camadas bem definida:
 - `GET /global/health`: Health check completo com status de sistema
 
 **nfa.py** (Phase 1 - Mock)
+
 - Endpoints mock para desenvolvimento/teste
 
 **nfa_real.py** (Phase 2 - Real)
+
 - `POST /nfa/create`: Criação de NFA (job-based)
 - `GET /nfa/status/{job_id}`: Status do job
 
 **redesim.py** (Phase 2)
+
 - `POST /redesim/email-extract`: Extração de emails (job-based)
 - `GET /redesim/status/{job_id}`: Status do job
 
-**n8n_*.py** (Endpoints n8n-compatíveis)
+**n8n\_\*.py** (Endpoints n8n-compatíveis)
+
 - `n8n_redesim.py`: `/api/redesim/*`
 - `n8n_nfa.py`: `/api/nfa/*`
 - `n8n_utils.py`: `/api/utils/*`
 - `n8n_browser.py`: `/api/browser/*`
 
 Todos os endpoints n8n retornam formato padronizado:
+
 ```json
 {
   "success": true|false,
@@ -205,6 +226,7 @@ Exemplo: `POST /echo`
 Exemplo: `POST /nfa/create`
 
 **Estados do Job:**
+
 - `QUEUED`: Job criado, aguardando execução
 - `RUNNING`: Em execução
 - `COMPLETED`: Concluído com sucesso
@@ -257,6 +279,7 @@ black>=23.11.0            # Code formatter
 ### Configurações Principais
 
 **Settings (app/core/config.py):**
+
 - `NFA_AUTOMATION_MODE`: "http" | "local"
 - `NFA_AUTOMATION_URL`: URL do serviço externo (se HTTP)
 - `REDESIM_AUTOMATION_MODE`: "http" | "local"
@@ -363,6 +386,7 @@ pip install -e ".[dev]"
 ### n8n
 
 Todos os endpoints n8n-compatíveis seguem formato padronizado:
+
 - Prefixo `/api/{module}/`
 - Resposta: `{success, data, errors}`
 - Documentação em `docs/n8n/`
@@ -407,6 +431,7 @@ Todos os endpoints n8n-compatíveis seguem formato padronizado:
 ### 1. NFA (Nota Fiscal Avulsa)
 
 **Capacidades:**
+
 - Criação de NFA única ou em lote
 - Preenchimento automático de formulários ATF
 - Validação de dados de entrada
@@ -415,6 +440,7 @@ Todos os endpoints n8n-compatíveis seguem formato padronizado:
 - Suporte a Scenario C completo
 
 **Endpoints:**
+
 - `POST /api/nfa/create`: Criar NFA
 - `POST /global/nfa/test`: Teste com dados mínimos
 - `POST /global/nfa/test/scenario-c`: Teste completo
@@ -423,6 +449,7 @@ Todos os endpoints n8n-compatíveis seguem formato padronizado:
 ### 2. REDESIM
 
 **Capacidades:**
+
 - Extração de emails de processos REDESIM
 - Enriquecimento com validação de CEP
 - Criação automática de rascunhos Gmail
@@ -431,6 +458,7 @@ Todos os endpoints n8n-compatíveis seguem formato padronizado:
 - Integração com Gmail API
 
 **Endpoints:**
+
 - `POST /api/redesim/extract`: Extrair dados
 - `POST /api/redesim/email/create-draft`: Criar rascunho
 - `POST /api/redesim/email/send`: Enviar email
@@ -438,22 +466,26 @@ Todos os endpoints n8n-compatíveis seguem formato padronizado:
 ### 3. Utils
 
 **Capacidades:**
+
 - Validação de CEP com múltiplas fontes
 - Enriquecimento de dados com informações de endereço
 - Validação em lote
 
 **Endpoints:**
+
 - `POST /api/utils/cep`: Validar CEP
 - `POST /api/utils/cep/batch`: Validação em lote
 
 ### 4. Browser
 
 **Capacidades:**
+
 - Captura de HTML de URLs
 - Automação via Playwright
 - Suporte a CDP (Chrome DevTools Protocol)
 
 **Endpoints:**
+
 - `POST /api/browser/html`: Capturar HTML
 
 ---
@@ -517,19 +549,23 @@ FBPException (base)
 ### Planejadas
 
 1. **Job Backend:**
+
    - Suporte a Redis para jobs distribuídos
    - Persistência em banco de dados
 
 2. **Local Mode:**
+
    - Implementação de clientes locais (sem HTTP)
    - Integração direta com bibliotecas Python
 
 3. **Monitoramento:**
+
    - Métricas de performance
    - Dashboard de jobs
    - Alertas de falhas
 
 4. **Testes:**
+
    - Aumentar cobertura de testes
    - Testes de integração end-to-end
    - Testes de carga
@@ -546,6 +582,7 @@ FBPException (base)
 O **FBP Backend** é um sistema robusto e bem estruturado que serve como hub centralizado para automações. Com arquitetura modular, sistema de jobs assíncrono, e integração n8n, o projeto está preparado para escalar e adicionar novas funcionalidades.
 
 **Pontos Fortes:**
+
 - ✅ Arquitetura limpa e modular
 - ✅ Sistema de jobs assíncrono
 - ✅ Integração n8n completa
@@ -554,6 +591,7 @@ O **FBP Backend** é um sistema robusto e bem estruturado que serve como hub cen
 - ✅ Documentação abrangente
 
 **Áreas de Melhoria:**
+
 - 🔄 Job backend distribuído (Redis/DB)
 - 🔄 Modo local para automações
 - 🔄 Monitoramento e métricas
@@ -563,5 +601,3 @@ O **FBP Backend** é um sistema robusto e bem estruturado que serve como hub cen
 
 **Relatório gerado automaticamente**
 **Última atualização:** 2025-01-XX
-
-

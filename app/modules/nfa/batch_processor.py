@@ -203,7 +203,7 @@ class BatchNFAProcessor:
                 "width": viewport_config.get("width", 1920),
                 "height": viewport_config.get("height", 1080),
             },
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            user_agent="Mozilla/5.0 (Macintosh; Apple M3 Mac OS X 26_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
             locale="pt-BR",
             timezone_id="America/Sao_Paulo",
             extra_http_headers={
@@ -469,6 +469,7 @@ class BatchNFAProcessor:
                     result["error"] = f"PDF download failed: {pdf_error}"
 
                 # Step 6: Save JSON log per CPF
+                result["status"] = "completed"
                 log_file = cpf_results_dir / f"{cpf_clean}.json"
                 try:
                     with open(log_file, "w", encoding="utf-8") as f:
@@ -477,7 +478,6 @@ class BatchNFAProcessor:
                 except Exception as log_error:
                     logger.warning(f"Failed to save JSON log: {log_error}")
 
-                result["status"] = "completed"
                 self.success_count += 1
                 logger.info(
                     f"NFA {index + 1}/{total} (CPF: {cpf_clean}) completed successfully",
