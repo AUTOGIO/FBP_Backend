@@ -37,7 +37,7 @@ class SEFAZReportGenerator:
             exploration_dir.glob("atf_exploration_*.json"), reverse=True
         )
         if json_files:
-            with open(json_files[0], "r", encoding="utf-8") as f:
+            with open(json_files[0], encoding="utf-8") as f:
                 return json.load(f)
         return None
 
@@ -931,7 +931,7 @@ def main():
     report = generator.generate_report()
     report_file = generator.save_report(report)
 
-    print(f"\n✅ Relatório gerado com sucesso!")
+    print("\n✅ Relatório gerado com sucesso!")
     print(f"📄 Arquivo: {report_file}")
     print(f"📊 Tamanho: {len(report)} caracteres")
 

@@ -202,7 +202,7 @@ def validate_destinatario(
 
     # CPF is required
     if not cpf:
-        errors.append(f"Missing required field: CPF/documento")
+        errors.append("Missing required field: CPF/documento")
 
     # Validate CPF format and checksum
     if cpf and not validate_cpf(cpf):
@@ -236,7 +236,7 @@ def validate_emitente(
 
     # CNPJ is required
     if not cnpj:
-        errors.append(f"Missing required field: CNPJ")
+        errors.append("Missing required field: CNPJ")
 
     # Validate CNPJ format and checksum
     if cnpj and not validate_cnpj(cnpj):

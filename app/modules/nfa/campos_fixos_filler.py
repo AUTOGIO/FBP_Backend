@@ -6,11 +6,13 @@ from __future__ import annotations
 
 import logging
 import random
-from pathlib import Path
 
 from app.modules.nfa.delays import AFTER_CAMPOS_FIXOS_DELAY, FIELD_DELAY
 from app.modules.nfa.nfa_context import NFAContext, get_page_from_context
-from app.modules.nfa.screenshot_utils import resolve_screenshots_dir, save_screenshot
+from app.modules.nfa.screenshot_utils import (
+    resolve_screenshots_dir,
+    save_screenshot,
+)
 
 logger = logging.getLogger(__name__)
 

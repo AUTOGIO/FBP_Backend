@@ -35,6 +35,10 @@ import argparse
 import asyncio
 import json
 import os
+
+# Fix for macOS fork safety (deadlock avoidance)
+os.environ["OBJC_DISABLE_INITIALIZE_FORK_SAFETY"] = "YES"
+
 import sys
 from pathlib import Path
 

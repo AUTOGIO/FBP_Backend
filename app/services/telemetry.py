@@ -5,9 +5,10 @@ Optimized for: iMac M3 (Mac15,5) | 8 cores (4P+4E) | 16GB RAM | macOS 26.0 Tahoe
 Monitors system resources during NFA batch processing.
 """
 
-import psutil
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any, Dict
+
+import psutil
 
 from app.core.config import HARDWARE_PROFILE, M3_LIMITS
 
@@ -19,16 +20,16 @@ def get_system_metrics() -> Dict[str, Any]:
         cpu_percent = psutil.cpu_percent(interval=0.1)
         cpu_count = psutil.cpu_count()
         cpu_freq = psutil.cpu_freq()
-        
+
         # Memory metrics
         memory = psutil.virtual_memory()
-        
+
         # Disk metrics
         disk = psutil.disk_usage('/')
-        
+
         # Network metrics
         net_io = psutil.net_io_counters()
-        
+
         return {
             "success": True,
             "timestamp": datetime.now().isoformat(),
@@ -73,10 +74,10 @@ def check_system_health() -> Dict[str, Any]:
     """
     mem = psutil.virtual_memory()
     cpu = psutil.cpu_percent(interval=0.1)
-    
+
     # M3-specific thresholds
     memory_threshold = M3_LIMITS["safe_memory_threshold"] * 100  # 80%
-    
+
     return {
         "healthy": mem.percent < memory_threshold and cpu < 90,
         "memory_percent": mem.percent,
@@ -106,15 +107,15 @@ def get_browser_recommendation() -> Dict[str, Any]:
     """
     mem = psutil.virtual_memory()
     available_gb = mem.available / (1024**3)
-    
+
     # M3-specific: Calculate based on known browser memory usage
     browser_memory_gb = M3_LIMITS["browser_memory_mb"] / 1024
     calculated_max = int(available_gb / browser_memory_gb)
-    
+
     # Cap at M3 limit (3 browsers max for stability)
     recommended = min(calculated_max, M3_LIMITS["max_concurrent_browsers"])
     recommended = max(1, recommended)  # At least 1
-    
+
     return {
         "available_memory_gb": round(available_gb, 2),
         "recommended_max_browsers": recommended,

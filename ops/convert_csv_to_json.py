@@ -56,7 +56,7 @@ def convert_csv_to_json(csv_path: str, output_path: str) -> int:
         print(f"❌ Error: CSV file not found: {csv_path}", file=sys.stderr)
         return 0
 
-    with open(csv_file, "r", encoding="utf-8") as f:
+    with open(csv_file, encoding="utf-8") as f:
         lines = f.readlines()
 
     # Skip header row (line 1)
@@ -116,7 +116,7 @@ def validate_json(json_path: str) -> tuple[bool, int, list[str]]:
         return False, 0, [f"JSON file not found: {json_path}"]
 
     try:
-        with open(json_file, "r", encoding="utf-8") as f:
+        with open(json_file, encoding="utf-8") as f:
             data = json.load(f)
     except json.JSONDecodeError as e:
         return False, 0, [f"Invalid JSON: {e}"]
@@ -163,7 +163,7 @@ def main():
     if len(sys.argv) > 2:
         output_path = Path(sys.argv[2])
 
-    print(f"Converting CSV to JSON...")
+    print("Converting CSV to JSON...")
     print(f"  Input:  {csv_path}")
     print(f"  Output: {output_path}")
     print()
@@ -185,10 +185,10 @@ def main():
 
     if is_valid:
         print(f"✓ JSON válido - {item_count} itens confirmados")
-        print(f"✓ All CPFs are properly formatted")
+        print("✓ All CPFs are properly formatted")
         sys.exit(0)
     else:
-        print(f"❌ Validation failed:")
+        print("❌ Validation failed:")
         print(f"  Items found: {item_count}")
         for error in errors[:10]:  # Show first 10 errors
             print(f"  - {error}")

@@ -1,0 +1,14 @@
+{
+  "python.defaultInterpreterPath": "/Users/dnigga/Documents/.venvs/fbp/bin/python",
+  "python.analysis.typeCheckingMode": "basic",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "ruff.enable": true,
+  "ruff.args": [
+    "--fix"
+  ],
+  "cursorpyright.analysis.typeCheckingMode": "basic"
+}

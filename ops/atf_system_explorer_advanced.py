@@ -33,9 +33,8 @@ try:
 except ImportError:
     yaml = None
 
-from playwright.async_api import Browser, Page
+from playwright.async_api import Page, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
-from playwright.async_api import async_playwright
 
 # Configure structured logging
 logging.basicConfig(
@@ -226,7 +225,7 @@ class ATFSystemExplorerAdvanced:
             return {}
 
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
+            with open(config_file, encoding="utf-8") as f:
                 config = yaml.safe_load(f)
                 # Flatten nested config
                 exploration = config.get("exploration", {})
@@ -970,7 +969,7 @@ async def main():
         with open(summary_file, "w", encoding="utf-8") as f:
             f.write(summary)
 
-        print(f"\n✅ Exploration complete!")
+        print("\n✅ Exploration complete!")
         print(f"📊 Pages explored: {results['stats']['total_pages_explored']}")
         print(f"🔗 Links discovered: {results['stats']['total_links_discovered']}")
         print(f"📝 Forms found: {results['stats']['total_forms_found']}")

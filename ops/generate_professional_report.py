@@ -38,7 +38,7 @@ class ProfessionalReportGenerator:
         logger.info(f"Loading exploration data from: {latest_file}")
 
         try:
-            with open(latest_file, "r", encoding="utf-8") as f:
+            with open(latest_file, encoding="utf-8") as f:
                 data = json.load(f)
 
             # Normalize data structure (handle both old and new formats)
@@ -162,7 +162,7 @@ A exploração identificou os seguintes tipos de páginas:
                 f"- **{page_type.upper()}**: {count} páginas ({percentage:.1f}%)\n"
             )
 
-        report += f"""
+        report += """
 ### 1.3 Distribuição por Profundidade
 
 A exploração mapeou a estrutura hierárquica do sistema:
@@ -172,7 +172,7 @@ A exploração mapeou a estrutura hierárquica do sistema:
             count = pages_by_depth[depth]
             report += f"- **Nível {depth}**: {count} páginas\n"
 
-        report += f"""
+        report += """
 ---
 
 ## 📊 Parte 2: Análise Detalhada de Funcionalidades
@@ -253,7 +253,7 @@ A análise identificou padrões claros de navegação:
             )[:10]:
                 report += f"- **{pattern}**: {len(urls)} ocorrências\n"
 
-        report += f"""
+        report += """
 ---
 
 ## 🎯 Parte 3: Integração com FBP_Backend
@@ -459,7 +459,7 @@ def main():
     report = generator.generate_executive_report()
     report_file = generator.save_report(report)
 
-    print(f"\n✅ Relatório profissional gerado!")
+    print("\n✅ Relatório profissional gerado!")
     print(f"📄 Arquivo: {report_file}")
     print(f"📊 Tamanho: {len(report)} caracteres")
 

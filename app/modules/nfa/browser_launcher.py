@@ -12,7 +12,12 @@ import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from playwright.async_api import Browser, BrowserContext, Page, async_playwright
+from playwright.async_api import (
+    Browser,
+    BrowserContext,
+    Page,
+    async_playwright,
+)
 
 from app.core.config import settings
 

@@ -14,6 +14,9 @@ source ~/.venvs/fbp/bin/activate
 # Set PYTHONPATH
 export PYTHONPATH="/Users/dnigga/Documents/FBP_Backend:${PYTHONPATH:-}"
 
+# Fix for macOS fork safety (deadlock avoidance)
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
 # Load .env if it exists (using python-dotenv or manual parsing)
 if [ -f .env ]; then
     # Export variables from .env, handling quoted values

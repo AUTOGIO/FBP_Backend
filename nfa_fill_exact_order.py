@@ -7,7 +7,6 @@ ONE BLOCK DEPENDS ON THE INPUT OF THE PREDECESSOR.
 import os
 import re
 import time
-from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
@@ -35,7 +34,7 @@ def click_pesquisar_and_wait(frame_or_page, wait_seconds=2):
         pesquisar_btn = frame_or_page.locator("input[value='Pesquisar']").first
         if pesquisar_btn.is_visible(timeout=3000):
             pesquisar_btn.click()
-            print(f"  ✓ Clicked 'Pesquisar'")
+            print("  ✓ Clicked 'Pesquisar'")
             print(f"  ⏳ Waiting {wait_seconds} seconds...")
             time.sleep(wait_seconds)
             return True

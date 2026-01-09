@@ -7,12 +7,11 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
-from playwright.async_api import BrowserContext, async_playwright
+from playwright.async_api import async_playwright
 
 from app.core.config import settings
 from app.core.logging_config import setup_logger

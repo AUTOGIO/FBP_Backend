@@ -5,7 +5,7 @@ Provides unified handling for ATF's NFA form - now always uses main page (no fra
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING
 
 from app.core.logging_config import setup_logger
 

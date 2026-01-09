@@ -20,11 +20,11 @@ async def main():
     print("=" * 80)
     print("\nRunning with headless=False (browser will be visible)")
     print("Make sure Funcionário Emitente block is filled and Pesquisar is clicked\n")
-    
+
     # Get credentials from environment or use defaults
     username = os.getenv("NFA_USERNAME", "eduardof")
     password = os.getenv("NFA_PASSWORD", "atf101010")
-    
+
     result = await run_nfa_job(
         username=username,
         password=password,
@@ -33,7 +33,7 @@ async def main():
         matricula="1595504",
         headless=False,  # Visual mode
     )
-    
+
     print("\n" + "=" * 80)
     if result["status"] == "ok":
         print("✅ Automation completed successfully!")

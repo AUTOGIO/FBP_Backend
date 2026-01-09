@@ -13,7 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from playwright.async_api import Browser, Page, async_playwright
+from playwright.async_api import Page, async_playwright
 
 # Configure logging
 logging.basicConfig(
@@ -520,7 +520,7 @@ async def main():
 
     if "error" not in results:
         output_file = explorer.save_results(results)
-        print(f"\n✅ Exploration complete!")
+        print("\n✅ Exploration complete!")
         print(f"📊 Total links discovered: {results['total_links_discovered']}")
         print(f"📄 Total pages explored: {results['total_pages_explored']}")
         print(f"💾 Results saved to: {output_file}")

@@ -29,55 +29,87 @@ venv/
 ENV/
 env/
 .venvs/
+.venv_foks
 
 # IDE
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea/
+.cursor/
+.history/
 *.swp
 *.swo
 *~
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon
+Network Trash Folder
+Temporary Items
+.apdisk
+Thumbs.db
 
 # Testing
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
 .tox/
 .hypothesis/
+.cache
 
-# MyPy
+# MyPy / Ruff
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# Ruff
 .ruff_cache/
 
 # Environment
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+.secrets
+secrets.*
 
 # Logs
 *.log
 logs/
+pip-log.txt
 
 # Playwright
 .playwright/
+ms-playwright/
 
-# Gmail API
+# Project specific
+traces/
+output/
+screenshots/
+reports/
+*.csv
+*.pdf
+*.db
+*.sqlite
+
+# Gmail API / Credentials
 config/auth/token.json
 config/auth/credentials.json
 credentials/
 credentials/*.json
 *.json.backup_*
+not/
+available/
+Browser/
+API/
+PAGE_FRAME_SOURCE
+Archive.zip
+fbp_audit_files.tar.gz
 
-# Project specific
-traces/
-output/
-*.csv
-*.pdf
-
-# OS
-.DS_Store
-Thumbs.db
+# Misc
+temp/
+tmp/
+desktop.ini

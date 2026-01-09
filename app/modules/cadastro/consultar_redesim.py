@@ -10,18 +10,15 @@ import json
 import logging
 import re
 import time
+from collections.abc import Mapping, Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Mapping, Sequence, Union
+from typing import Any, Union
 
 import httpx
 from playwright.async_api import Frame, Locator, Page
 
 from app.modules.nfa.delays import (
-    AFTER_SEARCH_DELAY,
-    CLICK_DELAY,
-    DEFAULT_DELAY,
-    FIELD_DELAY,
     NETWORK_IDLE_TIMEOUT,
 )
 from app.modules.redesim.draft_creator import GmailService
@@ -1039,7 +1036,7 @@ def _load_iteration_state() -> dict[str, Any]:
     """
     try:
         if STATE_FILE_PATH.exists():
-            with open(STATE_FILE_PATH, "r", encoding="utf-8") as f:
+            with open(STATE_FILE_PATH, encoding="utf-8") as f:
                 state = json.load(f)
                 logger.info(
                     "cadastro_redesim: Loaded state: current_index=%s, total=%s, last_value=%s",
@@ -1050,7 +1047,7 @@ def _load_iteration_state() -> dict[str, Any]:
                 return state
     except Exception as e:
         logger.warning(f"cadastro_redesim: Error loading state file: {e}")
-    
+
     # Return default state
     default_state = {
         "current_index": 0,
@@ -1070,11 +1067,11 @@ def _save_iteration_state(state: dict[str, Any]) -> None:
     try:
         # Ensure directory exists
         STATE_FILE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        
+
         # Save state
         with open(STATE_FILE_PATH, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2, ensure_ascii=False)
-        
+
         logger.info(
             "cadastro_redesim: Saved state: current_index=%s, total=%s, last_value=%s",
             state.get("current_index"),
@@ -1102,7 +1099,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
         RuntimeError: If iframe 'principal' is not found
     """
     logger.info("cadastro_redesim: Resolving iframe 'principal' explicitly...")
-    
+
     # Method 1: Wait for iframe element to exist in DOM first
     try:
         logger.info("cadastro_redesim: Waiting for iframe element in DOM...")
@@ -1116,7 +1113,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
             logger.info("cadastro_redesim: Found iframe by id/src containing 'principal'")
         except Exception:
             pass
-    
+
     # Method 2: Try to get frame by name directly
     try:
         frame = page.frame(name="principal")
@@ -1125,7 +1122,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
             return frame
     except Exception as e:
         logger.debug(f"cadastro_redesim: Direct frame lookup failed: {e}")
-    
+
     # Method 3: Search through all frames with extended timeout
     deadline = time.monotonic() + (timeout / 1000.0)
     iteration = 0
@@ -1134,19 +1131,19 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
         all_frames = list(page.frames)
         frame_names = [f.name for f in all_frames if f.name]
         frame_urls = [f.url for f in all_frames]
-        
+
         if iteration == 1 or iteration % 10 == 0:
             logger.info(
                 f"cadastro_redesim: Checking frames (iteration {iteration}): "
                 f"names={frame_names}, count={len(all_frames)}"
             )
-        
+
         for frame in all_frames:
             # Check frame name exactly
             if frame.name == "principal":
                 logger.info("cadastro_redesim: Found iframe 'principal' by iteration")
                 return frame
-            
+
             # Also check if name contains 'principal' (case-insensitive fallback)
             if frame.name and "principal" in frame.name.lower():
                 logger.info(
@@ -1154,7 +1151,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
                     frame.name,
                 )
                 return frame
-            
+
             # Check if frame URL contains 'principal' or 'REDESIM'
             if frame.url and ("principal" in frame.url.lower() or "redesim" in frame.url.lower()):
                 logger.info(
@@ -1171,9 +1168,9 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
                 except Exception:
                     logger.debug("cadastro_redesim: Frame URL matches but no radio buttons found")
                     continue
-        
+
         await page.wait_for_timeout(300)  # Wait 300ms before retry
-    
+
     # Final attempt 1: Try to find ANY iframe and check if it has radio buttons
     logger.warning("cadastro_redesim: Standard methods failed, trying fallback: check all iframes for radio buttons")
     for frame in page.frames:
@@ -1186,7 +1183,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
             return frame
         except Exception:
             continue
-    
+
     # Final attempt 2: Use JavaScript to find iframe in DOM and wait for it to load
     logger.warning("cadastro_redesim: Trying JavaScript-based iframe detection...")
     try:
@@ -1203,10 +1200,10 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
             }
         """)
         logger.info(f"cadastro_redesim: Found {len(iframe_info)} iframe(s) in DOM: {iframe_info}")
-        
+
         # Wait a bit more for frames to register with Playwright
         await page.wait_for_timeout(2000)
-        
+
         # Try again after JS detection
         for frame in page.frames:
             if frame == page.main_frame:
@@ -1220,7 +1217,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
                 continue
     except Exception as js_err:
         logger.warning(f"cadastro_redesim: JavaScript detection failed: {js_err}")
-    
+
     # If not found, raise explicit error with detailed info
     all_frame_info = []
     for f in page.frames:
@@ -1228,7 +1225,7 @@ async def _resolve_principal_iframe(page: Page, timeout: int = FAST_TIMEOUT) -> 
         if f.url:
             info += f", url='{f.url[:100]}...'"
         all_frame_info.append(info)
-    
+
     error_msg = (
         f"Iframe 'principal' not found within {timeout}ms timeout. "
         f"Available frames ({len(page.frames)}): {all_frame_info}"
@@ -1262,23 +1259,23 @@ async def _wait_for_hidden_field_sync(
         expected_value,
         timeout,
     )
-    
+
     deadline = time.monotonic() + (timeout / 1000.0)
     poll_interval = 100  # Check every 100ms
     iteration = 0
-    
+
     while time.monotonic() < deadline:
         iteration += 1
         try:
             # Re-query the form and hidden field (never reuse stale references)
             form = frame.locator('form[name="frmListagemPendeciaProc"]').first
             hidden_field = form.locator('input[name="hidNrProcesso"]').first
-            
+
             # Check if hidden field exists and get its value
             if await hidden_field.count() > 0:
                 current_value = await hidden_field.get_attribute("value") or ""
                 current_value = current_value.strip()
-                
+
                 if current_value == expected_value:
                     logger.info(
                         "cadastro_redesim: Hidden field synchronized after %d iterations (%dms)",
@@ -1286,7 +1283,7 @@ async def _wait_for_hidden_field_sync(
                         int((time.monotonic() - (deadline - timeout / 1000.0)) * 1000),
                     )
                     return True
-                
+
                 # Log progress every 10 iterations
                 if iteration % 10 == 0:
                     logger.debug(
@@ -1305,9 +1302,9 @@ async def _wait_for_hidden_field_sync(
             # Log error but continue polling
             if iteration % 10 == 0:
                 logger.debug(f"cadastro_redesim: Error checking hidden field: {e}")
-        
+
         await asyncio.sleep(poll_interval / 1000.0)
-    
+
     # Timeout - check final state for debugging
     try:
         form = frame.locator('form[name="frmListagemPendeciaProc"]').first
@@ -1325,7 +1322,7 @@ async def _wait_for_hidden_field_sync(
             )
     except Exception as e:
         logger.error(f"cadastro_redesim: Error checking final state: {e}")
-    
+
     return False
 
 
@@ -1350,11 +1347,11 @@ async def _collect_radio_buttons_from_iframe(frame: Frame) -> list[Locator]:
         RuntimeError: If no radio buttons are found
     """
     logger.info("cadastro_redesim: Collecting radio buttons from iframe (FRESH QUERY)...")
-    
+
     # CRITICAL: Always query fresh - never reuse stale locators
     # Use explicit selector for radio buttons
     radio_locator = frame.locator("input[type='radio'][name='rdbChavePrimaria']")
-    
+
     # Wait for at least one radio button to appear
     try:
         await radio_locator.first.wait_for(timeout=ELEMENT_TIMEOUT, state="attached")
@@ -1362,26 +1359,26 @@ async def _collect_radio_buttons_from_iframe(frame: Frame) -> list[Locator]:
         error_msg = f"No radio buttons found in iframe 'principal': {e}"
         logger.error(f"cadastro_redesim: {error_msg}")
         raise RuntimeError(error_msg)
-    
+
     # Count total radio buttons (fresh count, never cached)
     total_count = await radio_locator.count()
-    
+
     if total_count == 0:
         error_msg = "Radio buttons count is 0 after wait"
         logger.error(f"cadastro_redesim: {error_msg}")
         raise RuntimeError(error_msg)
-    
+
     logger.info(
         "cadastro_redesim: Collected %d radio button(s) from iframe 'principal' (fresh query)",
         total_count,
     )
-    
+
     # Return list of locators (index-based, deterministic)
     # Each locator is fresh and scoped to the current iframe state
     radios = []
     for i in range(total_count):
         radios.append(radio_locator.nth(i))
-    
+
     return radios
 
 
@@ -2057,31 +2054,31 @@ async def process_redesim_stage2(
         # Step 1: Load persistent state and resolve iframe
         logger.info("cadastro_redesim: Stage 2 - Step 1: Loading iteration state")
         state = _load_iteration_state()
-        
+
         # CRITICAL BUG FIX: Do NOT override row_index with persisted state
         # The loop in run_redesim_consulta.py already manages the iteration correctly
         # We should use the row_index passed as parameter, not the persisted one
         # The persisted state is only used for resuming after a crash, not during normal iteration
         last_processed_value = state.get("last_processed_value")
-        
+
         logger.info(
             "cadastro_redesim: Stage 2 - Processing row_index=%d (from loop), persisted_index=%s",
             row_index,
             state.get("current_index", "N/A"),
         )
-        
+
         # CRITICAL: Validate we're not reprocessing the same process
         if last_processed_value:
             logger.info(
                 "cadastro_redesim: Stage 2 - Last processed value: %s (will skip if same)",
                 last_processed_value,
             )
-        
+
         # Step 2: Wait for results page and resolve iframe 'principal' EXPLICITLY
         logger.info("cadastro_redesim: Stage 2 - Step 2: Waiting for results page and resolving iframe")
         await page.wait_for_load_state("domcontentloaded", timeout=FAST_TIMEOUT)
         await page.wait_for_timeout(FAST_DEFAULT_DELAY)
-        
+
         # MANDATORY: Resolve iframe 'principal' explicitly
         try:
             principal_frame = await _resolve_principal_iframe(page, timeout=FAST_TIMEOUT)
@@ -2090,7 +2087,7 @@ async def process_redesim_stage2(
             logger.error(f"cadastro_redesim: Stage 2 - {error_msg}")
             results["errors"].append(error_msg)
             return results
-        
+
         # Step 3: Collect ALL radio buttons from iframe (index-based, deterministic)
         logger.info("cadastro_redesim: Stage 2 - Step 3: Collecting radio buttons from iframe")
         try:
@@ -2101,12 +2098,12 @@ async def process_redesim_stage2(
             logger.error(f"cadastro_redesim: Stage 2 - {error_msg}")
             results["errors"].append(error_msg)
             return results
-        
+
         logger.info(
             "cadastro_redesim: Stage 2 - Collected %d radio button(s) from iframe",
             radio_count,
         )
-        
+
         # Update total in state if not set
         if state.get("total") is None:
             state["total"] = radio_count
@@ -2115,7 +2112,7 @@ async def process_redesim_stage2(
                 "cadastro_redesim: Stage 2 - Set total processes to %d in state",
                 radio_count,
             )
-        
+
         # Validate index bounds
         if row_index >= radio_count:
             error_msg = (
@@ -2125,19 +2122,19 @@ async def process_redesim_stage2(
             logger.warning(f"cadastro_redesim: Stage 2 - {error_msg}")
             results["errors"].append(error_msg)
             return results
-        
+
         # Step 4: Select radio button by INDEX (deterministic)
         logger.info(
             "cadastro_redesim: Stage 2 - Step 4: Selecting radio button at index %d",
             row_index,
         )
-        
+
         try:
             # CRITICAL: Get the radio button by index from our collected list
             # This list was collected fresh at the start of this function
             # Never reuse radio references from previous iterations
             radio = radio_list[row_index]
-            
+
             # Get the value before clicking (for logging and state)
             # CRITICAL: Always query fresh - never cache values
             radio_value = await radio.get_attribute("value")
@@ -2146,7 +2143,7 @@ async def process_redesim_stage2(
                 row_index,
                 radio_value,
             )
-            
+
             # CRITICAL: Skip if this is the same process we just processed
             if last_processed_value and radio_value == last_processed_value:
                 error_msg = (
@@ -2163,7 +2160,7 @@ async def process_redesim_stage2(
                     "radio_value": radio_value,
                 }
                 return results
-            
+
             # CRITICAL: Click the radio button (MUST use real click, never .checked = true)
             # Scroll into view first for reliability
             await radio.wait_for(timeout=ELEMENT_TIMEOUT, state="visible")
@@ -2174,7 +2171,7 @@ async def process_redesim_stage2(
                 row_index,
                 radio_value,
             )
-            
+
             # CRITICAL: Wait for hidden fields to be updated by defineCamposHid()
             # The system does NOT use .checked state - it uses hidden fields updated by onClick
             logger.info(
@@ -2183,7 +2180,7 @@ async def process_redesim_stage2(
             hidden_field_updated = await _wait_for_hidden_field_sync(
                 principal_frame, radio_value, timeout=ELEMENT_TIMEOUT * 2
             )
-            
+
             if not hidden_field_updated:
                 error_msg = (
                     f"Hidden field hidNrProcesso not updated after radio click. "
@@ -2196,13 +2193,13 @@ async def process_redesim_stage2(
                     "error": "Hidden field synchronization failed",
                 }
                 return results
-            
+
             logger.info(
                 "cadastro_redesim: Stage 2 - Hidden fields synchronized: hidNrProcesso=%s",
                 radio_value,
             )
             await page.wait_for_timeout(FAST_CLICK_DELAY)
-            
+
             # Step 5: Submit form (press Enter as per requirement)
             # ONLY after hidden fields are confirmed updated
             # CRITICAL: Form submission must occur only after:
@@ -2210,11 +2207,11 @@ async def process_redesim_stage2(
             #   - Hidden fields updated (validated above)
             #   - State synchronized
             logger.info("cadastro_redesim: Stage 2 - Step 5: Submitting form (pressing Enter)")
-            
+
             # CRITICAL: Re-query form elements (never reuse stale references after click)
             # The iframe may have updated, so we must query fresh
             form = principal_frame.locator('form[name="frmListagemPendeciaProc"]').first
-            
+
             # Try to find "Detalhar" button first (more reliable)
             # HTML real: <input type="submit" name="btnConsultar" value="Detalhar" onClick="defineAcao(this)">
             detalhar_buttons = form.locator(
@@ -2223,7 +2220,7 @@ async def process_redesim_stage2(
                 "input[type='button'][value*='Detalhar' i]"
             )
             detalhar_count = await detalhar_buttons.count()
-            
+
             if detalhar_count > 0:
                 # CRITICAL: Re-query the button before clicking (never reuse stale reference)
                 detalhar_button = detalhar_buttons.first
@@ -2239,21 +2236,21 @@ async def process_redesim_stage2(
                 await radio_fresh.wait_for(timeout=ELEMENT_TIMEOUT, state="visible")
                 await radio_fresh.press("Enter")
                 logger.info("cadastro_redesim: Stage 2 - Pressed Enter on radio button")
-            
+
             results["steps"]["process_selection"] = {
                 "success": True,
                 "row_index": row_index,
                 "radio_value": radio_value,
             }
-            
+
             # Update state with last processed value
             state["last_processed_value"] = radio_value
             _save_iteration_state(state)
-            
+
             # Wait for detail page to load
             await page.wait_for_load_state("domcontentloaded", timeout=FAST_TIMEOUT)
             await page.wait_for_timeout(FAST_SEARCH_DELAY)
-            
+
         except Exception as e:
             error_msg = f"Failed to select and submit process: {e}"
             logger.exception(f"cadastro_redesim: Stage 2 - {error_msg}")
@@ -2261,16 +2258,16 @@ async def process_redesim_stage2(
             results["steps"]["process_selection"] = {"success": False, "error": str(e)}
             return results
 
-        
+
         # Step 3: Extract emails and process data directly from detail page
         logger.info("cadastro_redesim: Stage 2 - Step 3: Extracting emails and process data from detail page")
-        
+
         # Extract emails from the main page (no frames)
         emails = await _extract_emails_from_page(page)
-        
+
         # Extract process data from the main page
         process_data = await _extract_process_data_from_page(page)
-        
+
         results["steps"]["email_extraction"] = {"emails": emails, "count": len(emails)}
         results["steps"]["process_data"] = process_data
 

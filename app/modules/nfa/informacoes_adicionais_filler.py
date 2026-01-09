@@ -7,9 +7,15 @@ from __future__ import annotations
 import logging
 import random
 
-from app.modules.nfa.delays import AFTER_INFORMACOES_ADICIONAIS_DELAY, FIELD_DELAY
+from app.modules.nfa.delays import (
+    AFTER_INFORMACOES_ADICIONAIS_DELAY,
+    FIELD_DELAY,
+)
 from app.modules.nfa.nfa_context import NFAContext, get_page_from_context
-from app.modules.nfa.screenshot_utils import resolve_screenshots_dir, save_screenshot
+from app.modules.nfa.screenshot_utils import (
+    resolve_screenshots_dir,
+    save_screenshot,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +96,7 @@ async def preencher_informacoes_adicionais(
                         expand_btn = page.locator(expand_selector).first
                         if await expand_btn.is_visible(timeout=2000):
                             await expand_btn.click()
-                            logger.info(f"✓ Expanded Informações Adicionais section")
+                            logger.info("✓ Expanded Informações Adicionais section")
                             await page.wait_for_timeout(1000)
                             await save_screenshot(
                                 page,
@@ -107,7 +113,7 @@ async def preencher_informacoes_adicionais(
                                             texto, delay=random.randint(50, 150)
                                         )
                                         logger.info(
-                                            f"✓ Informações Adicionais filled after expansion"
+                                            "✓ Informações Adicionais filled after expansion"
                                         )
                                         filled = True
                                         break

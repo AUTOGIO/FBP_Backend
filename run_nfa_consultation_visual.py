@@ -13,7 +13,6 @@ Environment variables:
 """
 
 import asyncio
-import json
 import os
 import sys
 from pathlib import Path
@@ -31,31 +30,31 @@ async def main():
     print("NFA Consultation Automation - Visual Mode")
     print("=" * 80)
     print()
-    
+
     # Get credentials from environment or use defaults
     username = os.getenv("NFA_USERNAME")
     password = os.getenv("NFA_PASSWORD")
-    
+
     if not username or not password:
         print("⚠️  Warning: NFA_USERNAME and/or NFA_PASSWORD not set in environment")
         print("   Using credentials from .env file if available")
         print()
-    
+
     print("Configuration:")
     print(f"  - Username: {username or '(from .env)'}")
     print(f"  - Password: {'*' * len(password) if password else '(from .env)'}")
-    print(f"  - Date range: 08/12/2025 to 08/12/2025")
-    print(f"  - Matrícula: 1595504")
-    print(f"  - Max NFAs: 3")
-    print(f"  - Wait between NFAs: 4 seconds")
-    print(f"  - Headless: False (browser will be visible)")
+    print("  - Date range: 08/12/2025 to 08/12/2025")
+    print("  - Matrícula: 1595504")
+    print("  - Max NFAs: 3")
+    print("  - Wait between NFAs: 4 seconds")
+    print("  - Headless: False (browser will be visible)")
     print()
     print("Starting automation in 3 seconds...")
     print("(You'll see the browser window open)")
     print()
-    
+
     await asyncio.sleep(3)
-    
+
     # Run the automation
     result = await run_nfa_job(
         username=username,
@@ -67,7 +66,7 @@ async def main():
         max_nfas=3,
         wait_between_nfas=4,
     )
-    
+
     # Print summary
     print()
     print("=" * 80)
@@ -76,7 +75,7 @@ async def main():
     print(f"Status: {result['status']}")
     print(f"Total NFAs processed: {result.get('total_processed', 0)}")
     print()
-    
+
     if result.get("nfas_processed"):
         print("NFAs processed:")
         for idx, nfa in enumerate(result["nfas_processed"], 1):
@@ -88,15 +87,15 @@ async def main():
                 print(f"     DAR:   {nfa['dar_path']}")
             if nfa.get("error"):
                 print(f"     Error: {nfa['error']}")
-    
+
     if result.get("error"):
         print(f"\nOverall error: {result['error']}")
-    
+
     print()
     print("=" * 80)
     print("Automation completed!")
     print("=" * 80)
-    
+
     return result
 
 

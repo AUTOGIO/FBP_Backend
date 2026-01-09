@@ -5,7 +5,6 @@ Handles submitting the NFA form after all fields are filled.
 from __future__ import annotations
 
 import logging
-import random
 import re
 from urllib.parse import parse_qs, urlparse
 

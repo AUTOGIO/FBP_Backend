@@ -20,13 +20,13 @@ async def main():
     username = os.getenv("NFA_USERNAME", "eduardof")
     password = os.getenv("NFA_PASSWORD", "atf101010")
     matricula = "1595504"
-    
+
     print("🚀 Starting NFA consultation automation...")
     print(f"   Username: {username}")
     print(f"   Matrícula: {matricula}")
-    print(f"   Date range: 08/12/2025 to 10/12/2025")
+    print("   Date range: 08/12/2025 to 10/12/2025")
     print()
-    
+
     # Run the job
     result = await run_nfa_job(
         username=username,
@@ -35,7 +35,7 @@ async def main():
         data_final="10/12/2025",
         matricula=matricula,
     )
-    
+
     # Print results
     print()
     print("=" * 60)
@@ -43,7 +43,7 @@ async def main():
     print("=" * 60)
     print(json.dumps(result, indent=2, ensure_ascii=False))
     print()
-    
+
     if result["status"] == "ok":
         print("✅ SUCCESS!")
         if result.get("danfe_path"):

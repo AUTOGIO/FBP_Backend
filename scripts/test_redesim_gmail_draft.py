@@ -6,15 +6,17 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 # Ensure project root is on sys.path for direct execution
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.modules.redesim.gmail_draft_creator import create_gmail_draft  # noqa: E402
+from app.modules.redesim.gmail_draft_creator import (
+    create_gmail_draft,  # noqa: E402
+)
 
 
 def _parse_recipients(raw: str) -> list[str]:

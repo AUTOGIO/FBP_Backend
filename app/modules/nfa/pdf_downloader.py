@@ -5,13 +5,10 @@ Handles downloading DAR and Nota Fiscal PDFs from SEFAZ PB system.
 from __future__ import annotations
 
 import logging
-import random
 from pathlib import Path
 from typing import Optional
 
 from app.modules.nfa.delays import (
-    AFTER_PDF_CLICK_DELAY_MAX,
-    AFTER_PDF_CLICK_DELAY_MIN,
     BETWEEN_PDF_DELAYS,
 )
 from app.modules.nfa.nfa_context import NFAContext, get_page_from_context

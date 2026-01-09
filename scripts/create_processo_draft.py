@@ -14,7 +14,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.modules.redesim.email_extractor import EmailExtractor  # noqa: E402
-from app.modules.redesim.gmail_draft_creator import create_gmail_draft  # noqa: E402
+from app.modules.redesim.gmail_draft_creator import (
+    create_gmail_draft,  # noqa: E402
+)
 
 logger = logging.getLogger(__name__)
 
@@ -170,7 +172,7 @@ Atenciosamente,"""
     )
 
     if draft_id:
-        print(f"\n✓ Draft created successfully!")
+        print("\n✓ Draft created successfully!")
         print(f"  Draft ID: {draft_id}")
         print(f"  Subject: {subject}")
         print(f"  Recipients ({len(emails)}): {', '.join(emails)}")

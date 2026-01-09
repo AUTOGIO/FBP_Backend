@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import base64
 import logging
+from collections.abc import Sequence
 from email.message import EmailMessage
-from typing import Optional, Sequence, cast
+from typing import Optional, cast
 
 from googleapiclient.discovery import build  # type: ignore[import]
 from googleapiclient.errors import HttpError  # type: ignore[import]

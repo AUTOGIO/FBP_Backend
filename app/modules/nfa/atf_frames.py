@@ -22,18 +22,18 @@ async def log_page_frames(page: Page) -> None:
     try:
         all_frames = page.frames
         logger.info(f"Total frames detected: {len(all_frames)}")
-        
+
         frame_urls = []
         for idx, frame in enumerate(all_frames):
             frame_url = frame.url or "about:blank"
             frame_name = frame.name or "unnamed"
             frame_urls.append(f"Frame {idx}: name='{frame_name}', url='{frame_url}'")
             logger.debug(f"Frame {idx}: name='{frame_name}', url='{frame_url}'")
-        
+
         from app.core.config import settings
         logs_dir = settings.paths.project_root / "logs" / "nfa"
         logs_dir.mkdir(parents=True, exist_ok=True)
-        
+
         frame_log_file = logs_dir / "frame_detection.log"
         with open(frame_log_file, "w", encoding="utf-8") as f:
             f.write("Frame Detection Log (for debugging only)\n")
@@ -41,6 +41,6 @@ async def log_page_frames(page: Page) -> None:
             for url_info in frame_urls:
                 f.write(url_info + "\n")
         logger.info(f"Frame URLs logged to: {frame_log_file}")
-        
+
     except Exception as e:
         logger.exception(f"Error logging frames: {e}")

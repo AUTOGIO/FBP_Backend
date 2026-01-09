@@ -23,6 +23,9 @@ fi
 # Set Python path
 export PYTHONPATH="${SCRIPT_DIR}:${PYTHONPATH}"
 
+# Fix for macOS fork safety (deadlock avoidance)
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
 # Run uvicorn
 exec uvicorn app.main:app \
     --host 0.0.0.0 \

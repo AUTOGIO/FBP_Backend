@@ -1,10 +1,11 @@
 """Telemetry Router - System Metrics API for FBP Backend"""
 
 from fastapi import APIRouter
+
 from app.services.telemetry import (
-    get_system_metrics,
     check_system_health,
-    get_browser_recommendation
+    get_browser_recommendation,
+    get_system_metrics,
 )
 
 router = APIRouter(prefix="/api/v1/telemetry", tags=["telemetry"])

@@ -15,13 +15,10 @@ sys.path.insert(0, str(project_root))
 
 from playwright.async_api import async_playwright
 
-from app.core.config import settings
 from app.modules.nfa.atf_login import navigate_to_nfa_form, perform_login
 from app.modules.nfa.campos_fixos_filler import preencher_campos_fixos
 from app.modules.nfa.destinatario_filler import preencher_destinatario
 from app.modules.nfa.endereco_filler import preencher_endereco
-from app.modules.nfa.form_filler import fill_nfa_form_complete
-from app.modules.nfa.nfa_context import resolve_nfa_context, wait_for_nfa_ready
 from app.modules.nfa.produto_filler import adicionar_item
 from app.modules.nfa.screenshot_utils import save_screenshot
 
@@ -110,7 +107,10 @@ async def live_fill_demo():
                 print("   Checking if form is already loaded...")
                 # Try to continue anyway - maybe form is there but detection failed
                 try:
-                    from app.modules.nfa.nfa_context import resolve_nfa_context, wait_for_nfa_ready
+                    from app.modules.nfa.nfa_context import (
+                        resolve_nfa_context,
+                        wait_for_nfa_ready,
+                    )
                     ctx = await resolve_nfa_context(page)
                     await wait_for_nfa_ready(ctx, timeout=30000)
                     print("✅ Form found via alternative detection!")

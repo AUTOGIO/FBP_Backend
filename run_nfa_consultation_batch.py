@@ -13,8 +13,8 @@ Or run with visible browser (for debugging):
     python run_nfa_consultation_batch.py --headless=false
 """
 
-import asyncio
 import argparse
+import asyncio
 import json
 import os
 import sys
@@ -68,13 +68,13 @@ async def main():
         default="1595504",
         help="Employee registration number (default: 1595504)",
     )
-    
+
     args = parser.parse_args()
-    
+
     # Get credentials from environment
     username = os.getenv("NFA_USERNAME")
     password = os.getenv("NFA_PASSWORD")
-    
+
     if not username or not password:
         print("❌ ERROR: NFA credentials not found!")
         print()
@@ -83,10 +83,10 @@ async def main():
         print("  export NFA_PASSWORD='atf101010'")
         print()
         sys.exit(1)
-    
+
     # Parse headless flag
     headless = args.headless.lower() in ("true", "1", "yes", "on")
-    
+
     print("=" * 80)
     print("🚀 NFA CONSULTATION BATCH AUTOMATION")
     print("=" * 80)
@@ -96,10 +96,10 @@ async def main():
     print(f"   Max NFAs: {args.max_nfas}")
     print(f"   Wait between NFAs: {args.wait_between} seconds")
     print(f"   Headless mode: {headless}")
-    print(f"   Output directory: /Users/dnigga/Downloads/NFA_Outputs")
+    print("   Output directory: /Users/dnigga/Downloads/NFA_Outputs")
     print("=" * 80)
     print()
-    
+
     # Run the job
     result = await run_nfa_job(
         username=username,
@@ -111,13 +111,13 @@ async def main():
         max_nfas=args.max_nfas,
         wait_between_nfas=args.wait_between,
     )
-    
+
     # Print summary
     print()
     print("=" * 80)
     print("📊 FINAL RESULTS")
     print("=" * 80)
-    
+
     if result["status"] == "ok":
         print(f"✅ SUCCESS: {result['total_processed']}/{len(result.get('nfas_processed', []))} NFAs processed")
         print()
@@ -136,7 +136,7 @@ async def main():
         if result.get("error"):
             print(f"   Error: {result['error']}")
         sys.exit(1)
-    
+
     print()
     print("=" * 80)
     print("📄 Full JSON Result:")

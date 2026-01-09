@@ -14,8 +14,10 @@ sys.path.insert(0, str(project_root))
 
 from playwright.async_api import async_playwright
 
-from app.core.config import settings
-from app.modules.nfa.atf_frames import wait_for_nfa_fields, wait_for_nfa_form_ready
+from app.modules.nfa.atf_frames import (
+    wait_for_nfa_fields,
+    wait_for_nfa_form_ready,
+)
 from app.modules.nfa.atf_login import navigate_to_nfa_form, perform_login
 from app.modules.nfa.campos_fixos_filler import preencher_campos_fixos
 from app.modules.nfa.destinatario_filler import preencher_destinatario

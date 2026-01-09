@@ -11,13 +11,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from playwright.async_api import Browser, BrowserContext, Page, async_playwright
+from playwright.async_api import (
+    Browser,
+    BrowserContext,
+    Page,
+    async_playwright,
+)
 
 from app.core.config import settings
 from app.modules.nfa.atf_login import navigate_to_nfa_form, perform_login
 from app.modules.nfa.form_filler import fill_nfa_form_complete
 from app.modules.nfa.form_submitter import submeter_nfa
-from app.modules.nfa.nfa_context import resolve_nfa_context
 from app.modules.nfa.pdf_downloader import download_all_pdfs
 from app.modules.nfa.screenshot_utils import save_screenshot
 
@@ -301,7 +305,7 @@ class BatchNFAProcessor:
                 steps_dir = cpf_screenshots_dir
 
                 # Step 1: Wait for form to be ready
-                logger.info(f"Step 1: Waiting for NFA form to be ready...")
+                logger.info("Step 1: Waiting for NFA form to be ready...")
                 # Ensure page is still alive
                 try:
                     await page.wait_for_load_state("domcontentloaded", timeout=10000)
@@ -349,7 +353,7 @@ class BatchNFAProcessor:
                     )
 
                 # Step 2: Wait for NFA form to be ready (form is on main page)
-                logger.info(f"Step 2: Waiting for NFA form to be ready on main page...")
+                logger.info("Step 2: Waiting for NFA form to be ready on main page...")
                 from app.modules.nfa.nfa_context import (
                     resolve_nfa_context,
                     wait_for_nfa_ready,

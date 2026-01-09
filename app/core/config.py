@@ -11,7 +11,6 @@ from typing import Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # HARDWARE PROFILE: iMac M3 (Mac15,5)
 # ═══════════════════════════════════════════════════════════════════════════════

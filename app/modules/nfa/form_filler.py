@@ -26,7 +26,10 @@ from app.modules.nfa.nfa_context import (
     wait_for_nfa_ready,
 )
 from app.modules.nfa.produto_filler import adicionar_item
-from app.modules.nfa.screenshot_utils import resolve_screenshots_dir, save_screenshot
+from app.modules.nfa.screenshot_utils import (
+    resolve_screenshots_dir,
+    save_screenshot,
+)
 
 if TYPE_CHECKING:
     from playwright.async_api import Page

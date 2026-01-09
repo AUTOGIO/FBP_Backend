@@ -12,7 +12,10 @@ import logging
 from typing import Any
 
 from app.modules.nfa.batch_processor import BatchNFAProcessor
-from app.modules.nfa.data_validator import validate_destinatario, validate_emitente
+from app.modules.nfa.data_validator import (
+    validate_destinatario,
+    validate_emitente,
+)
 
 logger = logging.getLogger(__name__)
 

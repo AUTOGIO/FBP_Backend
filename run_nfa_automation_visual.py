@@ -19,23 +19,23 @@ async def main():
     print("NFA Automation - Visual Mode")
     print("=" * 80)
     print()
-    
+
     # Get credentials from environment or use defaults
     username = os.getenv("NFA_USERNAME", "eduardof")
     password = os.getenv("NFA_PASSWORD", "atf101010")
-    
+
     if not username or not password:
         print("ERROR: NFA_USERNAME and NFA_PASSWORD must be set")
         print("Export them or set in .env file")
         sys.exit(1)
-    
+
     print(f"Username: {username}")
-    print(f"Date range: 08/12/2025 to 10/12/2025")
-    print(f"Matrícula: 1595504")
+    print("Date range: 08/12/2025 to 10/12/2025")
+    print("Matrícula: 1595504")
     print()
     print("Starting automation in VISUAL mode (browser will be visible)...")
     print()
-    
+
     # Run automation in visual mode
     result = await run_nfa_job(
         username=username,
@@ -45,7 +45,7 @@ async def main():
         matricula="1595504",
         headless=False,  # Visual mode
     )
-    
+
     # Print final summary
     print()
     print("=" * 80)

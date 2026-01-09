@@ -11,10 +11,13 @@ from app.core.config import settings
 from app.core.execution_runtime import execution_runtime
 from app.core.jobs import job_store
 from app.core.logging_config import setup_logger
-from app.modules.cad_redesim_consulta import router as cad_redesim_consulta_router
+from app.modules.cad_redesim_consulta import (
+    router as cad_redesim_consulta_router,
+)
 from app.modules.nfa_consult import router as nfa_consult_router
 from app.routers import (
     echo,
+    executor,
     global_router,
     health,
     n8n_browser,
@@ -76,6 +79,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router)
 app.include_router(echo.router)
+app.include_router(executor.router)
 app.include_router(global_router.router)  # Global unified endpoints
 app.include_router(nfa.router)  # Phase 1 mock endpoints
 app.include_router(nfa_real.router)  # Phase 2 real NFA endpoints

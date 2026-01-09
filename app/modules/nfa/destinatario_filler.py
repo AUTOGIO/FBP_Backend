@@ -8,7 +8,10 @@ import logging
 
 from app.modules.nfa.delays import FIELD_DELAY
 from app.modules.nfa.nfa_context import NFAContext, get_page_from_context
-from app.modules.nfa.screenshot_utils import resolve_screenshots_dir, save_screenshot
+from app.modules.nfa.screenshot_utils import (
+    resolve_screenshots_dir,
+    save_screenshot,
+)
 
 logger = logging.getLogger(__name__)
 

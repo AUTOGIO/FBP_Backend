@@ -27,7 +27,7 @@ async def main():
     # Get credentials from environment or use defaults
     username = os.getenv("NFA_USERNAME")
     password = os.getenv("NFA_PASSWORD")
-    
+
     if not username or not password:
         print("ERROR: NFA_USERNAME and NFA_PASSWORD environment variables must be set")
         print("\nExample:")
@@ -35,16 +35,16 @@ async def main():
         print("  export NFA_PASSWORD='atf101010'")
         print("  python run_nfa_consult_example.py")
         sys.exit(1)
-    
+
     print("=" * 80)
     print("NFA Consultation Automation")
     print("=" * 80)
     print(f"Username: {username}")
-    print(f"Date range: 08/12/2025 to 08/12/2025")
-    print(f"Matrícula: 1595504")
+    print("Date range: 08/12/2025 to 08/12/2025")
+    print("Matrícula: 1595504")
     print("=" * 80)
     print()
-    
+
     # Run the automation job
     # Note: Set headless=False to see the browser in action
     result = await run_nfa_job(
@@ -55,7 +55,7 @@ async def main():
         matricula="1595504",
         headless=False,  # Set to True for headless mode
     )
-    
+
     # Check result
     if result["status"] == "ok":
         print("\n✅ Automation completed successfully!")
