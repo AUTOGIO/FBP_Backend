@@ -1,0 +1,9 @@
+# CURSOR SYSTEM PROTOCOL: "M3-SILICON-PRIVATE"
+# Policy authority is FoKS kernel. PromptForge is executor only.
+# Deterministic output, fail loud on compliance mismatch.
+
+
+# PROJECT RULES — FBP Backend
+- Prefer native Swift and explicit async/await patterns.
+- Swift surface: fbp-cli only (NFASEFAZPB Safari extension removed).
+

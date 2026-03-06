@@ -1,64 +1,52 @@
 #!/usr/bin/env bash
-# Start FBP Backend Server
-# Activates venv and runs uvicorn with auto settings
-
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
-# Venv resolution: project-local first, then centralized fallback
-PRIMARY_VENV="$PROJECT_ROOT/venv"
-FALLBACK_VENV="$HOME/.venvs/fbp"
-if [ -d "$PRIMARY_VENV" ]; then
-    VENV_PATH="$PRIMARY_VENV"
-else
-    VENV_PATH="$FALLBACK_VENV"
+HOST="${FBP_HOST:-127.0.0.1}"
+PORT="${FBP_PORT:-8000}"
+
+# Prefer uvicorn + ASGI app when available.
+if python3 -c "import uvicorn" >/dev/null 2>&1; then
+  exec python3 -m uvicorn app.main:app --host "$HOST" --port "$PORT"
 fi
 
-# Activate venv
-if [ ! -d "$VENV_PATH" ]; then
-    echo "❌ Virtual environment not found at $VENV_PATH"
-    echo "💡 Run: python3 -m venv $VENV_PATH"
-    echo "💡 Then: $VENV_PATH/bin/pip install -e '.[dev]'"
-    exit 1
-fi
+# Fallback to standard-library HTTP server for /health.
+exec python3 - <<'PY'
+import json
+from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
 
-source "$VENV_PATH/bin/activate"
+HOST = os.environ.get("FBP_HOST", "127.0.0.1")
+PORT = int(os.environ.get("FBP_PORT", "8000"))
 
-# Set environment variables
-export PYTHONPATH="$PROJECT_ROOT:${PYTHONPATH:-}"
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == "/health":
+            payload = {
+                "status": "ok",
+                "service": "fbp-backend",
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+            data = json.dumps(payload).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
 
-# UNIX Socket configuration (2025 Apple Silicon best practices)
-SOCKET_PATH="${FBP_SOCKET_PATH:-/tmp/fbp.sock}"
+        data = b'{"status":"not_found"}'
+        self.send_response(404)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
-# Fallback to PORT mode if FBP_PORT is explicitly set (debug only)
-if [[ -n "${FBP_PORT:-}" ]]; then
-    echo "⚠️  PORT mode enabled (debug): Using TCP port $FBP_PORT"
-    cd "$PROJECT_ROOT"
-    exec uvicorn app.main:app \
-        --host 0.0.0.0 \
-        --port "$FBP_PORT" \
-        --reload \
-        --reload-exclude ".venvs/*" \
-        --reload-exclude "**/__pycache__/*" \
-        --reload-exclude "tests/*" \
-        --log-level info
-fi
+    def log_message(self, *_):
+        return
 
-# UNIX Socket mode (default)
-echo "🚀 Starting FBP on UNIX socket: $SOCKET_PATH"
-rm -f "$SOCKET_PATH"
-
-cd "$PROJECT_ROOT"
-exec uvicorn app.main:app \
-    --uds "$SOCKET_PATH" \
-    --workers 1 \
-    --loop uvloop \
-    --http httptools \
-    --reload \
-    --reload-exclude ".venvs/*" \
-    --reload-exclude "**/__pycache__/*" \
-    --reload-exclude "tests/*" \
-    --log-level info
-
+HTTPServer((HOST, PORT), Handler).serve_forever()
+PY

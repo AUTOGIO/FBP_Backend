@@ -1,0 +1,10 @@
+{
+  "compliance_profile" : "default",
+  "config_hash_sha256" : "ef8b4fe0b3406c218a3b0e7a2f9622028ac3eaab6e8750f1587ed4695cc1d599",
+  "generated_at" : "2026-02-14T18:05:05Z",
+  "policy_hash_sha256" : "21f14a5585ebe0782df36251d76527b476b6147c94b3664610cfa7e50a0fbf67",
+  "project" : "FBP_Backend",
+  "protocol_version" : "4.0.1",
+  "risk_level" : "SAFE",
+  "rules_hash_sha256" : "813ed48be2d74986b6cd760a53ba475f7dcf67915516d4ac496c4f92267e2cb9"
+}

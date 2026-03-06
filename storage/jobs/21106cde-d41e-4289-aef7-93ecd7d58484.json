@@ -1,0 +1,33 @@
+{
+  "workflow": "fac-batch",
+  "input": {
+    "facs": [
+      {
+        "processo": "123",
+        "fac": "ABC"
+      }
+    ]
+  },
+  "status": "completed",
+  "result": {
+    "success": true,
+    "total": 1,
+    "processed": 1,
+    "results": [
+      {
+        "processo": "123",
+        "fac": "ABC",
+        "status": "processed"
+      }
+    ],
+    "errors": []
+  },
+  "error": null,
+  "artifacts": [
+    "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/fac_batch_20260306T005115Z.txt"
+  ],
+  "created_at": "2026-03-06T00:51:15.522436+00:00",
+  "started_at": "2026-03-06T00:51:15.523051+00:00",
+  "completed_at": "2026-03-06T00:51:15.523601+00:00",
+  "job_id": "21106cde-d41e-4289-aef7-93ecd7d58484"
+}

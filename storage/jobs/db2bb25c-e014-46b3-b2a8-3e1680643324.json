@@ -1,0 +1,23 @@
+{
+  "workflow": "redesim-consulta",
+  "input": {
+    "wait_user_dates": true,
+    "data_criacao_inicio": "01/03/2026",
+    "data_criacao_fim": "03/03/2026"
+  },
+  "status": "completed",
+  "result": {
+    "execution_id": "redesim_consulta_20260306T052730Z",
+    "result": {
+      "summary": "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/redesim_consulta_20260306T052730Z.txt"
+    }
+  },
+  "error": null,
+  "artifacts": [
+    "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/redesim_consulta_20260306T052730Z.txt"
+  ],
+  "created_at": "2026-03-06T05:27:30.610264+00:00",
+  "started_at": "2026-03-06T05:27:30.610891+00:00",
+  "completed_at": "2026-03-06T05:27:30.612260+00:00",
+  "job_id": "db2bb25c-e014-46b3-b2a8-3e1680643324"
+}

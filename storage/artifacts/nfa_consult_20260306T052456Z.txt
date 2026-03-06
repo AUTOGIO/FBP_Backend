@@ -1,0 +1,4 @@
+NFA consultation simulated
+period: 01/03/2026 to 03/03/2026
+matricula: 1595504
+nfa_numero: SIM-01032026-03032026

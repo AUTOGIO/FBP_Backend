@@ -1,0 +1,3 @@
+data_criacao_inicio: 01/03/2026
+data_criacao_fim: 03/03/2026
+status: simulated_completed

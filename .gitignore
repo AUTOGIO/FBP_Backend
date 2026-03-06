@@ -109,6 +109,9 @@ PAGE_FRAME_SOURCE
 Archive.zip
 fbp_audit_files.tar.gz
 
+# Swift (fbp-cli)
+tools/fbp-cli/.build/
+
 # Misc
 temp/
 tmp/

@@ -1,0 +1,17 @@
+{
+  "workflow": "daily-briefing",
+  "input": {
+    "priorities": [
+      "A",
+      "B"
+    ]
+  },
+  "status": "queued",
+  "result": null,
+  "error": null,
+  "artifacts": [],
+  "created_at": "2026-03-06T00:50:52.278882+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "job_id": "662f45aa-9ff1-4403-9986-d59f22a86c04"
+}

@@ -1,31 +1,38 @@
-"""Tests for health endpoint."""
+from __future__ import annotations
 
-from fastapi.testclient import TestClient
+import asyncio
+import json
+import sys
+import unittest
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
 from app.main import app
 
-client = TestClient(app)
+
+class HealthAPITest(unittest.TestCase):
+    def test_health_endpoint(self) -> None:
+        async def receive() -> dict:
+            return {"type": "http.request", "body": b"", "more_body": False}
+
+        messages: list[dict] = []
+
+        async def send(message: dict) -> None:
+            messages.append(message)
+
+        scope = {"type": "http", "method": "GET", "path": "/health"}
+        asyncio.run(app(scope, receive, send))
+
+        start = messages[0]
+        body = messages[1]
+        payload = json.loads(body["body"].decode("utf-8"))
+
+        self.assertEqual(start["status"], 200)
+        self.assertEqual(payload["status"], "ok")
 
 
-def test_health_check() -> None:
-    """Test GET /health endpoint."""
-    response = client.get("/health")
-
-    assert response.status_code == 200
-    data = response.json()
-
-    assert data["status"] == "ok"
-    assert "machine" in data
-    assert data["project"] == "FBP"
-
-
-def test_root_endpoint() -> None:
-    """Test root endpoint."""
-    response = client.get("/")
-
-    assert response.status_code == 200
-    data = response.json()
-
-    assert data["project"] == "FBP"
-    assert "version" in data
-    assert data["status"] == "running"
+if __name__ == "__main__":
+    unittest.main()

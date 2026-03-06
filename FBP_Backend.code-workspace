@@ -1,8 +1,15 @@
 {
 	"folders": [
 		{
+			"name": "FBP_Backend",
 			"path": "."
+		},
+		{
+			"name": "FoKS_Intelligence",
+			"path": "../FoKS_Intelligence"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"ruff.enable": true
+	}
 }

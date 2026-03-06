@@ -1,0 +1,14 @@
+{
+  "workflow": "risk-scan",
+  "input": {
+    "diff": "+line\n-line"
+  },
+  "status": "queued",
+  "result": null,
+  "error": null,
+  "artifacts": [],
+  "created_at": "2026-03-06T00:50:52.279301+00:00",
+  "started_at": null,
+  "completed_at": null,
+  "job_id": "11bff281-31e2-4b46-b5a1-003590c72236"
+}

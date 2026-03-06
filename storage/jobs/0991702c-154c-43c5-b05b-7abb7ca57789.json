@@ -1,0 +1,27 @@
+{
+  "workflow": "nfa-consult",
+  "input": {
+    "data_inicial": "01/03/2026",
+    "data_final": "03/03/2026",
+    "matricula": "1595504"
+  },
+  "status": "completed",
+  "result": {
+    "nfa_numero": "SIM-01032026-03032026",
+    "danfe_path": "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/nfa_consult_20260306T005115Z.txt",
+    "dar_path": "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/nfa_consult_20260306T005115Z.txt",
+    "result": {
+      "data_inicial": "01/03/2026",
+      "data_final": "03/03/2026",
+      "matricula": "1595504"
+    }
+  },
+  "error": null,
+  "artifacts": [
+    "/Users/dnigga/Documents/Active_Projects/FBP_Backend/storage/artifacts/nfa_consult_20260306T005115Z.txt"
+  ],
+  "created_at": "2026-03-06T00:51:15.412167+00:00",
+  "started_at": "2026-03-06T00:51:15.412789+00:00",
+  "completed_at": "2026-03-06T00:51:15.413139+00:00",
+  "job_id": "0991702c-154c-43c5-b05b-7abb7ca57789"
+}

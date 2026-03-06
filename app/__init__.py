@@ -1,1 +1,0 @@
-"""FBP application package."""
