@@ -9,13 +9,20 @@ public enum ApiError: Error {
 }
 
 public struct FBPApiClient {
+    public static let defaultTimeout: TimeInterval = 30
+
     private let baseURL: String
     private let session: URLSession
 
-    public init(baseURL: String? = nil) {
-        let url = baseURL ?? ProcessInfo.processInfo.environment["FBP_BASE_URL"] ?? "http://127.0.0.1:8000"
-        self.baseURL = url.hasSuffix("/") ? String(url.dropLast()) : url
-        self.session = URLSession.shared
+    /// - Parameters:
+    ///   - baseURL: Resolved backend base URL (e.g. from `FBPConfig.baseURL(explicit:)`).
+    ///   - timeout: Request timeout in seconds; default 30.
+    public init(baseURL: String, timeout: TimeInterval = defaultTimeout) {
+        self.baseURL = baseURL.hasSuffix("/") ? String(baseURL.dropLast()) : baseURL
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = timeout
+        config.timeoutIntervalForResource = timeout
+        self.session = URLSession(configuration: config)
     }
 
     private func url(path: String) -> URL? {
@@ -34,7 +41,14 @@ public struct FBPApiClient {
     public func getData(path: String) async throws -> Data {
         guard let requestURL = url(path: path) else { throw ApiError.invalidURL }
 
-        let (data, response) = try await session.data(from: requestURL)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(from: requestURL)
+        } catch let urlError as URLError where urlError.code == .timedOut {
+            throw ApiError.timeout
+        } catch {
+            throw ApiError.networkError(error)
+        }
 
         guard let http = response as? HTTPURLResponse else {
             throw ApiError.networkError(NSError(domain: "FBPApiClient", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"]))
@@ -56,7 +70,14 @@ public struct FBPApiClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(body)
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch let urlError as URLError where urlError.code == .timedOut {
+            throw ApiError.timeout
+        } catch {
+            throw ApiError.networkError(error)
+        }
 
         guard let http = response as? HTTPURLResponse else {
             throw ApiError.networkError(NSError(domain: "FBPApiClient", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"]))
@@ -82,7 +103,14 @@ public struct FBPApiClient {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, response) = try await session.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await session.data(for: request)
+        } catch let urlError as URLError where urlError.code == .timedOut {
+            throw ApiError.timeout
+        } catch {
+            throw ApiError.networkError(error)
+        }
 
         guard let http = response as? HTTPURLResponse else {
             throw ApiError.networkError(NSError(domain: "FBPApiClient", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"]))

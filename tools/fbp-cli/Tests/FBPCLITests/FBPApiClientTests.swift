@@ -3,7 +3,7 @@ import XCTest
 
 final class FBPApiClientTests: XCTestCase {
     func testClientInitWithDefaultURL() {
-        let _ = FBPApiClient()
+        let _ = FBPApiClient(baseURL: FBPConfig.defaultBaseURL)
     }
 
     func testClientInitWithCustomURL() {
@@ -32,11 +32,14 @@ final class FBPApiClientTests: XCTestCase {
         }
     }
 
-    func testClientUsesEnvironmentBaseURLWhenNotPassed() async {
+    func testConfigBaseURLUsesEnvironmentWhenExplicitNil() async {
         setenv("FBP_BASE_URL", "invalid base url", 1)
         defer { unsetenv("FBP_BASE_URL") }
 
-        let client = FBPApiClient()
+        let baseURL = FBPConfig.baseURL(explicit: nil)
+        XCTAssertEqual(baseURL, "invalid base url")
+
+        let client = FBPApiClient(baseURL: baseURL)
         do {
             _ = try await client.getData(path: "/health")
             XCTFail("Expected URL construction/request error from environment base URL")
@@ -55,5 +58,15 @@ final class FBPApiClientTests: XCTestCase {
         } catch {
             XCTFail("Expected ApiError.invalidURL or ApiError.networkError but got \(error)")
         }
+    }
+
+    func testConfigBaseURLExplicitOverridesEnv() {
+        setenv("FBP_BASE_URL", "http://env:8000", 1)
+        defer { unsetenv("FBP_BASE_URL") }
+        XCTAssertEqual(FBPConfig.baseURL(explicit: "http://override:9000"), "http://override:9000")
+    }
+
+    func testConfigBaseURLStripsTrailingSlash() {
+        XCTAssertEqual(FBPConfig.baseURL(explicit: "http://localhost:8000/"), "http://localhost:8000")
     }
 }

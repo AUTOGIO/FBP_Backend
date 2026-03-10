@@ -36,7 +36,7 @@ struct NFAConsultCommand: AsyncParsableCommand {
     var json: Bool = false
 
     mutating func run() async throws {
-        let baseURL = fbpUrl ?? ProcessInfo.processInfo.environment["FBP_BASE_URL"] ?? "http://127.0.0.1:8000"
+        let baseURL = FBPConfig.baseURL(explicit: fbpUrl)
         let client = FBPApiClient(baseURL: baseURL)
 
         let request = NFAConsultRequest(
@@ -59,13 +59,8 @@ struct NFAConsultCommand: AsyncParsableCommand {
                 print("job_id: \(response.job_id)")
                 print("status: \(response.status)")
             }
-        } catch ApiError.requestFailed(let code, let body) {
-            print("Error: FBP returned \(code)", to: &stderrStream)
-            if let body = body, !body.isEmpty { print(body, to: &stderrStream) }
-            Darwin.exit(2)
-        } catch ApiError.networkError(let err) {
-            print("Error: \(err.localizedDescription). Is FBP running?", to: &stderrStream)
-            Darwin.exit(2)
+        } catch let e as ApiError {
+            exitWithApiError(e)
         } catch {
             print("Error: \(error)", to: &stderrStream)
             Darwin.exit(2)
@@ -92,7 +87,7 @@ struct NFAStatusCommand: AsyncParsableCommand {
     var json: Bool = false
 
     mutating func run() async throws {
-        let baseURL = fbpUrl ?? ProcessInfo.processInfo.environment["FBP_BASE_URL"] ?? "http://127.0.0.1:8000"
+        let baseURL = FBPConfig.baseURL(explicit: fbpUrl)
         let client = FBPApiClient(baseURL: baseURL)
 
         func fetch() async throws -> NFAJobStatusResponse {
@@ -122,13 +117,8 @@ struct NFAStatusCommand: AsyncParsableCommand {
                 if let dar = response.dar_path { print("dar_path: \(dar)") }
                 if let err = response.error { print("error: \(err)") }
             }
-        } catch ApiError.requestFailed(let code, let body) {
-            print("Error: FBP returned \(code)", to: &stderrStream)
-            if let body = body, !body.isEmpty { print(body, to: &stderrStream) }
-            Darwin.exit(2)
-        } catch ApiError.networkError(let err) {
-            print("Error: \(err.localizedDescription). Is FBP running?", to: &stderrStream)
-            Darwin.exit(2)
+        } catch let e as ApiError {
+            exitWithApiError(e)
         } catch {
             print("Error: \(error)", to: &stderrStream)
             Darwin.exit(2)

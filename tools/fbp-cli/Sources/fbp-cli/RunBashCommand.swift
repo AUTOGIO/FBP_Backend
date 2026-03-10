@@ -25,7 +25,7 @@ struct RunBashCommand: AsyncParsableCommand {
     var json: Bool = false
 
     mutating func run() async throws {
-        let baseURL = fbpUrl ?? ProcessInfo.processInfo.environment["FBP_BASE_URL"] ?? "http://127.0.0.1:8000"
+        let baseURL = FBPConfig.baseURL(explicit: fbpUrl)
         let client = FBPApiClient(baseURL: baseURL)
 
         let scriptContent: String
@@ -51,19 +51,15 @@ struct RunBashCommand: AsyncParsableCommand {
                 encoder.outputFormatting = .prettyPrinted
                 let data = try encoder.encode(response)
                 print(String(data: data, encoding: .utf8)!)
+                // Propagate script exit code so automation can detect failure
+                Darwin.exit(response.success ? 0 : Int32(response.exit_code))
             } else {
                 if !response.stdout.isEmpty { print(response.stdout) }
                 if !response.stderr.isEmpty { print(response.stderr, to: &stderrStream) }
-                if response.success {
-                    Darwin.exit(0)
-                } else {
-                    Darwin.exit(Int32(response.exit_code))
-                }
+                Darwin.exit(response.success ? 0 : Int32(response.exit_code))
             }
-        } catch ApiError.requestFailed(let code, let body) {
-            print("Error: FBP returned status \(code)", to: &stderrStream)
-            if let body = body { print(body, to: &stderrStream) }
-            Darwin.exit(2)
+        } catch let e as ApiError {
+            exitWithApiError(e)
         } catch {
             print("Error: \(error)", to: &stderrStream)
             Darwin.exit(2)

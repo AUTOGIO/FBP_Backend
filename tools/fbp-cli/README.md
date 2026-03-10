@@ -6,7 +6,7 @@ Native macOS command-line client for FBP Backend. Built with Swift Package Manag
 
 - macOS 13+
 - Swift 5.9+
-- FBP Backend running (default: http://127.0.0.1:8000)
+- FBP Backend running (default: http://127.0.0.1:8000). The CLI depends on the backend; there is no offline mode.
 
 ## Build
 
@@ -24,6 +24,8 @@ swift build -c release
 cp .build/release/fbp /usr/local/bin/fbp
 ```
 
+Install copies the binary to `/usr/local/bin/fbp`; you may need `sudo` if that directory is not writable.
+
 ## Usage
 
 | Command | Description |
@@ -39,10 +41,15 @@ cp .build/release/fbp /usr/local/bin/fbp
 | `fbp run-bash --file script.sh` | Run bash script via FBP executor |
 | `fbp metrics` | Get system metrics |
 
-## Environment
+## Configuration
 
-- `FBP_BASE_URL` – FBP base URL (default: http://127.0.0.1:8000)
-- `--fbp-url` / `-u` – Override per command
+No config file. Backend URL is resolved in order:
+
+1. `--fbp-url` (per command)
+2. Environment variable `FBP_BASE_URL`
+3. Default: `http://127.0.0.1:8000`
+
+Request timeout: 30 seconds (fixed in client).
 
 ## Examples
 
@@ -64,3 +71,9 @@ fbp run-bash --file /path/to/script.sh --timeout 30
 fbp cep validate 58010120
 fbp cep validate 58010120 --enrich --json
 ```
+
+## Limitations
+
+- Backend must be running; the CLI has no offline mode.
+- Backend URL is not configurable via a config file (env and `--fbp-url` only).
+- Request timeout is 30 seconds; long-running backend operations may need to be polled (e.g. `fbp nfa status <id> --wait`).
